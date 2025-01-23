@@ -387,3 +387,243 @@ import { ref } from "vue";
 
 並可以在購物車裡 加入/移除 商品<br />
 ![20250123143132](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123143132.png) <br />
+
+# Layout 設定
+
+1.  在 src 目錄下新增 layouts 資料夾並新增 Default.vue (預設 Layout )<br />
+    ![20250123144354](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123144354.png) <br />
+2.  在 components 目錄下新增頁首及頁尾元件
+    Header.vue
+
+    ```js
+    <script setup>
+    import { computed, onMounted, ref } from "vue";
+    import { useRoute } from "vue-router";
+    import { useDisplay } from "vuetify";
+
+    const route = useRoute();
+    const path = computed(() => route.path.replace("/", ""));
+    const pageTitle = ref("");
+    const { mobile } = useDisplay();
+
+    onMounted(() => {
+        pageTitle.value = path.value;
+    });
+
+    const buttons = [
+        {
+            value: "Home",
+            text: "Home",
+            icon: "mdi-home",
+            textClass: "text-green",
+            to: "/",
+        },
+        {
+            value: "resume",
+            text: "Resume",
+            icon: "mdi-file-account",
+            textClass: "text-brown-darken-1",
+            to: "/resume",
+        },
+        {
+            value: "about",
+            text: "About Me",
+            icon: "mdi-information",
+            textClass: "text-blue",
+            to: "/about",
+        },
+        {
+            value: "contact",
+            text: "Contact Me",
+            icon: "mdi-phone-incoming",
+            textClass: "text-yellow-darken-4",
+            to: "/contact",
+        },
+    ];
+    </script>
+
+    <template>
+        <v-app-bar :elevation="5" color="white" class="header">
+            <v-container class="pa-0" fluid>
+                <v-btn-toggle v-model="pageTitle">
+                    <v-btn
+                        v-for="button in buttons"
+                        :key="button.value"
+                        rounded="xl"
+                        size="large"
+                        :class="button.textClass"
+                        :value="button.value"
+                        :to="button.to"
+                    >
+                        <v-icon :icon="button.icon" />
+                        <span v-if="!mobile">{{ button.text }}</span>
+                    </v-btn>
+                </v-btn-toggle>
+
+                <v-spacer></v-spacer>
+            </v-container>
+        </v-app-bar>
+    </template>
+
+    <style scoped>
+    .header {
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .v-container {
+        width: 100%;
+        padding: 0;
+    }
+    </style>
+    ```
+
+    Footer.vue
+
+    ```js
+    <script setup>
+    import { reactive } from "vue";
+
+    const socialMedias = reactive([
+        {
+            icon: "mdi-facebook",
+            link: "",
+        },
+        {
+            icon: "mdi-twitter",
+            link: "",
+        },
+        {
+            icon: "mdi-linkedin",
+            link: "",
+        },
+        {
+            icon: "mdi-instagram",
+            link: "",
+        },
+    ]);
+    </script>
+
+    <template>
+        <v-footer rounded class="bg-grey-lighten-1">
+            <v-row justify="center" no-gutters>
+                <v-btn color="white" variant="text" class="mx-2" rounded="xl" to="/"
+                    >Home</v-btn
+                >
+                <v-btn
+                    color="white"
+                    variant="text"
+                    class="mx-2"
+                    rounded="xl"
+                    to="/resume"
+                    >Resume</v-btn
+                >
+                <v-btn
+                    color="white"
+                    variant="text"
+                    class="mx-2"
+                    rounded="xl"
+                    to="/about"
+                    >About Me</v-btn
+                >
+                <v-btn
+                    color="white"
+                    variant="text"
+                    class="mx-2"
+                    rounded="xl"
+                    to="/contact"
+                    >Contact Me</v-btn
+                >
+
+                <v-col class="text-center mt-4" cols="12">
+                    <v-btn
+                        v-for="media in socialMedias"
+                        :key="media"
+                        class="mx-4"
+                        :icon="media.icon"
+                        :href="media.link"
+                        variant="text"
+                    ></v-btn>
+                </v-col>
+
+                <v-col class="text-center mt-4" cols="12">
+                    <strong
+                        >All contents of this site, unless otherwise noted, are
+                        ©2000-{{ new Date().getFullYear() }} Daniel. All Rights
+                        Reserved.</strong
+                    >
+                </v-col>
+            </v-row>
+        </v-footer>
+    </template>
+    ```
+
+3.  配置 Default.vue 作為 Layout
+
+    ```js
+    <script setup>
+    // 導入頁首和頁尾元件
+    import Header from "../components/Header.vue";
+    import Footer from "../components/Footer.vue";
+    </script>
+
+    <template>
+        <!-- 頁首區域 -->
+        <Header />
+        <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->
+        <v-main>
+            <!--
+                路由視圖區域：
+                - v-slot="{ Component }" 接收當前路由對應的元件
+                - 使用動態元件渲染路由內容
+            -->
+            <router-view v-slot="{ Component }">
+                <component :is="Component" />
+            </router-view>
+        </v-main>
+        <!-- 頁尾區域 -->
+        <Footer />
+    </template>
+
+    <style scoped>
+    /* 主要內容區域的樣式，設定上方內距為 64px，避免被 Header 遮擋 */
+    .v-main {
+        padding-top: 64px;
+    }
+    </style>
+    ```
+
+4.  修改 App.vue
+
+        ```js
+        <script setup>
+        // 引入 Default.vue 作為預設佈局元件
+        import DefaultLayout from "./layouts/Default.vue";
+        </script>
+
+        <template>
+            <!-- 使用 Vuetify 的 v-app 組件作為應用程式的根元素 -->
+            <v-app id="app">
+                <!-- 在 v-app 內部渲染 DefaultLayout 元件，將 DefaultLayout 定義的佈局套用到整個應用程式中。 -->
+                <DefaultLayout />
+            </v-app>
+        </template>
+
+        <style>
+        #app {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        </style>
+        ```
+
+此時每個畫面已成功套用 Default.vue 作為 Layout<br />
+(根據頁面需求可彈性調整)<br />
+![20250123150022](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123150022.png) <br />
+![20250123150145](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123150145.png) <br />
