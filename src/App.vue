@@ -1,30 +1,21 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+// 引入 Default.vue 作為預設佈局元件
+import DefaultLayout from "./layouts/Default.vue";
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+    <!-- 使用 Vuetify 的 v-app 組件作為應用程式的根元素 -->
+    <v-app id="app">
+        <!-- 在 v-app 內部渲染 DefaultLayout 元件，將 DefaultLayout 定義的佈局套用到整個應用程式中。 -->
+        <DefaultLayout />
+    </v-app>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<style>
+#app {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
 }
 </style>
