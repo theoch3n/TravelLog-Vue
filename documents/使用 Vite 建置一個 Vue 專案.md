@@ -1,4 +1,4 @@
-# 建置基本的 Vue 專案 ( npm )
+# [Vite 建置基本的 Vue 專案 ( npm )](https://vite.dev/guide/)
 
 1. 找到要建構的資料夾位置，輸入
     ```shell
@@ -31,7 +31,7 @@ npm run dev
 
 # 引入第三方套件
 
-## Vue Router
+## [Vue Router](https://router.vuejs.org/installation.html)
 
 ### 安裝
 
@@ -137,7 +137,7 @@ npm run dev
 `http://localhost:5173/about`<br />
 ![20250123011545](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123011545.png) <br />
 
-## Vuetify
+## [Vuetify](https://vuetifyjs.com/en/getting-started/installation/#installation)
 
 ### 安裝
 
@@ -240,3 +240,150 @@ import { ref } from "vue";
 
 然後執行即可看到卡片組件已加入到首頁 ( 首頁樣式未調整 )<br />
 ![20250123101320](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123101320.png) <br />
+
+## [Pinia ( 狀態管理工具 )](https://pinia.vuejs.org/getting-started.html)
+
+### 安裝
+
+1. 在 Terminal 執行
+
+    ```shell
+    npm install pinia
+    ```
+
+2. 配置 main.js
+
+    ```js
+    import { createApp } from "vue";
+    import "./style.css"; // 全局樣式
+
+    import App from "./App.vue";
+    import router from "./router/router"; // 引入路由配置
+
+    // 引入 Vuetify
+    import "vuetify/styles";
+    import { createVuetify } from "vuetify";
+    import * as components from "vuetify/components";
+    import * as directives from "vuetify/directives";
+    // 創建 Vuetify 物件，並註冊所有組件與指令
+    const vuetify = createVuetify({
+        components,
+        directives,
+    });
+
+    // 引入 Pinia
+    import { createPinia } from "pinia";
+    const pinia = createPinia(); // 創建 Pinia 物件
+
+    // 創建 Vue 應用程式，並使用路由、Vuetify、Pinia
+    createApp(App).use(router).use(vuetify).use(pinia).mount("#app");
+    ```
+
+### 如何使用
+
+> Pinia 是一個專為 Vue.js 設計的狀態管理庫，其主要目的是用來管理應用程式中的狀態。你可以把它想像成一個存放應用程式資料的中央倉庫，讓不同的組件都能夠方便地存取和修改這些資料。
+
+例如:
+
+-   購物車中的商品
+-   使用者的登入狀態
+-   表單中的資料
+-   全域性的設定
+-   跨組件共享資料： 不同組件之間可以共享相同的狀態，無需通過 props 或 events 來傳遞資料。
+-   簡化狀態管理： Pinia 提供了一套簡單易用的 API，讓你可以輕鬆地定義和管理狀態。
+
+以購物車為例，需儲存購物車狀態時
+
+1. 在 src 目錄下新增 stores 資料夾並新增 cart.js <br />
+   ![20250123113605](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123113605.png) <br />
+2. 配置 cart.js
+
+    ```js
+    import { defineStore } from "pinia";
+
+    export const useCartStore = defineStore("cart", {
+        // 狀態，像 Vue 的 Data
+        state: () => ({
+            cartItems: [], // 購物車中的商品列表 (陣列)
+        }),
+        // 計算屬性，像 Vue 的 Computed
+        getters: {
+            totalPrice: (state) => {
+                // 計算購物車總金額，透過 reduce 函式累計每個商品的價格
+                return state.cartItems.reduce(
+                    (total, item) => total + item.price,
+                    0
+                );
+            },
+        },
+        // 動作，像 Vue 的 function
+        actions: {
+            // 將商品加入購物車
+            addToCart(product) {
+                this.cartItems.push(product);
+            },
+            // 從購物車中移除商品
+            removeFromCart(productId) {
+                this.cartItems = this.cartItems.filter(
+                    (item) => item.id !== productId
+                );
+            },
+        },
+    });
+    ```
+
+3. 在 components 資料夾裡新增一個 Cart.vue
+
+    ```js
+     <script setup>
+     import { reactive, computed } from "vue";
+     import { useCartStore } from "../stores/cart";
+
+    const cartStore = useCartStore(); // 取得購物車的狀態
+
+    const state = reactive({
+    // 購物車中的商品 (計算屬性，直接使用購物車的狀態)
+    cartItems: computed(() => cartStore.cartItems),
+    // 購物車中的總金額 (計算屬性，直接使用購物車的狀態)
+    totalPrice: computed(() => {
+    // 如果購物車中有商品，計算總金額、若無商品則直接返回 0
+    return cartStore.cartItems.length > 0
+    ? cartStore.cartItems.reduce((total, item) => total + item.price, 0)
+    : 0;
+    }),
+    });
+    </script>
+
+    <template>
+        <div>
+            <ul>
+                <li v-for="item in state.cartItems" :key="item.id">
+                    {{ item.name }} - {{ item.price }}
+                    <button @click="cartStore.removeFromCart(item.id)">移除</button>
+                </li>
+            </ul>
+            <p>總價：{{ state.totalPrice }}</p>
+            <button
+                @click="cartStore.addToCart({ id: 1, name: '蘋果', price: 20 })"
+            >
+                加入蘋果
+            </button>
+            <button
+                @click="cartStore.addToCart({ id: 2, name: '香蕉', price: 30 })"
+            >
+                加入香蕉
+            </button>
+            <button
+                @click="cartStore.addToCart({ id: 3, name: '鳳梨', price: 30 })"
+            >
+                加入鳳梨
+            </button>
+        </div>
+    </template>
+    ```
+
+此時執行並打開開發者工具可以看到 stores 裡的 cart 成功載入的訊息<br />
+![20250123142834](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123142834.png) <br />
+
+並可以在購物車裡 加入/移除 商品<br />
+![20250123143132](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123143132.png) <br />

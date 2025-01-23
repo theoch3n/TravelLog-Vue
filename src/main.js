@@ -15,5 +15,9 @@ const vuetify = createVuetify({
     directives,
 });
 
-// 創建 Vue 應用程式，並使用路由、Vuetify
-createApp(App).use(router).use(vuetify).mount("#app");
+// 引入 Pinia
+import { createPinia } from "pinia";
+const pinia = createPinia(); // 創建 Pinia 物件
+
+// 創建 Vue 應用程式，並使用路由、Vuetify、Pinia
+createApp(App).use(router).use(vuetify).use(pinia).mount("#app");
