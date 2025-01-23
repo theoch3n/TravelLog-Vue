@@ -5,18 +5,18 @@
     npm create vite@latest
     ```
 2. 接下來 Vite 會問你專案名稱、需不需要安裝一些工具，根據需求選擇即可。
-   ![20250122230427](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250122230427.png?token=BGQ3C6WTDIA52AETXS4CDRTHSEETS)
-   ![20250122230513](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250122230513.png?token=BGQ3C6TCVMYRX5ZX4QEV6DTHSEEWM)
-   ![20250122230602](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250122230602.png?token=BGQ3C6V53IXKNQXDK4VUT6DHSEEZO)
+   ![20250122230427](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250122230427.png)
+   ![20250122230513](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250122230513.png)
+   ![20250122230602](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250122230602.png)
 3. 專案建置完成
    切到專案目錄後，輸入
     ```shell
     npm install
     ```
     npm 會自動依照 package.json 的內容下載套件。
-    ![20250122230818](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250122230818.png?token=BGQ3C6XMU3LLYROAAQA7FDDHSEFB6)
+    ![20250122230818](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250122230818.png)
 4. 完成後的專案目錄
-   ![20250122231127](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250122231127.png?token=BGQ3C6WDP6H43HINHVXCCYTHSEFNY)
+   ![20250122231127](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250122231127.png)
 
 此時執行
 
@@ -25,7 +25,7 @@ npm run dev
 ```
 
 可以看到
-![20250122231239](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250122231239.png?token=BGQ3C6XYFP2EN3PILSHFERLHSEFSG)
+![20250122231239](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250122231239.png)
 
 ---
 
@@ -42,7 +42,7 @@ npm run dev
     ```
 
 2. 在 src 目錄下新增 router 資料夾並新增 router.js (路由配置檔)
-   ![20250123003704](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250123003704.png?token=BGQ3C6U55QOQNTPAUMMYMWTHSEPO2)
+   ![20250123003704](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123003704.png)
 
 3. 配置 main.js
 
@@ -59,7 +59,7 @@ npm run dev
 ### 如何使用
 
 1.  在 src 目錄下新增 pages 資料夾並新增 Home.vue & About.vue (演示用，可依需求調整)
-    ![20250123005213](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250123005213.png?token=BGQ3C6VIE3C2PC3R5HCRIJ3HSERHU)
+    ![20250123005213](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123005213.png)
     Home.vue
 
     ```js
@@ -133,6 +133,6 @@ npm run dev
 此時畫面就會依照不同路由顯示對應頁面
 
 `http://localhost:5173/`
-![20250123011427](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250123011427.png?token=BGQ3C6XBSBTLWVEJK6Y35RLHSET3C)
+![20250123011427](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123011427.png)
 `http://localhost:5173/about`
-![20250123011545](https://raw.githubusercontent.com/theoch3n/picgo/main/images/20250123011545.png?token=BGQ3C6THOX3UXZISR27EJULHSET74)
+![20250123011545](https://raw.githubusercontent.com/theoch3n/PicGo/main/images/20250123011545.png)
