@@ -3,18 +3,60 @@ import { createRouter, createWebHistory } from "vue-router";
 // 導入預設定路由的頁面
 import Home from "../pages/Home.vue";
 import About from "../pages/About.vue";
+import Payment from "../pages/Payment.vue";
+import DefaultLayout from "../layouts/Default.vue";
+import PaymentLayout from "../layouts/PaymentLayout.vue";
+import OrderConfirmation from "../components/PaymentPage/OrderConfirmation.vue";
+import PaymentMethod from "../components/PaymentPage/PaymentMethod.vue";
+import OrderComplete from "../components/PaymentPage/OrderComplete.vue";
 
 // 定義路由配置
 const routes = [
     {
-        path: "/", // 路由路徑 (根目錄)
-        name: "Home", // 路由名稱 (用於程式內部識別)
-        component: Home, // 顯示的頁面
+        path: "/",
+        component: DefaultLayout, // 使用 DefaultLayout 作為根組件
+        children: [
+            {
+                path: "",
+                name: "Home",
+                component: Home,
+            },
+            {
+                path: "/about",
+                name: "About",
+                component: About,
+            },
+        ],
     },
     {
-        path: "/about", // 路由路徑 (根目錄)
-        name: "About", // 路由名稱 (用於程式內部識別)
-        component: About, // 顯示的頁面
+        path: "/payment", // 路由路徑 (根目錄)
+        name: "PaymentPage", // 路由名稱 (用於程式內部識別)
+        component: PaymentLayout, // 使用 PaymentLayout 作為根組件
+        meta: {
+            layout: "PaymentLayout",
+        },
+        children: [
+            {
+                path: "",
+                name: "Payment",
+                component: Payment,
+            },
+            // {
+            //     path: "orderconfirmation",
+            //     name: "OrderConfirmation",
+            //     component: OrderConfirmation,
+            // },
+            // {
+            //     path: "paymentmethod",
+            //     name: "PaymentMethod",
+            //     component: PaymentMethod,
+            // },
+            // {
+            //     path: "/ordercomplete",
+            //     name: "OrderComplete",
+            //     component: OrderComplete,
+            // },
+        ],
     },
 ];
 

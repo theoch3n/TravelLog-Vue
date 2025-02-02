@@ -21,11 +21,11 @@ const buttons = [
         to: "/",
     },
     {
-        value: "resume",
-        text: "Resume",
+        value: "payment",
+        text: "Payment",
         icon: "mdi-file-account",
         textClass: "text-brown-darken-1",
-        to: "/resume",
+        to: "/payment",
     },
     {
         value: "about",
@@ -48,15 +48,8 @@ const buttons = [
     <v-app-bar :elevation="5" color="white" class="header">
         <v-container class="pa-0" fluid>
             <v-btn-toggle v-model="pageTitle">
-                <v-btn
-                    v-for="button in buttons"
-                    :key="button.value"
-                    rounded="xl"
-                    size="large"
-                    :class="button.textClass"
-                    :value="button.value"
-                    :to="button.to"
-                >
+                <v-btn v-for="button in buttons" :key="button.value" rounded="xl" size="large" :class="button.textClass"
+                    :value="button.value" :to="button.to">
                     <v-icon :icon="button.icon" />
                     <span v-if="!mobile">{{ button.text }}</span>
                 </v-btn>

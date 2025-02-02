@@ -9,7 +9,7 @@ import Footer from "../components/Footer.vue";
     <Header />
     <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->
     <v-main>
-        <!-- 
+        <!--
             路由視圖區域：
             - v-slot="{ Component }" 接收當前路由對應的元件
             - 使用動態元件渲染路由內容
