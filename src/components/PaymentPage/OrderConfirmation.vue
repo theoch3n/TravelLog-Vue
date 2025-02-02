@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import StepperHeader from './StepperHeader.vue';
 
 const orderDetails = ref({
     name: '',

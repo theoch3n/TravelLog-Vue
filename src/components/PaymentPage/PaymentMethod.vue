@@ -35,41 +35,7 @@ const handlePayment = async () => {
     }
 }
 
-const handleEcpayPayment = async () => {
-    try {
-        const orderData = {
-            totalAmount: 2200,
-            itemName: '台北一日遊',
-            tradeDesc: '旅遊行程'
-        }
-
-        const result = await paymentStore.createOrder(orderData)
-
-        // 直接提交綠界金流表單
-        if (result.orderParams) {
-            const form = document.createElement('form')
-            form.method = 'post'
-            form.action = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5'
-
-            Object.entries(result.orderParams).forEach(([key, value]) => {
-                const input = document.createElement('input')
-                input.type = 'hidden'
-                input.name = key
-                input.value = value
-                form.appendChild(input)
-            })
-
-            document.body.appendChild(form)
-            form.submit()
-        }
-    } catch (error) {
-        console.error('綠界金流付款失敗', error)
-        errorMessage.value = '無法初始化付款'
-    }
-}
-
 onMounted(async () => {
-    // 初始化付款資訊（可選）
     try {
         await paymentStore.createOrder({
             totalAmount: 2200,

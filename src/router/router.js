@@ -41,21 +41,6 @@ const routes = [
                 name: "Payment",
                 component: Payment,
             },
-            // {
-            //     path: "orderconfirmation",
-            //     name: "OrderConfirmation",
-            //     component: OrderConfirmation,
-            // },
-            // {
-            //     path: "paymentmethod",
-            //     name: "PaymentMethod",
-            //     component: PaymentMethod,
-            // },
-            // {
-            //     path: "/ordercomplete",
-            //     name: "OrderComplete",
-            //     component: OrderComplete,
-            // },
         ],
     },
 ];

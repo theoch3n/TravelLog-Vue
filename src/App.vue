@@ -30,10 +30,14 @@ import PaymentLayout from "./layouts/PaymentLayout.vue";
 
 body {
     background-color: white;
+    margin: 0;
+    padding: 0;
 }
 
 .v-application,
 .v-application__wrap {
     background-color: white;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 </style>

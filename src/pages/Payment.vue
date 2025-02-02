@@ -4,9 +4,7 @@ import ParentStepper from "../components/PaymentPage/ParentStepper.vue";
 </script>
 
 <template>
-    <ParentStepper>
-        <!-- 這裡可以放置付款流程的具體內容 -->
-    </ParentStepper>
+    <ParentStepper />
 </template>
 
 <style scoped>

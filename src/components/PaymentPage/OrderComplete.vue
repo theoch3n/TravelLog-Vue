@@ -29,11 +29,11 @@ onMounted(() => {
         } else {
             // 付款失敗
             errorMessage.value = '付款未成功'
-            router.push({ name: 'PaymentMethod' })
+            router.push({ name: 'Payment' })
         }
     } else if (!paymentStore.isPaymentSuccessful) {
         // 如果沒有付款成功的狀態，導回付款頁面
-        router.push({ name: 'PaymentMethod' })
+        router.push({ name: 'Payment' })
     }
 })
 </script>
