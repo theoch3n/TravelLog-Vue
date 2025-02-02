@@ -6,9 +6,7 @@ import About from "../pages/About.vue";
 import Payment from "../pages/Payment.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
-import OrderConfirmation from "../components/PaymentPage/OrderConfirmation.vue";
-import PaymentMethod from "../components/PaymentPage/PaymentMethod.vue";
-import OrderComplete from "../components/PaymentPage/OrderComplete.vue";
+import testPayment from "../pages/testPayment.vue";
 
 // 定義路由配置
 const routes = [
@@ -39,7 +37,7 @@ const routes = [
             {
                 path: "",
                 name: "Payment",
-                component: Payment,
+                component: testPayment,
             },
         ],
     },
