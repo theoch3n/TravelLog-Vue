@@ -7,8 +7,8 @@ const paymentStore = usePaymentStore()
 const router = useRouter()
 
 const paymentMethods = [
-    { value: 'credit_card', label: '信用卡' },
-    { value: 'atm', label: 'ATM轉帳' },
+    // { value: 'credit_card', label: '信用卡' },
+    // { value: 'atm', label: 'ATM轉帳' },
     { value: 'ecpay', label: '綠界金流' }
 ]
 
@@ -61,7 +61,7 @@ onMounted(async () => {
                         </v-radio-group>
 
                         <v-btn color="primary" @click="handlePayment" :loading="isLoading" block>
-                            確認付款
+                            前往付款
                         </v-btn>
 
                         <v-alert v-if="errorMessage" type="error" class="mt-3">

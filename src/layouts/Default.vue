@@ -3,6 +3,7 @@
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import Announcement from "../components/announcement.vue";
+import PageTop from "../components/PageTop.vue";
 </script>
 
 <template>
@@ -23,6 +24,8 @@ import Announcement from "../components/announcement.vue";
     </v-main>
     <!-- 頁尾區域 -->
     <Footer />
+    <!-- Page-Top -->
+    <PageTop />
 </template>
 
 <style scoped>

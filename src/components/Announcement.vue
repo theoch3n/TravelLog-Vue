@@ -91,7 +91,8 @@ const hasAnnouncements = computed(() => announcements.value.length > 0);
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #c0b9a5;
+    /* background-color: #c0b9a5; */
+    background-color: #b81111;
     color: #fffb;
 }
 

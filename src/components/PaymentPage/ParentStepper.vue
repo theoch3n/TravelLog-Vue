@@ -9,7 +9,7 @@ import PaymentMethod from "./PaymentMethod.vue";
 import OrderComplete from "./OrderComplete.vue";
 
 const steps = [
-    { title: '確認訂單', component: OrderConfirmation },
+    { title: '填寫資料', component: OrderConfirmation },
     { title: '付款方式', component: PaymentMethod },
     { title: '完成訂單', component: OrderComplete }
 ]

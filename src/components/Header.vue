@@ -15,7 +15,7 @@ onMounted(() => {
 const buttons = [
     {
         value: "Home",
-        text: "Home",
+        text: "首頁",
         icon: "mdi-home",
         textClass: "text-green",
         to: "/",
@@ -29,14 +29,14 @@ const buttons = [
     },
     {
         value: "about",
-        text: "About Me",
+        text: "關於我們",
         icon: "mdi-information",
         textClass: "text-blue",
         to: "/about",
     },
     {
         value: "contact",
-        text: "Contact Me",
+        text: "客服中心",
         icon: "mdi-phone-incoming",
         textClass: "text-yellow-darken-4",
         to: "/contact",

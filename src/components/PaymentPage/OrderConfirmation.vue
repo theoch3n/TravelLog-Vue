@@ -9,7 +9,7 @@ const orderDetails = ref({
 </script>
 <template>
     <v-card flat>
-        <v-card-title>訂單詳情</v-card-title>
+        <v-card-title>聯絡資料</v-card-title>
         <v-card-text>
             <v-row>
                 <v-col cols="12">
