@@ -1,31 +1,22 @@
+<script setup>
+// 引入 Default.vue 作為預設佈局元件
+import DefaultLayout from "./layouts/Default.vue";
+</script>
+
 <template>
-    <div id="app" class="container my-3">
-        <SearchBar @updateKeyword="axiosData" />
-        <ProductList :categoryArray="categoryArray" />
-    </div>
+    <!-- 使用 Vuetify 的 v-app 組件作為應用程式的根元素 -->
+    <v-app id="app">
+        <!-- 在 v-app 內部渲染 DefaultLayout 元件，將 DefaultLayout 定義的佈局套用到整個應用程式中。 -->
+        <DefaultLayout />
+    </v-app>
+    
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import ProductList from './components/ProductList.vue';
-import SearchBar from './components/SearchBar.vue';
-
-const baseAddress = 'https://localhost:7206';
-const categoryArray = ref([]);
-
-const axiosData = async (keyword = '') => {
-    try {
-        const request = { eventName: keyword, eventDescription: keyword };
-        const response = await axios.post(`${baseAddress}/api/TourBundles/GetTourBundlesByKeyword`, request);
-        //alert(JSON.stringify(response.data));
-        categoryArray.value = response.data;
-    } catch (error) {
-        alert(error.message);
-    }
-};
-
-onMounted(axiosData);
-</script>
+<style>
+#app {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+</style>

@@ -51,6 +51,14 @@ const socialMedias = reactive([
                 to="/contact"
                 >Contact Me</v-btn
             >
+            <v-btn
+                color="white"
+                variant="text"
+                class="mx-2"
+                rounded="xl"
+                to="/products"
+                >Products</v-btn
+            >
 
             <v-col class="text-center mt-4" cols="12">
                 <v-btn
