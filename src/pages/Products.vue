@@ -13,7 +13,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import ProductList from '../components/ProductList.vue';
 import SearchBar from '../components/SearchBar.vue';
 
-const baseAddress = 'https://localhost:7206';
+const baseAddress = 'https://localhost:7092';
 const categoryArray = ref([]);
 
 const getData = async (keyword = '') => {
