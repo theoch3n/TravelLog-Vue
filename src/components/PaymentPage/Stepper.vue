@@ -72,12 +72,10 @@ provide("stepperContext", {
             <v-row>
                 <v-col cols="12" md="8">
                     <stepper-window />
-
-
                 </v-col>
                 <v-col cols="12" md="4">
-                    <order-summary />
-                    <div class="d-flex justify-space-between pa-4">
+                    <order-summary /><br>
+                    <div class="d-flex justify-space-between pa-4 ButtonBlock">
                         <v-btn color="primary" @click="handlePayment" :loading="isLoading" block>
                             前往付款
                         </v-btn>
@@ -85,8 +83,15 @@ provide("stepperContext", {
                 </v-col>
             </v-row>
         </v-container>
-
     </v-stepper>
 </template>
 
-<style scoped></style>
+<style scoped>
+.payment-stepper {
+    background-color: #f5f5f5;
+}
+
+.ButtonBlock {
+    background-color: white;
+}
+</style>
