@@ -1,10 +1,3 @@
-<template>
-    <div id="app" class="container my-3">
-        <SearchBar @updateKeyword="getData" />
-        <ProductList :categoryArray="categoryArray" />
-    </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -29,3 +22,10 @@ const getData = async (keyword = '') => {
 
 onMounted(getData);
 </script>
+
+<template>
+    <div id="app" class="container my-3">
+        <SearchBar @updateKeyword="getData" />
+        <ProductList :categoryArray="categoryArray" />
+    </div>
+</template>
