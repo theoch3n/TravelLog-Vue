@@ -7,6 +7,7 @@ import Payment from "../pages/Payment.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
 import testPayment from "../pages/testPayment.vue";
+import Products from "../pages/Products.vue";
 
 // 定義路由配置
 const routes = [
@@ -24,6 +25,11 @@ const routes = [
                 name: "About",
                 component: About,
             },
+            {
+                path: "/products", // 路由路徑 (根目錄)
+                name: "Products", // 路由名稱 (用於程式內部識別)
+                component: Products, // 顯示的頁面
+            },
         ],
     },
     {
@@ -40,11 +46,6 @@ const routes = [
                 component: testPayment,
             },
         ],
-    },
-    {
-        path: "/products", // 路由路徑 (根目錄)
-        name: "Products", // 路由名稱 (用於程式內部識別)
-        component: Products, // 顯示的頁面
     },
 ];
 
