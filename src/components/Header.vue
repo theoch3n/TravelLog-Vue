@@ -15,28 +15,28 @@ onMounted(() => {
 const buttons = [
     {
         value: "Home",
-        text: "Home",
+        text: "首頁",
         icon: "mdi-home",
         textClass: "text-green",
         to: "/",
     },
     {
-        value: "resume",
-        text: "Resume",
+        value: "payment",
+        text: "Payment",
         icon: "mdi-file-account",
         textClass: "text-brown-darken-1",
-        to: "/resume",
+        to: "/payment",
     },
     {
         value: "about",
-        text: "About Me",
+        text: "關於我們",
         icon: "mdi-information",
         textClass: "text-blue",
         to: "/about",
     },
     {
         value: "contact",
-        text: "Contact Me",
+        text: "客服中心",
         icon: "mdi-phone-incoming",
         textClass: "text-yellow-darken-4",
         to: "/contact",
@@ -48,15 +48,8 @@ const buttons = [
     <v-app-bar :elevation="5" color="white" class="header">
         <v-container class="pa-0" fluid>
             <v-btn-toggle v-model="pageTitle">
-                <v-btn
-                    v-for="button in buttons"
-                    :key="button.value"
-                    rounded="xl"
-                    size="large"
-                    :class="button.textClass"
-                    :value="button.value"
-                    :to="button.to"
-                >
+                <v-btn v-for="button in buttons" :key="button.value" rounded="xl" size="large" :class="button.textClass"
+                    :value="button.value" :to="button.to">
                     <v-icon :icon="button.icon" />
                     <span v-if="!mobile">{{ button.text }}</span>
                 </v-btn>
