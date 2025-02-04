@@ -41,6 +41,11 @@ const routes = [
             },
         ],
     },
+    {
+        path: "/products", // 路由路徑 (根目錄)
+        name: "Products", // 路由名稱 (用於程式內部識別)
+        component: Products, // 顯示的頁面
+    },
 ];
 
 // 建立路由實例

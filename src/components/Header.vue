@@ -41,6 +41,13 @@ const buttons = [
         textClass: "text-yellow-darken-4",
         to: "/contact",
     },
+    {
+        value: "products",
+        text: "Products",
+        icon: "mdi-phone-incoming",
+        textClass: "text-yellow-darken-4",
+        to: "/products",
+    },
 ];
 </script>
 

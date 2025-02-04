@@ -17,6 +17,7 @@ import PaymentLayout from "./layouts/PaymentLayout.vue";
             </component>
         </router-view>
     </v-app>
+    
 </template>
 
 <style>
