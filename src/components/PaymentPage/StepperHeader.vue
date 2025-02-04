@@ -16,3 +16,4 @@ const { currentStep, setCurrentStep, steps } = inject('stepperContext', {
         </v-stepper-item>
     </v-stepper-header>
 </template>
+<style scoped></style>

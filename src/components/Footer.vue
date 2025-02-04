@@ -1,7 +1,7 @@
 <script setup>
 import { reactive } from "vue";
 
-const socialMedias = reactive([
+const icons = reactive([
     {
         icon: "mdi-phone",
         link: "",
@@ -42,7 +42,7 @@ const socialMedias = reactive([
                     </p>
                 </v-col>
                 <v-col class="col-12 col-lg-4 order-lg-2 mb-3 " cols="12">
-                    <v-btn v-for="media in socialMedias" :key="media" class="mx-4" :icon="media.icon" :href="media.link"
+                    <v-btn v-for="icon in icons" :key="icon" class="mx-4" :icon="icon.icon" :href="icon.link"
                         variant="text"></v-btn>
                 </v-col>
 

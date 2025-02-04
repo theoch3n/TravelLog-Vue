@@ -1,264 +1,148 @@
-<script setup>
-import { ref, computed, nextTick } from 'vue';
-import ECPayService from '../services/testECPayService';
-
-const unitPrice = ref(5000);
-const peopleCount = ref(2);
-const participants = ref(
-    Array.from({ length: peopleCount.value }, () => ({
-        lastName: '',
-        firstName: '',
-        gender: ''
-    }))
-);
-
-const contactInfo = ref({
-    name: '',
-    email: '',
-    phone: '',
-    country: ''
-});
-
-const participantFormRef = ref(null);
-const contactFormRef = ref(null);
-const isParticipantFormValid = ref(false);
-const isContactFormValid = ref(false);
-
-const orderDetails = ref({
-    itemName: '東京自由行 5 天 4 夜',
-    departureDate: '2024-07-15',
-    departureLocation: '台北松山機場',
-    description: `
-    行程特色：
-    - 暢遊東京知名景點
-    - 享受日本美食與文化
-    - 自由行程，彈性安排
-    - 包含機場接送服務
-
-    行程包含：
-    1. 來回機票
-    2. 四晚住宿
-    3. 機場接送
-    4. 旅遊保險
-  `,
-});
-
-const totalPrice = computed(() => {
-    return unitPrice.value * peopleCount.value;
-});
-
-async function initiatePayment() {
-    try {
-        // 驗證表單
-        const participantFormValid = await validateForm(participantFormRef.value);
-        const contactFormValid = await validateForm(contactFormRef.value);
-
-        if (!participantFormValid || !contactFormValid) {
-            return;
-        }
-
-        const orderResult = await ECPayService.createOrder({
-            totalAmount: totalPrice.value,
-            itemName: orderDetails.value.itemName,
-            tradeDesc: `${peopleCount.value}人 - ${orderDetails.value.departureDate}`,
-            participants: participants.value,
-            contactInfo: contactInfo.value
-        });
-
-        ECPayService.submitToECPay(orderResult.orderParams);
-    } catch (error) {
-        console.error('Payment initiation failed', error);
-        alert('付款初始化失敗，請稍後再試');
-    }
-}
-
-// 表單驗證方法
-async function validateForm(formRef) {
-    if (!formRef) {
-        console.error('Form reference is null');
-        return false;
-    }
-
-    // 等待 DOM 更新
-    await nextTick();
-
-    // 調用 validate 方法
-    const { valid } = await formRef.validate();
-    return valid;
-}
-</script>
-
 <template>
-    <v-container fluid class="payment-container">
-        <v-row>
-            <!-- 行程資訊 -->
-            <v-col cols="12" md="7" class="order-details">
-                <v-card flat>
-                    <v-card-title class="text-h5 font-weight-bold">
-                        {{ orderDetails.itemName }}
-                    </v-card-title>
+    <v-container class="bg-grey-lighten-4 min-h-screen py-6">
+        <!-- Progress Stepper -->
+        <v-stepper :items="['選擇方案', '填寫資料', '完成付款']" :model-value="2" class="mb-6 bg-transparent elevation-0">
+            <template v-slot:item.icon="{ index }">
+                <div class="rounded-circle" :class="index <= 1 ? 'bg-orange' : 'bg-grey'"
+                    style="width: 16px; height: 16px;"></div>
+            </template>
+            <template v-slot:item.title="{ title, index }">
+                <span :class="index <= 1 ? 'text-orange' : 'text-grey'">{{ title }}</span>
+            </template>
+        </v-stepper>
 
-                    <v-divider class="my-4"></v-divider>
+        <v-row>
+            <!-- Main Form -->
+            <v-col cols="12" md="8">
+                <!-- Booking Details -->
+                <v-card class="mb-6">
+                    <v-card-item>
+                        <div class="d-flex gap-4">
+                            <v-img src="" width="80" height="80" cover class="rounded-lg"></v-img>
+                            <div>
+                                <v-card-title class="text-body-1 font-weight-bold pa-0 mb-1">
+                                    羅東夜市第一日遊（含羅東和連山公路）
+                                </v-card-title>
+                                <v-card-subtitle class="pa-0">
+                                    羅東市區～日遊
+                                </v-card-subtitle>
+                            </div>
+                        </div>
+                    </v-card-item>
 
                     <v-card-text>
-                        <v-row>
-                            <v-col cols="12" md="6">
-                                <v-icon left color="primary">mdi-calendar</v-icon>
-                                <span class="subtitle-1">出發日期：{{ orderDetails.departureDate }}</span>
-                            </v-col>
-                            <v-col cols="12" md="6">
-                                <v-icon left color="primary">mdi-map-marker</v-icon>
-                                <span class="subtitle-1">出發地點：{{ orderDetails.departureLocation }}</span>
-                            </v-col>
-                        </v-row>
+                        <h3 class="text-h6 font-weight-bold mb-4">參加人資料</h3>
+                        <div class="d-flex gap-2 mb-6">
+                            <v-btn variant="outlined" size="small">會員</v-btn>
+                            <v-btn variant="outlined" size="small">旅客</v-btn>
+                            <v-btn variant="outlined" size="small" color="orange">
+                                <v-icon start>mdi-plus</v-icon>
+                                新增
+                            </v-btn>
+                        </div>
 
-                        <!-- 參加人資料表單 -->
-                        <v-card class="mt-6" outlined>
-                            <v-card-title class="subtitle-1 font-weight-bold">
-                                參加人資料
-                            </v-card-title>
-                            <v-card-text>
-                                <v-form ref="participantFormRef" v-model="isParticipantFormValid">
-                                    <v-row v-for="(participant, index) in participants" :key="index">
-                                        <v-col cols="12">
-                                            <v-subheader class="pl-0 font-weight-bold">
-                                                參加人 {{ index + 1 }}:
-                                            </v-subheader>
-                                        </v-col>
-                                        <v-col cols="12" md="4">
-                                            <v-text-field v-model="participant.lastName" label="姓"
-                                                :rules="[v => !!v || '請輸入姓']" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="4">
-                                            <v-text-field v-model="participant.firstName" label="名"
-                                                :rules="[v => !!v || '請輸入名']" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="4">
-                                            <v-select v-model="participant.gender" :items="['男', '女']" label="性別"
-                                                :rules="[v => !!v || '請選擇性別']" required></v-select>
-                                        </v-col>
-                                    </v-row>
-                                </v-form>
-                            </v-card-text>
-                        </v-card>
+                        <v-select label="其他用戶資訊" placeholder="請選擇" variant="outlined" density="comfortable"
+                            class="mb-4"></v-select>
 
-                        <!-- 聯絡資料表單 -->
-                        <v-card class="mt-6" outlined>
-                            <v-card-title class="subtitle-1 font-weight-bold">
-                                聯絡資料
-                            </v-card-title>
-                            <v-card-text>
-                                <v-form ref="contactFormRef" v-model="isContactFormValid">
-                                    <v-row>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.name" label="聯絡人姓名"
-                                                :rules="[v => !!v || '請輸入聯絡人姓名']" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.email" label="電子信箱" :rules="[
-                                                v => !!v || '請輸入電子信箱',
-                                                v => /.+@.+\..+/.test(v) || '請輸入有效的電子信箱'
-                                            ]" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.phone" label="聯絡電話" :rules="[
-                                                v => !!v || '請輸入聯絡電話',
-                                                v => /^09\d{8}$/.test(v) || '請輸入有效的手機號碼'
-                                            ]" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.country" label="國籍"
-                                                :rules="[v => !!v || '請輸入國籍']" required></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                </v-form>
-                            </v-card-text>
-                        </v-card>
+                        <v-select label="您會帶寵物或導盲犬嗎？" placeholder="請選擇" variant="outlined"
+                            density="comfortable"></v-select>
                     </v-card-text>
                 </v-card>
+
+                <!-- Contact Info -->
+                <v-card class="mb-6">
+                    <v-card-text>
+                        <h3 class="text-h6 font-weight-bold mb-4">聯絡資料</h3>
+                        <v-row>
+                            <v-col cols="12" sm="6">
+                                <v-text-field label="姓名" variant="outlined" density="comfortable"
+                                    model-value="Chen"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6">
+                                <v-text-field label="名字" variant="outlined" density="comfortable"
+                                    model-value="TaiZhi"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-text-field label="電話號碼" variant="outlined" density="comfortable" model-value="886-905863313"
+                            class="mb-4"></v-text-field>
+                        <v-text-field label="電子郵箱（旅遊行程將寄送於此）" variant="outlined" density="comfortable"
+                            model-value="abc1234@gmail.com"></v-text-field>
+                    </v-card-text>
+                </v-card>
+
+                <!-- Insurance -->
+                <v-card class="mb-6">
+                    <v-card-text>
+                        <h3 class="text-h6 font-weight-bold mb-4">升級</h3>
+                        <v-alert color="orange" variant="tonal" class="mb-4">
+                            <div class="d-flex align-center gap-2">
+                                <v-icon icon="mdi-heart" color="orange"></v-icon>
+                                <span class="font-weight-medium">有買有保障，出遊更安心！</span>
+                            </div>
+                        </v-alert>
+
+                        <v-checkbox label="未購買旅遊險" density="comfortable">
+                            <template v-slot:message>
+                                <span class="text-grey">建議投保</span>
+                            </template>
+                        </v-checkbox>
+
+                        <v-checkbox label="不需加購保險服務" density="comfortable"></v-checkbox>
+                    </v-card-text>
+                </v-card>
+
+                <v-btn block color="orange" size="large" class="mb-6">
+                    前往付款
+                </v-btn>
             </v-col>
 
-            <!-- 訂單摘要 -->
-            <v-col cols="12" md="5" class="payment-section">
-                <v-card elevation="4" class="sticky-card">
-                    <v-card-title class="text-h6 font-weight-bold">
-                        訂單摘要
-                    </v-card-title>
-
-                    <v-divider></v-divider>
-
+            <!-- Price Summary -->
+            <v-col cols="12" md="4">
+                <v-card class="mb-6">
                     <v-card-text>
-                        <v-row>
-                            <v-col cols="8">
-                                <span>行程費用</span>
-                            </v-col>
-                            <v-col cols="4" class="text-right">
-                                <span>NT$ {{ unitPrice.toLocaleString() }}</span>
-                            </v-col>
-                        </v-row>
-
-                        <v-row>
-                            <v-col cols="8">
-                                <span>人數</span>
-                            </v-col>
-                            <v-col cols="4" class="text-right">
-                                <span>{{ peopleCount }} 人</span>
-                            </v-col>
-                        </v-row>
-
-                        <v-divider class="my-4"></v-divider>
-
-                        <v-row class="total-price">
-                            <v-col cols="8">
-                                <span class="font-weight-bold">總金額</span>
-                            </v-col>
-                            <v-col cols="4" class="text-right">
-                                <span class="text-h6 font-weight-bold primary--text">
-                                    NT$ {{ totalPrice.toLocaleString() }}
-                                </span>
-                            </v-col>
-                        </v-row>
+                        <h3 class="text-h6 font-weight-bold mb-4">價格資料</h3>
+                        <div class="d-flex justify-space-between mb-4">
+                            <span>成人 x 1</span>
+                            <span>NT$ 1,520</span>
+                        </div>
+                        <div class="d-flex justify-space-between mb-4 text-grey">
+                            <span>服務平台手續費</span>
+                            <span>NT$ 1,015</span>
+                        </div>
+                        <v-divider class="mb-4"></v-divider>
+                        <div class="d-flex justify-space-between font-weight-bold">
+                            <span>付款下一步</span>
+                            <span>NT$ 1,613</span>
+                        </div>
                     </v-card-text>
-
-                    <v-card-actions>
-                        <v-btn block color="primary" large @click="initiatePayment"
-                            :disabled="!isParticipantFormValid || !isContactFormValid">
-                            確認付款
-                        </v-btn>
-                    </v-card-actions>
                 </v-card>
+
+                <v-alert color="green" variant="tonal" class="mb-6">
+                    <p class="text-body-2">
+                        再加 NT$ 60 Klook 幣回饋！<br>
+                        下次消費使用回饋幣更超值！
+                    </p>
+                </v-alert>
             </v-col>
         </v-row>
     </v-container>
 </template>
 
+<script setup>
+// Component logic can be added here if needed
+</script>
 
 <style scoped>
-.payment-container {
-    background-color: #f5f5f5;
-    min-height: 100vh;
-    padding: 24px;
+/* Custom styles */
+:deep(.v-stepper) {
+    --v-theme-primary: rgb(255, 87, 34);
 }
 
-.order-details {
-    background-color: white;
-    border-radius: 8px;
-    padding: 16px;
+:deep(.v-btn) {
+    text-transform: none;
 }
 
-.payment-section {
-    position: sticky;
-    top: 24px;
-}
-
-.sticky-card {
-    position: sticky;
-    top: 24px;
-}
-
-.total-price {
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    padding: 8px;
+:deep(.v-alert) {
+    --v-theme-orange: rgb(255, 87, 34);
 }
 </style>

@@ -1,10 +1,9 @@
 <script setup>
-import { ref } from "vue";
-import ParentStepper from "../components/PaymentPage/ParentStepper.vue";
+import Stepper from "../components/PaymentPage/Stepper.vue";
 </script>
 
 <template>
-    <ParentStepper />
+    <Stepper />
 </template>
 
 <style scoped>

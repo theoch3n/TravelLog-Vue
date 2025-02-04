@@ -30,23 +30,28 @@ const routes = [
                 name: "Products", // 路由名稱 (用於程式內部識別)
                 component: Products, // 顯示的頁面
             },
-        ],
-    },
-    {
-        path: "/payment", // 路由路徑 (根目錄)
-        name: "PaymentPage", // 路由名稱 (用於程式內部識別)
-        component: PaymentLayout, // 使用 PaymentLayout 作為根組件
-        meta: {
-            layout: "PaymentLayout",
-        },
-        children: [
             {
-                path: "",
+                path: "/payment",
                 name: "Payment",
-                component: testPayment,
+                component: Payment,
             },
         ],
     },
+    // {
+    //     path: "/payment", // 路由路徑 (根目錄)
+    //     name: "PaymentPage", // 路由名稱 (用於程式內部識別)
+    //     component: PaymentLayout, // 使用 PaymentLayout 作為根組件
+    //     meta: {
+    //         layout: "PaymentLayout",
+    //     },
+    //     children: [
+    //         {
+    //             path: "",
+    //             name: "Payment",
+    //             component: Payment,
+    //         },
+    //     ],
+    // },
 ];
 
 // 建立路由實例
