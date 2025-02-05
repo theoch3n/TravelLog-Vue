@@ -1,4 +1,12 @@
-<script setup>
+.PayContainer {
+    display: flex;
+    align-items: stretch; /* 確保左右兩側內容高度一致 */
+}
+
+.v-col {
+    display: flex;
+    flex-direction: column; /* 確保內部元件垂直排列 */
+}<script setup>
 import { reactive, computed } from "vue";
 import { useCartStore } from "../stores/cart";
 

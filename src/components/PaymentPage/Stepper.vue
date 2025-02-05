@@ -68,7 +68,7 @@ provide("stepperContext", {
 <template>
     <v-stepper v-model="currentStep" class="payment-stepper">
         <stepper-header />
-        <v-container>
+        <v-container class="PayContainer" fluid>
             <v-row>
                 <v-col cols="12" md="8">
                     <stepper-window />
@@ -93,5 +93,15 @@ provide("stepperContext", {
 
 .ButtonBlock {
     background-color: white;
+}
+
+.PayContainer {
+    display: flex;
+    align-items: stretch;
+}
+
+.v-col {
+    display: flex;
+    flex-direction: column;
 }
 </style>

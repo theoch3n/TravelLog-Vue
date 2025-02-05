@@ -8,6 +8,7 @@ import Products from "../pages/Products.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
 import testPayment from "../pages/testPayment.vue";
+import Contact from "../pages/Contact.vue";
 
 // 定義路由配置
 const routes = [
@@ -30,28 +31,33 @@ const routes = [
                 name: "Products", // 路由名稱 (用於程式內部識別)
                 component: Products, // 顯示的頁面
             },
+            // {
+            //     path: "/payment",
+            //     name: "Payment",
+            //     component: testPayment,
+            // },
             {
-                path: "/payment",
-                name: "Payment",
-                component: Payment,
+                path: "/contact",
+                name: "Contact",
+                component: Contact,
             },
         ],
     },
-    // {
-    //     path: "/payment", // 路由路徑 (根目錄)
-    //     name: "PaymentPage", // 路由名稱 (用於程式內部識別)
-    //     component: PaymentLayout, // 使用 PaymentLayout 作為根組件
-    //     meta: {
-    //         layout: "PaymentLayout",
-    //     },
-    //     children: [
-    //         {
-    //             path: "",
-    //             name: "Payment",
-    //             component: Payment,
-    //         },
-    //     ],
-    // },
+    {
+        path: "/payment", // 路由路徑 (根目錄)
+        name: "PaymentPage", // 路由名稱 (用於程式內部識別)
+        component: PaymentLayout, // 使用 PaymentLayout 作為根組件
+        meta: {
+            layout: "PaymentLayout",
+        },
+        children: [
+            {
+                path: "",
+                name: "Payment",
+                component: testPayment,
+            },
+        ],
+    },
 ];
 
 // 建立路由實例

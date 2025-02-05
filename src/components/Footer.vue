@@ -22,10 +22,10 @@ const icons = reactive([
 </script>
 
 <template>
-    <v-footer rounded class="mt-auto py-3 bg-white">
-        <v-container fluid class="pa-0">
-            <v-row justify="center" no-gutters>
-                <v-col class="col-12 col-lg-12 order-lg-1 mb-4" cols="12" style="border-top: 1px solid #dbdbdb;">
+    <v-footer rounded class="bg-white">
+        <v-container fluid class="pa-0" style="border-top: 1px solid #dbdbdb;">
+            <v-row no-gutters>
+                <v-col class=" order-lg-1 mb-4" cols="12">
                     <h2 class="mt-4 mb-4">
                         聯絡我們
                     </h2>
@@ -41,16 +41,20 @@ const icons = reactive([
                         TravelLog<br>
                     </p>
                 </v-col>
-                <v-col class="col-12 col-lg-4 order-lg-2 mb-3 " cols="12">
+                <v-col class="order-lg-2 mb-3 " cols="12">
                     <v-btn v-for="icon in icons" :key="icon" class="mx-4" :icon="icon.icon" :href="icon.link"
                         variant="text"></v-btn>
                 </v-col>
 
-                <v-col class="footer-text col-12 col-lg-4 order-lg-3 mb-3" cols="12">
-                    <p>© 2024-2025 TravelLog. All Rights Reserved. 旅遊產品由 TravelLog 負責提供<br>
-                        旅行業註冊編號：交觀甲第XXXXXX號
-                        品保協會會員編號：北XXXX號 統一編號：XXXXXXXX 代表人姓名：XXX <br>
-                        其他產品由 TravelLog 負責提供 統一編號：XXXXXXXX
+                <v-col class="footer-text order-lg-3 mb-3" cols="12">
+                    <p>© 2024-2025 TravelLog. All Rights Reserved.<br>
+                        旅遊產品由 TravelLog 負責提供。
+                        旅行業註冊編號：交觀甲第XXXXXX號。
+                        品保協會會員編號：北XXXX號。
+                        統一編號：XXXXXXXX。
+                        代表人姓名：XXX。
+                        其他產品由 TravelLog 負責提供。
+                        統一編號：XXXXXXXX
                     </p>
                 </v-col>
             </v-row>
@@ -69,5 +73,17 @@ const icons = reactive([
 .footer-text {
     font-size: 12px;
     color: rgb(80, 80, 80);
+}
+
+.v-application {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.v-container {
+    min-height: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 </style>
