@@ -2,7 +2,6 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
-import logo from "@/assets/logo.png";
 
 // 控制登入對話框 & 行動選單
 const loginDialog = ref(false);
@@ -16,12 +15,19 @@ const route = useRoute();
 const pageTitle = ref("");
 
 // 定義按鈕選單
-const buttons = [
-    { value: "", text: "首頁", icon: "mdi-home", textClass: "text-green", to: "/" },
-    { value: "payment", text: "Payment", icon: "mdi-file-account", textClass: "text-brown-darken-1", to: "/payment" },
-    { value: "about", text: "關於我們", icon: "mdi-information", textClass: "text-blue", to: "/about" },
-    { value: "contact", text: "客服中心", icon: "mdi-phone-incoming", textClass: "text-yellow-darken-4", to: "/contact" },
-    { value: "products", text: "Products", icon: "mdi-shopping", textClass: "text-purple-darken-4", to: "/products" },
+// const buttons = [
+//     { value: "", text: "首頁", icon: "mdi-home", textClass: "text-green", to: "/" },
+//     { value: "payment", text: "Payment", icon: "mdi-file-account", textClass: "text-brown-darken-1", to: "/payment" },
+//     { value: "about", text: "關於我們", icon: "mdi-information", textClass: "text-blue", to: "/about" },
+//     { value: "contact", text: "客服中心", icon: "mdi-phone-incoming", textClass: "text-yellow-darken-4", to: "/contact" },
+//     { value: "products", text: "Products", icon: "mdi-shopping", textClass: "text-purple-darken-4", to: "/products" },
+// ];
+// 定義選單
+const pages = [
+    { value: "payment", text: "Payment", textClass: "text-brown-darken-1", to: "/payment" },
+    { value: "about", text: "關於我們", textClass: "text-blue", to: "/about" },
+    { value: "contact", text: "客服中心", textClass: "text-yellow-darken-4", to: "/contact" },
+    { value: "products", text: "Products", textClass: "text-purple-darken-4", to: "/products" },
 ];
 
 // 監聽路由變化，確保導航按鈕與路由同步
@@ -104,18 +110,16 @@ onMounted(() => {
                     aria-controls="cartMenu"><i class="bi bi-bag-fill fs-4 me-3"></i></a>
             </div>
             <div class="d-flex justify-content-center align-items-center py-3">
-                <div class="logo">
-                    <a href="./index.html">
-                        <img class="img-fluid" src="./resource/images/NI-SENSE/logo.png">
+                <div class="headerLogo">
+                    <a href="/">
+                        <img class="img-fluid" src="@/assets/logo.png" alt="TravelLog">
                     </a>
                 </div>
             </div>
 
             <!-- 導航菜單 -->
             <nav class="desktop-nav">
-                <a href="./product-list.html" class="nav-link">NEW ARRIVALS</a>
-                <a href="./index.html#brand" class="nav-link">經銷品牌</a>
-                <a href="./faq.html" class="nav-link">常見問題</a>
+                <v-btn v-for="page in pages" :to="page.to">{{ page.text }}</v-btn>
             </nav>
 
             <!-- <form class="d-flex">
@@ -186,7 +190,9 @@ onMounted(() => {
                         data-bs-target="#exampleModal"><i class="bi bi-person-fill fs-3"></i></a>
                 </div>
                 <div class="logo" style="width: 80px;">
-                    <img src="./resource/images/NI-SENSE/logo.png" alt="NIS Logo" class="img-fluid">
+                    <a href="/">
+                        <img class="img-fluid" src="@/assets/logo.png" alt="TravelLog">
+                    </a>
                 </div>
                 <div class="d-flex gap-2">
                     <a class="tool-button text-black" href="#cartMenu" data-bs-toggle="offcanvas"
@@ -204,9 +210,10 @@ onMounted(() => {
             <div class="offcanvas offcanvas-start" id="mobileMenu">
                 <div class="offcanvas-body">
                     <div class="d-flex flex-column">
-                        <a href="./product-list.html" class="nav-link py-2">NEW ARRIVALS</a>
-                        <a href="./index.html#brand" class="nav-link py-2">經銷品牌</a>
-                        <a href="./faq.html" class="nav-link py-2">常見問題</a>
+                        <a href="./product-list.html" class="nav-link">Payment</a>
+                        <a href="./index.html#brand" class="nav-link">關於我們</a>
+                        <a href="./faq.html" class="nav-link">客服中心</a>
+                        <a href="./faq.html" class="nav-link">Products</a>
                     </div>
                 </div>
             </div>
@@ -216,9 +223,9 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.logo {
-    height: 32px;
-    width: 115px;
+.headerLogo {
+    height: 100px;
+    width: 187px;
     margin-left: 20px;
 }
 
@@ -243,11 +250,6 @@ onMounted(() => {
     font-size: 11.2px;
     line-height: 16px;
     font-family: 'Noto Sans TC', sans-serif;
-}
-
-.logo {
-    width: 187px;
-    height: auto;
 }
 
 /* Desktop Header 樣式 */

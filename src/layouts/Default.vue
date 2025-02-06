@@ -8,7 +8,7 @@ import PageTop from "../components/PageTop.vue";
 
 <template>
     <!-- 公告欄 -->
-    <!-- <Announcement /> -->
+    <Announcement />
     <!-- 頁首區域 -->
     <Header />
     <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->
