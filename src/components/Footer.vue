@@ -43,7 +43,6 @@ const socialMedias = reactive([
                 </p>
             </v-col>
         </v-row>
-        </v-container>
     </v-footer>
 </template>
 <style scoped>

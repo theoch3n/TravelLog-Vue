@@ -48,6 +48,13 @@ const buttons = [
         textClass: "text-yellow-darken-4",
         to: "/products",
     },
+    {
+        value: "Googlemap",
+        text: "Googlemap",
+        icon: "mdi-phone-incoming",
+        textClass: "text-yellow-darken-4",
+        to: "/Googlemap",
+    },
 ];
 </script>
 
