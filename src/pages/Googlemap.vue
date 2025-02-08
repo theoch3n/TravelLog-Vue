@@ -1,38 +1,46 @@
 <!-- TripPlanner.vue -->
 <template>
-  <div class="trip-planner">
-    <div class="flex-container">
-      <div class="controls-container">
-        <input
-          v-model="searchInput"
-          class="form-control mt-2"
-          placeholder="地點搜尋"
-          id="search-input"
-        />
-        <h4 class="mt-4">今日行程</h4>
-        <ul
-          class="list-group list-group-flush"
-          ref="itineraryList"
-          id="itinerary-list"
-        >
+  <div class="trip-planner  ">
+    <div class="flex-container ">
+
+      <!-- 動態生成日期按鈕 -->
+      <!--  <ul class="nav">
+        <li v-for="(day, index) in days" :key="index" class="nav-item">
+          <button @click="selectedDate = day">{{ day }}</button>
+        </li>
+      </ul>-->
+
+      <div class="controls-container  col-4 rounded-3">
+        <h4 class="title mt-4">台北五日遊</h4>
+        <img src="/public/台中.jpeg" alt="" class="titleimg">
+        </img>
+        <ul class="nav">
+          <li class="nav-item">
+            <button>8/25</button>
+          </li>
+          <li class="nav-item">
+            <button>8/26</button>
+          </li>
+          <li class="nav-item">
+            <button>8/27</button>
+          </li>
+          <li class="nav-item">
+            <button>8/28</button>
+          </li>
+        </ul>
+
+
+        <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
+        <ul class="list-group list-group-flush" ref="itineraryList" id="itinerary-list">
           <div v-for="(place, index) in itineraryItems" :key="place.id">
             <!-- 行程項目 -->
-            <li
-              class="list-group-item d-flex justify-content-between align-items-center"
-              :data-index="index"
-            >
+            <li class="list-group-item d-flex justify-content-between align-items-center" :data-index="index">
               <span>{{ place.name }}</span>
-              <button
-                class="btn-close remove"
-                @click="deletePlace(place.id)"
-              ></button>
+              <button class="btn-close remove" @click="deletePlace(place.id)"></button>
             </li>
             <!-- 路線資訊 -->
-            <li
-              v-if="index < itineraryItems.length - 1"
-              class="list-group-item text-center text-muted route-info"
-              :id="`route-info-${index}`"
-            >
+            <li v-if="index < itineraryItems.length - 1" class="list-group-item text-center text-muted route-info"
+              :id="`route-info-${index}`">
               計算中...
             </li>
           </div>
@@ -41,31 +49,19 @@
           規劃路線
         </button>
       </div>
-      <div>
-        <div class="input">
-          <input
-            v-model="textsearchInput"
-            class="form-control search-input-overlay"
-            placeholder="關鍵字搜尋"
-            id="textsearch-input-overlay"
-          />
+      <div class="pt-2 ">
+        <div class="input ">
+          <input v-model="textsearchInput" class="form-control search-input-overlay  p-1 border-5 border-primary"
+            placeholder="關鍵字搜尋" id="textsearch-input-overlay" />
         </div>
       </div>
-      <div id="map" class="map-container">
-        <!-- 在地圖上顯示關鍵字搜尋框 -->
-        <!-- <div class="search-overlay">
-          <input
-            v-model="textsearchInput"
-            class="form-control search-input-overlay"
-            placeholder="關鍵字搜尋"
-            id="textsearch-input-overlay"
-          />
-        </div> -->
+      <div id="map" class="map-container col-8">
       </div>
       <div class="additional-controls"></div>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
@@ -123,6 +119,8 @@ const initMap = () => {
 
   initAutocomplete();
 };
+
+
 
 // Initialize autocomplete
 const initAutocomplete = () => {
@@ -417,30 +415,61 @@ onMounted(() => {
   // initSortable()
 });
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .input {
-  z-index: 1000; /* 讓搜尋框浮在地圖之上 */
+  z-index: 1000;
+  /* 讓搜尋框浮在地圖之上 */
   position: absolute;
 }
+
 .flex-container {
   display: flex;
-  flex-direction: row; /* 讓控制項目在左邊 */
+  flex-direction: row;
+  /* 讓控制項目在左邊 */
   height: 100vh;
+  width: 100%;
+
+}
+
+.title {
+  position: absolute;
+  padding-left: 140.72px;
+  padding-top: 100px;
+  color: red;
+
+
+}
+
+.titleimg {
+  max-width: 100%;
+  /* 圖片寬度不超過容器 */
+  max-height: 100%;
+  /* 圖片高度不超過容器 */
+  object-fit: cover;
+  /* 圖片填滿容器，可能會裁剪部分內容 */
 }
 
 .map-container {
-  width: 100%; /* 讓地圖覆蓋剩餘空間 */
+  width: 100%;
+  /* 讓地圖覆蓋剩餘空間 */
   height: 100vh;
   /* 為了定位覆蓋層 */
-  border: none; /* 移除邊界 */
+  /* border: none; */
+  /* 移除邊界 */
+
 }
 
 .controls-container {
-  padding: 16px;
-  width: 30%; /* 調整控制項目的寬度 */
-  height: 100vh; /* 讓控制項目佔滿左邊空間 */
-  overflow-y: auto; /* 如果控制項目內容超出，則允許滾動 */
+  padding: 0px;
+  width: 400px;
+  /* 調整控制項目的寬度 */
+  height: 100vh;
+  /* 讓控制項目佔滿左邊空間 */
+  overflow-y: auto;
+  /* 如果控制項目內容超出，則允許滾動 */
+  background-color: rgb(159, 167, 181);
+
 }
 
 .additional-controls {
@@ -449,10 +478,10 @@ onMounted(() => {
 }
 
 .search-overlay {
-  position: relative;
   top: 10px;
-  left: 10px;
-  background-color: rgba(61, 118, 192, 0.9); /* 白色半透明背景 */
+  /* right: 5px; */
+  background-color: rgba(61, 118, 192, 0.9);
+  /* 白色半透明背景 */
   padding: 5px;
   border-radius: 5px;
 }
@@ -461,4 +490,3 @@ onMounted(() => {
   width: 200px;
 }
 </style>
-  

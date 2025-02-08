@@ -17,7 +17,7 @@ import PaymentLayout from "./layouts/PaymentLayout.vue";
             </component>
         </router-view>
     </v-app>
-    
+
 </template>
 
 <style>
@@ -25,6 +25,8 @@ import PaymentLayout from "./layouts/PaymentLayout.vue";
     position: relative;
     width: 100%;
     max-width: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
     margin: 0 auto;
     background-color: white;
 }
