@@ -10,28 +10,57 @@
         </li>
       </ul>-->
 
+
       <div class="controls-container  col-4 rounded-3">
-        <h4 class="title mt-4">台北五日遊</h4>
+        <h4 class="title mt-4">高雄五日遊</h4>
+
         <img src="/public/台中.jpeg" alt="" class="titleimg">
-        </img>
-        <ul class="nav">
-          <li class="nav-item">
-            <button>8/25</button>
+
+
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+              role="tab" aria-controls="home" aria-selected="true">8/25</button>
           </li>
-          <li class="nav-item">
-            <button>8/26</button>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+              role="tab" aria-controls="profile" aria-selected="false">8/26</button>
           </li>
-          <li class="nav-item">
-            <button>8/27</button>
-          </li>
-          <li class="nav-item">
-            <button>8/28</button>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button"
+              role="tab" aria-controls="contact" aria-selected="false">8/27</button>
           </li>
         </ul>
-
-
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"><!--呼叫PlaceCard-->
+            <div class="container">
+              <div v-if="places2.length > 0">
+                <PlaceCard v-for="(place, index) in places2" :key="index" :data="place" />
+              </div>
+              <div v-else>
+                <p>目前沒有行程資料</p>
+              </div>
+            </div>
+            <!---------------->
+          </div>
+          <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            <!--呼叫PlaceCard-->
+            <div class="container">
+              <div v-if="places.length > 0">
+                <PlaceCard v-for="(place, index) in places" :key="index" :data="place" />
+              </div>
+              <div v-else>
+                <p>目前沒有行程資料</p>
+              </div>
+            </div>
+            <!---------------->
+          </div>
+          <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">weweweew</div>
+        </div>
         <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
         <ul class="list-group list-group-flush" ref="itineraryList" id="itinerary-list">
+
           <div v-for="(place, index) in itineraryItems" :key="place.id">
             <!-- 行程項目 -->
             <li class="list-group-item d-flex justify-content-between align-items-center" :data-index="index">
@@ -65,7 +94,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-
+import PlaceCard from "../components/PlaceCard.vue";
 // Constants
 const baseAddress = "https://localhost:7092";
 const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
@@ -81,6 +110,50 @@ const directionsService = ref(null);
 const directionsRenderers = ref([]);
 const infoWindow = ref(null);
 const placesList = ref([]);
+
+
+//假的vard資料
+
+const places = ref([
+  {
+    title: "一蘭拉麵 心齋橋店",
+    rating: "3.6",
+    image: "/public/湯婆婆.jpg",
+    time: "19:00",
+  },
+  {
+    title: "大阪城",
+    rating: "2",
+    image: "/public/湯婆婆.jpg",
+    time: "10:00",
+  },
+  {
+    title: "TST麵包坊",
+    rating: "4.5",
+    image: "/public/777.jpeg",
+    time: "10:00",
+  },
+]);
+
+const places2 = ref([
+
+  {
+    title: "TST麵包坊",
+    rating: "4.5",
+    image: "/public/777.jpeg",
+    time: "10:00",
+  },
+  {
+    title: "光之穹頂",
+    rating: "4",
+    image: "/public/666.jpeg",
+    time: "10:00",
+  },
+]);
+
+//標籤頁
+
+
 
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
@@ -434,11 +507,19 @@ onMounted(() => {
 
 .title {
   position: absolute;
-  padding-left: 140.72px;
-  padding-top: 100px;
-  color: red;
-
-
+  top: 100px;
+  /* 確保標題貼近圖片頂部 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 10px 15px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.5);
+  /* 半透明黑色背景提升可讀性 */
+  border-radius: 5px;
+  text-align: center;
 }
 
 .titleimg {
@@ -469,7 +550,8 @@ onMounted(() => {
   overflow-y: auto;
   /* 如果控制項目內容超出，則允許滾動 */
   background-color: rgb(159, 167, 181);
-
+  position: relative;
+  /* 確保內部元素可以相對於它進行絕對定位 */
 }
 
 .additional-controls {

@@ -27,6 +27,7 @@ import PaymentLayout from "./layouts/PaymentLayout.vue";
     max-width: 100%;
     padding-left: 0px;
     padding-right: 0px;
+    padding-bottom: 0px;
     margin: 0 auto;
     background-color: white;
 }
