@@ -14,6 +14,7 @@ import Account from "../pages/Account.vue";
 import Register from "../pages/Register.vue";
 import Products from "../pages/Products.vue";
 import Itinerary from "../pages/Itinerary.vue";
+import share from "../pages/Share.vue";
 
 // 定義路由配置
 const routes = [
@@ -45,6 +46,11 @@ const routes = [
                 path: "/itinerary",
                 name: "Itinerary",
                 component: Itinerary,
+            },
+            {
+                path: "/share", // 路由路徑 (根目錄)
+                name: "share", // 路由名稱 (用於程式內部識別)
+                component: share, // 顯示的頁面
             },
         ],
     },

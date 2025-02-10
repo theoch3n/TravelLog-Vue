@@ -56,6 +56,13 @@ const buttons = [
         to: "/products",
     },
     {
+        value: "share",
+        text: "share",
+        icon: "mdi-phone-incoming",
+        textClass: "text-yellow-darken-4",
+        to: "/share",
+    },
+    {
         value: "Googlemap",
         text: "Googlemap",
         icon: "mdi-phone-incoming",
@@ -79,7 +86,8 @@ const buttons = [
                 <v-btn v-for="button in buttons" :key="button.value" rounded="xl" size="large" :class="button.textClass"
                     :value="button.value" :to="button.to">
                     <v-icon :icon="button.icon" />
-                    <span v-if="!mobile">{{ button.text }}</span>
+                    <span>{{ button.text }}</span>
+                    <!-- <span v-if="!mobile">{{ button.text }}</span> -->
                 </v-btn>
             </v-btn-toggle>
 

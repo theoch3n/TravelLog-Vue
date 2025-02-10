@@ -29,6 +29,7 @@ const socialMedias = reactive([
             <v-btn color="white" variant="text" class="mx-2" rounded="xl" to="/about">About Me</v-btn>
             <v-btn color="white" variant="text" class="mx-2" rounded="xl" to="/contact">Contact Me</v-btn>
             <v-btn color="white" variant="text" class="mx-2" rounded="xl" to="/products">Products</v-btn>
+            <v-btn color="white" variant="text" class="mx-2" rounded="xl" to="/share">share</v-btn>
 
             <v-col class="text-center mt-4" cols="12">
                 <v-btn v-for="media in socialMedias" :key="media" class="mx-4" :icon="media.icon" :href="media.link"

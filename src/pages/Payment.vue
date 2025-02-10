@@ -1,10 +1,13 @@
 <script setup>
-import { ref } from "vue";
 import ParentStepper from "../components/PaymentPage/ParentStepper.vue";
+
+const productPara = useProductPara();
 </script>
 
 <template>
-    <ParentStepper />
+    <div class="container">
+        <ParentStepper />
+    </div>
 </template>
 
 <style scoped>

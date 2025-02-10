@@ -31,7 +31,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" @click="show(item)">加到購物車</button>
-                                <button class="btn btn-primary" @click="show(item)">立即結帳</button>
+                                <v-btn class="btn btn-primary" @click="selectItem(item)" :to="payUrl.to">立即結帳</v-btn>
                             </div>
                         </div>
                     </div>
@@ -44,6 +44,28 @@
 
 <script setup>
 import Rating from './Rating.vue';
+import { useProductPara } from '../stores/productPara';
+import { components } from 'vuetify/dist/vuetify-labs.js';
+import testPayment from '../pages/testPayment.vue';
+
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+const route = useRoute();
+const path = computed(() => route.path.replace("/", ""));
+
+const productPara = useProductPara();
+
+const payUrl = {
+    components:testPayment,
+    to:"/payment"
+}
+
+
+const selectItem = (item) =>{
+    console.log(productPara.selectItem);
+    productPara.selectToPay(item);
+}
+
 const show = (item) => {
     alert(JSON.stringify(item.eventName));
 }
