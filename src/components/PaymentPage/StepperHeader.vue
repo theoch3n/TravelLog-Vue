@@ -1,17 +1,22 @@
 <script setup>
-import { inject, ref } from 'vue'
+import { defineProps, defineEmits } from "vue";
 
-const { currentStep, setCurrentStep, steps } = inject('stepperContext', {
-    currentStep: ref(1),
-    setCurrentStep: () => { },
-    steps: []
-})
+const props = defineProps({
+    modelValue: Number, // 綁定步驟數
+    steps: Array,
+});
+
+const emit = defineEmits(["update:modelValue"]);
+
+const goToStep = (step) => {
+    emit("update:modelValue", step);
+};
 </script>
 
 <template>
     <v-stepper-header>
-        <v-stepper-item v-for="(step, index) in steps" :key="index" :complete="currentStep > index + 1"
-            :value="index + 1">
+        <v-stepper-item v-for="(step, index) in steps" :key="index" :value="index + 1"
+            :complete="modelValue > index + 1" @click="goToStep(index + 1)">
             {{ step.title }}
         </v-stepper-item>
     </v-stepper-header>

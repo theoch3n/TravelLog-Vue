@@ -12,7 +12,7 @@ import PageTop from "../components/PageTop.vue";
     <!-- 頁首區域 -->
     <Header />
     <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->
-    <v-main>
+    <v-main class="content">
         <!--
             路由視圖區域：
             - v-slot="{ Component }" 接收當前路由對應的元件
@@ -29,11 +29,6 @@ import PageTop from "../components/PageTop.vue";
 </template>
 
 <style scoped>
-.v-main {
-    padding-top: 72px;
-    flex-grow: 1;
-}
-
 Header {
     padding-top: 40px;
 }
@@ -41,5 +36,12 @@ Header {
 Footer {
     flex-shrink: 0;
     margin-bottom: -1px;
+}
+
+.content {
+    padding-top: 104px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 </style>

@@ -1,13 +1,9 @@
 <script setup>
-import ParentStepper from "../components/PaymentPage/ParentStepper.vue";
-
-const productPara = useProductPara();
+import Stepper from "../components/PaymentPage/Stepper.vue";
 </script>
 
 <template>
-    <div class="container">
-        <ParentStepper />
-    </div>
+    <Stepper />
 </template>
 
 <style scoped>

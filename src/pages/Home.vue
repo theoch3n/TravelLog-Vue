@@ -1,5 +1,5 @@
 <script setup>
-import CarouselsCycle from "../components/CarouselsCycle.vue";
+import CarouselsCycle from "@/components/CarouselsCycle.vue";
 </script>
 <template>
     <div class="home-container">

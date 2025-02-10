@@ -1,133 +1,59 @@
 <script setup>
-import { ref, computed, nextTick } from 'vue';
-import ECPayService from '../services/testECPayService';
+// import { ref } from "vue";
+// import StepperHeader from "@/components/PaymentPage/StepperHeader.vue";
+// import StepperWindow from "@/components/PaymentPage/StepperWindow.vue";
+// import OrderSummary from "@/components/PaymentPage/OrderSummary.vue";
+// import OrderConfirmation from "@/components/PaymentPage/OrderConfirmation.vue";
+// import PaymentMethod from "@/components/PaymentPage/PaymentMethod.vue";
+// import OrderComplete from "@/components/PaymentPage/OrderComplete.vue";
 
-import { useProductPara } from "../stores/productPara";
-const productPara = useProductPara();
+// // 定義步驟
+// const steps = [
+//     { title: "選擇方案", component: OrderConfirmation },
+//     { title: "填寫資料", component: PaymentMethod },
+//     { title: "完成訂單", component: OrderComplete },
+// ];
 
-const unitPrice = ref(5000);
-const peopleCount = ref(2);
-const participants = ref(
-    Array.from({ length: peopleCount.value }, () => ({
-        lastName: '',
-        firstName: '',
-        gender: ''
-    }))
-);
+// // 當前步驟
+// const currentStep = ref(1);
 
-const contactInfo = ref({
-    name: '',
-    email: '',
-    phone: '',
-    country: ''
-});
+// // 上一步
+// const prevStep = () => {
+//     if (currentStep.value > 1) {
+//         currentStep.value--;
+//     }
+// };
 
-const participantFormRef = ref(null);
-const contactFormRef = ref(null);
-const isParticipantFormValid = ref(false);
-const isContactFormValid = ref(false);
+// // 下一步
+// const nextStep = () => {
+//     if (currentStep.value < steps.length) {
+//         currentStep.value++;
+//     }
+// };
+import { inject } from "vue";
 
-const orderDetails = ref({
-    itemName: '東京自由行 5 天 4 夜',
-    departureDate: '2024-07-15',
-    departureLocation: '台北松山機場',
-    description: `
-    行程特色：
-    - 暢遊東京知名景點
-    - 享受日本美食與文化
-    - 自由行程，彈性安排
-    - 包含機場接送服務
+const currentStep = inject("currentStep");
 
-    行程包含：
-    1. 來回機票
-    2. 四晚住宿
-    3. 機場接送
-    4. 旅遊保險
-  `,
-});
-
-const totalPrice = computed(() => {
-    return unitPrice.value * peopleCount.value;
-});
-
-async function initiatePayment() {
-    try {
-        // 驗證表單
-        const participantFormValid = await validateForm(participantFormRef.value);
-        const contactFormValid = await validateForm(contactFormRef.value);
-
-        if (!participantFormValid || !contactFormValid) {
-            return;
-        }
-
-        const orderResult = await ECPayService.createOrder({
-            totalAmount: totalPrice.value,
-            itemName: orderDetails.value.itemName,
-            tradeDesc: `${peopleCount.value}人 - ${orderDetails.value.departureDate}`,
-            participants: participants.value,
-            contactInfo: contactInfo.value
-        });
-
-        ECPayService.submitToECPay(orderResult.orderParams);
-    } catch (error) {
-        console.error('Payment initiation failed', error);
-        alert('付款初始化失敗，請稍後再試');
-    }
-}
-
-// 表單驗證方法
-async function validateForm(formRef) {
-    if (!formRef) {
-        console.error('Form reference is null');
-        return false;
-    }
-
-    // 等待 DOM 更新
-    await nextTick();
-
-    // 調用 validate 方法
-    const { valid } = await formRef.validate();
-    return valid;
-}
+// 改變步驟
+const goToStep2 = () => {
+    currentStep.value = 2;
+};
 </script>
 
 <template>
-    <h2>您的購物車</h2>
-        <ul v-if="productPara.selectItem.length">
-            <li v-for="(item, index) in productPara.selectItem" :key="item.eventName">
-                {{ item.eventName }} - 售價: {{ item.price }}
-            </li>
-        </ul>
-        <p v-else>您的購物車是空的</p>
+    <v-container>
+        <v-btn color="primary" @click="goToStep2">跳到第 2 步</v-btn>
+    </v-container>
 </template>
 
-
 <style scoped>
-.payment-container {
+.v-container {
     background-color: #f5f5f5;
-    min-height: 100vh;
-    padding: 24px;
+    width: 100%;
+    height: 100%;
 }
 
-.order-details {
-    background-color: white;
-    border-radius: 8px;
-    padding: 16px;
-}
-
-.payment-section {
-    position: sticky;
-    top: 24px;
-}
-
-.sticky-card {
-    position: sticky;
-    top: 24px;
-}
-
-.total-price {
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    padding: 8px;
+.payment-stepper {
+    background-color: transparent;
 }
 </style>

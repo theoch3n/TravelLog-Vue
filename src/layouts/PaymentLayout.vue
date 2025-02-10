@@ -1,26 +1,43 @@
 <script setup>
-import Header from '../components/Header.vue';
-import StepperHeader from '../components/PaymentPage/StepperHeader.vue';
+import { ref, provide } from "vue";
+import Header from "../components/Header.vue";
+import StepperHeader from "../components/PaymentPage/StepperHeader.vue";
+import StepperWindow from "../components/PaymentPage/StepperWindow.vue";
+
+// 共享步驟狀態
+const currentStep = ref(1);
+
+// 提供 `currentStep`，讓子頁面可以透過 inject 來控制步驟
+provide("currentStep", currentStep);
 </script>
+
 <template>
-    <!-- <Header />
-    <StepperHeader /> -->
-    <v-app>
-        <v-main>
+    <Header />
+
+    <v-container fluid class="content-container">
+        <v-stepper v-model="currentStep">
+            <!-- 固定在 Header 下方的 StepperHeader -->
             <v-sheet class="stepper-header-container" position="fixed">
-                <StepperHeader />
+                <!-- 確保 StepperHeader 在 v-stepper 內 -->
+                <StepperHeader v-model="currentStep" :steps="[
+                    { title: '選擇方案' },
+                    { title: '填寫資料' },
+                    { title: '完成訂單' }
+                ]" />
             </v-sheet>
 
-            <v-container fluid class="content-container">
-                <router-view />
-            </v-container>
-        </v-main>
-    </v-app>
+            <v-main class="content">
+                <v-container fluid class="content-container">
+                    <router-view />
+                </v-container>
+            </v-main>
+        </v-stepper>
+    </v-container>
 </template>
+
 <style scoped>
 .stepper-header-container {
     top: 64px;
-    /* 與 Header 高度對應 */
     left: 0;
     right: 0;
     z-index: 2;
@@ -28,7 +45,18 @@ import StepperHeader from '../components/PaymentPage/StepperHeader.vue';
 }
 
 .content-container {
-    margin-top: 128px;
-    /* Header + Stepper 高度 */
+    margin-top: 136px;
+    /* Header + StepperHeader 的高度 */
+    height: 100%;
+    width: 100%;
+    background-color: #f5f5f5;
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
 }
 </style>
