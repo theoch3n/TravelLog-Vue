@@ -6,7 +6,10 @@ import About from "../pages/About.vue";
 import Payment from "../pages/Payment.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
+import AccountLayout from "../layouts/AccountLayout.vue";
 import testPayment from "../pages/testPayment.vue";
+import Account from "../pages/Account.vue";
+import Register from "../pages/Register.vue";
 import Products from "../pages/Products.vue";
 import Itinerary from "../pages/Itinerary.vue";
 
@@ -30,7 +33,8 @@ const routes = [
                 path: "/products", // 路由路徑 (根目錄)
                 name: "Products", // 路由名稱 (用於程式內部識別)
                 component: Products, // 顯示的頁面
-            }, {
+            },
+            {
                 path: "/itinerary",
                 name: "Itinerary",
                 component: Itinerary,
@@ -49,6 +53,27 @@ const routes = [
                 path: "",
                 name: "Payment",
                 component: testPayment,
+            },
+        ],
+    },
+
+    {
+        path: "/account",
+        // 移除這裡的 name 屬性
+        component: AccountLayout,
+        meta: {
+            layout: "AccountLayout",
+        },
+        children: [
+            {
+                path: "",
+                name: "Account", // 只有這裡保留 name
+                component: Account,
+            },
+            {
+                path: "/",
+                name: "Register", // 只有這裡保留 name
+                component: Register,
             },
         ],
     },
