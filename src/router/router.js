@@ -12,7 +12,6 @@ import testPayment from "../pages/testPayment.vue";
 import Googlemap from "../pages/Googlemap.vue";
 import Account from "../pages/Account.vue";
 import Register from "../pages/Register.vue";
-import Products from "../pages/Products.vue";
 import Itinerary from "../pages/Itinerary.vue";
 import share from "../pages/Share.vue";
 import Contact from "../pages/Contact.vue";
