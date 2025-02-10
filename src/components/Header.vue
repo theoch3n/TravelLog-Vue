@@ -56,6 +56,13 @@ const buttons = [
         to: "/products",
     },
     {
+        value: "Googlemap",
+        text: "Googlemap",
+        icon: "mdi-phone-incoming",
+        textClass: "text-yellow-darken-4",
+        to: "/Googlemap",
+    },
+    {
         value: "Itinerary",
         text: "行程",
         icon: "mdi-phone-incoming",

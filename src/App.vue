@@ -10,7 +10,7 @@
             </component>
         </router-view>
     </v-app>
-    
+
 </template>
 
 <script setup>
@@ -42,6 +42,9 @@ function getLayout(layoutName) {
     position: relative;
     width: 100%;
     max-width: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
     margin: 0 auto;
     background-color: white;
 }
