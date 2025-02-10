@@ -9,6 +9,7 @@ import PaymentLayout from "../layouts/PaymentLayout.vue";
 import AccountLayout from "../layouts/AccountLayout.vue";
 import testPayment from "../pages/testPayment.vue";
 import Account from "../pages/Account.vue";
+import Register from "../pages/Register.vue";
 
 // 定義路由配置
 const routes = [
@@ -57,6 +58,12 @@ const routes = [
                 name: "Account", // 只有這裡保留 name
                 component: Account,
             },
+            {
+                path: "/",
+                name: "Register", // 只有這裡保留 name
+                component: Register,
+            },
+
         ],
     }
     

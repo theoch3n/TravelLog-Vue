@@ -11,6 +11,7 @@
   </script>
   
   <style scoped>
+  
   .account-layout {
     min-height: 100vh;
 
