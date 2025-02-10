@@ -41,6 +41,13 @@ const buttons = [
         textClass: "text-yellow-darken-4",
         to: "/contact",
     },
+    {
+        value:"Account",
+        text: "會員登入",
+        icon: "mdi-account",
+        textClass: "text-black",
+        to: "/account",
+    },
 ];
 </script>
 

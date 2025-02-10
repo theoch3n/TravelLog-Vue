@@ -6,7 +6,9 @@ import About from "../pages/About.vue";
 import Payment from "../pages/Payment.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
+import AccountLayout from "../layouts/AccountLayout.vue";
 import testPayment from "../pages/testPayment.vue";
+import Account from "../pages/Account.vue";
 
 // 定義路由配置
 const routes = [
@@ -41,6 +43,23 @@ const routes = [
             },
         ],
     },
+
+    {
+        path: "/account",
+        // 移除這裡的 name 屬性
+        component: AccountLayout,
+        meta: {
+            layout: "AccountLayout",
+        },
+        children: [
+            {
+                path: "",
+                name: "Account", // 只有這裡保留 name
+                component: Account,
+            },
+        ],
+    }
+    
 ];
 
 // 建立路由實例
