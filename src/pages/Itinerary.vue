@@ -98,6 +98,7 @@
      
 
     import { ref } from "vue";
+    import axios from 'axios';
     import { format } from "date-fns"; // 格式化日期
 
     // 控制 v-date-picker 顯示與隱藏
@@ -107,6 +108,7 @@
     const startDate = ref("");  // 顯示格式 YYYY-MM-DD
     const endDate = ref("");  
     const selectedDate = ref(null); // v-date-picker 使用 Date 物件
+    const baseAddress = 'https://localhost:7092';
 
     // 追蹤當前選擇的是哪個輸入框
     const activeInput = ref(null);
@@ -164,12 +166,48 @@
         showDatePicker.value = false;
     };
 
-    const insertdata = () => 
+    
+    const insertdata = async () => 
     {
-        console.log(startDate.value);
-        console.log(endDate.value);
+        try
+        {
+            const insert = {itineraryId: 0, itineraryTitle: "2", itineraryImage: "test", itineraryCreateDate: null };
+            const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`, insert);
+
+            console.log(JSON.stringify(response.data));
+            //categoryArray.value = response.data;
+        } 
+        catch (error)
+        {
+            alert(error.message + "\n檢查你的api有沒有開");
+        }
+
+
+        // console.log(startDate.value);
+        // console.log(endDate.value);
     };
+
+    // const categoryArray = ref([]);
+
+    //     const getData = async (keyword = '') => 
+    //     {
+    //         try
+    //         {
+    //             const insert = {  "itineraryId": 0,
+    //   "itineraryTitle": "string",
+    //   "itineraryImage": "string",
+    //   "itineraryCreateDate": null };
+
             
+    //             const response = await axios.post(`${baseAddress}/api/Itinerary`, insert);
+    //             alert(JSON.stringify(response.data));
+    //             //categoryArray.value = response.data;
+    //         } 
+    //         catch (error)
+    //         {
+    //             alert(error.message + "\n檢查你的api有沒有開");
+    //         }
+    //     };
 
 </script>
 
