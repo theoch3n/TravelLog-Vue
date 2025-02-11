@@ -13,7 +13,7 @@ import PageTop from "../components/PageTop.vue";
         <!-- 頁首區域 -->
         <Header />
         <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->
-        <v-main class="content">
+        <v-main class="content d-flex flex-column">
             <!--
             路由視圖區域：
             - v-slot="{ Component }" 接收當前路由對應的元件
@@ -46,7 +46,7 @@ Footer {
     flex: 1;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
+    /* flex-shrink: 0; */
 }
 
 /* 確保 <v-app> 佔滿視窗高度 */
