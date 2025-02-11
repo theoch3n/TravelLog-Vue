@@ -44,7 +44,12 @@ const routes = [
             },
         ],
     },
-
+    {
+        path: "/products", // 路由路徑 (根目錄)
+        name: "Products", // 路由名稱 (用於程式內部識別)
+        component: Products, // 顯示的頁面
+    },
+    
     {
         path: "/account",
         // 移除這裡的 name 屬性
@@ -63,10 +68,8 @@ const routes = [
                 name: "Register", // 只有這裡保留 name
                 component: Register,
             },
-
         ],
-    }
-    
+    },
 ];
 
 // 建立路由實例

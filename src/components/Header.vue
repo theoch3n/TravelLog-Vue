@@ -42,6 +42,13 @@ const buttons = [
         to: "/contact",
     },
     {
+        value: "products",
+        text: "Products",
+        icon: "mdi-phone-incoming",
+        textClass: "text-yellow-darken-4",
+        to: "/products",
+    },
+    {
         value:"Account",
         text: "會員登入",
         icon: "mdi-account",
