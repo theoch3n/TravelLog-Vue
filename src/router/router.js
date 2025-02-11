@@ -94,7 +94,7 @@ const routes = [
             },
         ],
     },
-}
+]
 
 // 建立路由實例
 const router = createRouter({

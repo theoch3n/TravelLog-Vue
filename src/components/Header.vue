@@ -63,8 +63,6 @@ const pages = [
         to: "/account",
     },
 ];
-    },
-];
 
 // 監聽路由變化，確保導航按鈕與路由同步
 // watch(route, () => {
@@ -73,10 +71,10 @@ const pages = [
 // });
 
 // 頁面載入時同步導航按鈕狀態
-onMounted(() => {
-    const matchedButton = buttons.find((btn) => btn.to === route.path);
-    pageTitle.value = matchedButton ? matchedButton.value : "";
-});
+// onMounted(() => {
+//     const matchedButton = buttons.find((btn) => btn.to === route.path);
+//     pageTitle.value = matchedButton ? matchedButton.value : "";
+// });
 </script>
 
 <template>
