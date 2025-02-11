@@ -44,11 +44,25 @@ const pages = [
         to: "/Googlemap",
     },
     {
+        value: "products",
+        text: "Products",
+        to: "/products",
+    },
+    {
         value: "Itinerary",
         text: "行程",
         icon: "mdi-phone-incoming",
         textClass: "text-yellow-darken-4",
-        to: "/Itinerary",
+        to: "/itinerary",
+    },
+    {
+        value:"Account",
+        text: "會員登入",
+        icon: "mdi-account",
+        textClass: "text-black",
+        to: "/account",
+    },
+];
     },
 ];
 

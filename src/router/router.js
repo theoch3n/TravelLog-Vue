@@ -74,7 +74,6 @@ const routes = [
             },
         ],
     },
-
     {
         path: "/account",
         // 移除這裡的 name 屬性
@@ -95,7 +94,7 @@ const routes = [
             },
         ],
     },
-];
+}
 
 // 建立路由實例
 const router = createRouter({
