@@ -2,9 +2,9 @@
 <template>
 
     <div class="container mt-5 mb-5">
-        <button type="button" class="btn btn-outline-primary bi bi-plus-lg" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"> 新增行程</button>
+        <button type="button" class="btn btn-outline-primary bi bi-plus-lg" data-bs-toggle="modal" data-bs-target="#ItineraryModal" data-bs-whatever="@mdo"> 新增行程</button>
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="ItineraryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog custom-modal">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -15,7 +15,7 @@
                         <form>
                             <div class="mb-3">
                                 <label for="travel-themes" class="col-form-label">旅程主題</label>
-                                <input type="text" class="form-control" id="travel-themes" placeholder="請輸入主題">
+                                <input type="text" class="form-control" id="travel-themes" placeholder="請輸入主題" v-model="itinerarytitle">
                             </div>
                             <div class="mb-3">
                                 <label for="travel-location" class="col-form-label">旅程地點</label>
@@ -109,6 +109,7 @@
     const endDate = ref("");  
     const selectedDate = ref(null); // v-date-picker 使用 Date 物件
     const baseAddress = 'https://localhost:7092';
+    const itinerarytitle = ref("");
 
     // 追蹤當前選擇的是哪個輸入框
     const activeInput = ref(null);
@@ -171,9 +172,13 @@
     {
         try
         {
-            const insert = {itineraryId: 0, itineraryTitle: "2", itineraryImage: "test", itineraryCreateDate: null };
+            const insert = {itineraryId: 0, itineraryTitle: itinerarytitle.value, itineraryImage: "t", itineraryStartDate: startDate.value ,ItineraryEndDate: endDate.value, itineraryCreateDate: null };
             const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`, insert);
 
+
+            console.log(itinerarytitle.value);
+            console.log(startDate.value);
+            console.log(endDate.value);
             console.log(JSON.stringify(response.data));
             //categoryArray.value = response.data;
         } 
@@ -183,8 +188,6 @@
         }
 
 
-        // console.log(startDate.value);
-        // console.log(endDate.value);
     };
 
     // const categoryArray = ref([]);
