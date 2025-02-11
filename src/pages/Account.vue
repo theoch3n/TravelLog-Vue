@@ -52,7 +52,8 @@
                                     </form>
                                     <!-- 註冊連結 -->
                                     <div class="new-account mt-3">
-                                        <p>還沒有帳號嗎？<router-link to="/register" class="text-primary">註冊</router-link></p>
+                                        <p>還沒有帳號嗎？<router-link to="/account/register"
+                                                class="text-primary">註冊</router-link></p>
                                     </div>
                                 </div>
                             </div>
@@ -65,6 +66,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: "Login",
     data() {
@@ -80,11 +83,32 @@ export default {
         togglePassword() {
             this.showPassword = !this.showPassword;
         },
-        login() {
-            console.log("Email:", this.email);
-            console.log("Password:", this.password);
-            console.log("Remember me:", this.rememberMe);
-            alert("登入成功！");
+        async login() {
+            const loginData = {
+                email: this.email,
+                password: this.password,
+                rememberMe: this.rememberMe
+            };
+
+            try {
+                const response = await axios.post('https://localhost:7092/api/User/login', loginData);
+                console.log("登入成功，後端回應：", response.data);
+                // 取得回應資料，例如 token
+                const { message, userId, userName, token } = response.data;
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('userName', userName);
+                alert(message);
+                this.$router.push('/');
+            } catch (error) {
+                if (error.response && error.response.data) {
+                    console.error("登入失敗：", error.response.data);
+                    alert("登入失敗：" + error.response.data.message);
+                } else {
+                    console.error("連線錯誤：", error.message);
+                    alert("連線到後端失敗，請確認服務是否啟動且 CORS 設定正確。");
+                }
+            }
         }
     }
 };
@@ -99,25 +123,34 @@ export default {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding-top: 100px; /* 增加上方空白 */
+    padding-top: 100px;
+    /* 增加上方空白 */
 }
 
 .auth-form h4 {
-    font-size: 2rem; /* 放大字體 */
-    font-weight: 700; /* 加粗 */
-    text-align: center; /* 置中 */
-    margin-bottom: 20px; /* 增加底部間距 */
-    color: #212529; /* 深色字體，確保清晰度 */
+    font-size: 2rem;
+    /* 放大字體 */
+    font-weight: 700;
+    /* 加粗 */
+    text-align: center;
+    /* 置中 */
+    margin-bottom: 20px;
+    /* 增加底部間距 */
+    color: #212529;
+    /* 深色字體，確保清晰度 */
 }
+
 /* 控制上方空白的高度 */
 .spacer {
-    height: 100px;
+    height: 80px;
 }
 
 /* 登入框的樣式 */
 .authincation-content {
-    max-width: 500px; /* 桌面版最大寬度 */
-    width: 90%; /* 手機、平板時，最大寬度為螢幕的90% */
+    max-width: 500px;
+    /* 桌面版最大寬度 */
+    width: 90%;
+    /* 手機、平板時，最大寬度為螢幕的90% */
     margin: auto;
     padding: 50px;
     border-radius: 12px;
@@ -130,17 +163,23 @@ export default {
     font-size: 1.1rem;
     padding: 12px;
     width: 100%;
-    background-color: #f3f4f6; /* 預設淺灰色背景 */
-    border: 1px solid #d1d5db; /* 預設邊框顏色 */
+    background-color: #f3f4f6;
+    /* 預設淺灰色背景 */
+    border: 1px solid #d1d5db;
+    /* 預設邊框顏色 */
     border-radius: 6px;
-    transition: all 0.3s ease-in-out; /* 增加動畫，使變化更順暢 */
+    transition: all 0.3s ease-in-out;
+    /* 增加動畫，使變化更順暢 */
 }
 
 /* 當輸入框被點擊（聚焦）時改變顏色 */
 .auth-form input:focus {
-    background-color: #ffffff; /* 點擊後變成白色 */
-    border: 1px solid #a290f5; /* 點擊後邊框變成紫色 */
-    box-shadow: 0 0 5px rgba(89, 59, 219, 0.3); /* 增加輕微陰影 */
+    background-color: #ffffff;
+    /* 點擊後變成白色 */
+    border: 1px solid #a290f5;
+    /* 點擊後邊框變成紫色 */
+    box-shadow: 0 0 5px rgba(89, 59, 219, 0.3);
+    /* 增加輕微陰影 */
     outline: none;
 }
 
@@ -208,5 +247,4 @@ export default {
 body {
     background-color: #f8f9fa48;
 }
-
 </style>
