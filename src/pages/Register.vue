@@ -27,6 +27,15 @@
                                     <input type="email" class="form-control" id="registerEmail" v-model="formData.email"
                                         required />
                                 </div>
+                                <!--電話號碼-->
+                                <div class="mb-3">
+                                    <label for="registerPhone" class="form-label">
+                                        <strong>電話號碼</strong>
+                                    </label>
+                                    <input type="tel" class="form-control" id="registerPhone" v-model="formData.phone"
+                                        required @blur="validatePhone" />
+                                    <div v-if="errors.phone" class="text-danger mt-1">{{ errors.phone }}</div>
+                                </div>
                                 <!-- 密碼 -->
                                 <div class="mb-3">
                                     <label for="registerPassword" class="form-label">
@@ -91,6 +100,7 @@ export default {
             formData: {
                 accountName: "",
                 email: "",
+                phone: "",
                 password: "",
                 confirmPassword: ""
             },
@@ -122,6 +132,14 @@ export default {
                 this.errors.confirmPassword = "";
             }
         },
+        validatePhone() {
+            // 檢查電話號碼是否為10位數，且必須以 "09" 開頭
+            if (!/^09\d{8}$/.test(this.formData.phone)) {
+                this.errors.phone = "電話格式不正確，必須以09開頭且為10位數字。";
+            } else {
+                this.errors.phone = "";
+            }
+        },
         async validateForm() {
             // 先進行密碼與確認密碼的驗證
             this.validatePassword();
@@ -139,7 +157,7 @@ export default {
                 const response = await axios.post('https://localhost:7092/api/User/register', {
                     userName: this.formData.accountName,
                     email: this.formData.email,
-                    phone: "", // 如果有電話欄位，可傳送；這裡設為空字串
+                    phone: this.formData.phone,
                     password: this.formData.password
                 });
                 console.log("註冊成功，回應資料：", response.data);
