@@ -37,7 +37,7 @@ provide("currentStep", currentStep);
 
 <style scoped>
 .stepper-header-container {
-    top: 64px;
+    top: 244px;
     left: 0;
     right: 0;
     z-index: 2;
@@ -49,7 +49,7 @@ provide("currentStep", currentStep);
     /* Header + StepperHeader 的高度 */
     height: 100%;
     width: 100%;
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
 }
 
 .content {

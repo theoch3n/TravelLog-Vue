@@ -19,6 +19,8 @@ const contactInfo = ref({
     country: ''
 });
 
+const orderStatus = "";
+
 const participantFormRef = ref(null);
 const contactFormRef = ref(null);
 const isParticipantFormValid = ref(false);
@@ -85,6 +87,17 @@ async function validateForm(formRef) {
     // 調用 validate 方法
     const { valid } = await formRef.validate();
     return valid;
+}
+async function checkOrderStatus() {
+    try {
+        const response = await axios.post("https://localhost:7092/api/Ecpay/QueryOrder", {
+            MerchantTradeNo: "你的訂單編號",
+        });
+
+        this.orderStatus = response.data.TradeStatus === "1" ? "已付款" : "未付款";
+    } catch (error) {
+        console.error("查詢失敗:", error);
+    }
 }
 </script>
 
@@ -226,6 +239,8 @@ async function validateForm(formRef) {
                             確認付款
                         </v-btn>
                     </v-card-actions>
+                    <v-btn @click="checkOrderStatus">查詢訂單狀態</v-btn>
+                    <p v-if="orderStatus">訂單狀態: {{ orderStatus }}</p>
                 </v-card>
             </v-col>
         </v-row>

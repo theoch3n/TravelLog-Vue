@@ -66,8 +66,8 @@ const icons = reactive([
     width: 100vw;
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
-    position: relative;
     border: none;
+    margin-top: auto;
 }
 
 .footer-text {
@@ -75,11 +75,11 @@ const icons = reactive([
     color: rgb(80, 80, 80);
 }
 
-.v-application {
+/* .v-application {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
+} */
 
 .v-container {
     min-height: auto !important;
