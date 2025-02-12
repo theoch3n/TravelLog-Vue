@@ -9,109 +9,39 @@
         <button class="btn btn-primary mt-4" id="draw-route" @click="drawRoute">
           規劃路線
         </button>
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button
-              class="nav-link active"
-              id="home-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#home"
-              type="button"
-              role="tab"
-              aria-controls="home"
-              aria-selected="true"
-            >
-              8/25
+
+        <ul class="nav nav-tabs " id="myTab" role="tablist">
+          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
+            <button class="nav-link " id="home-tab" data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]"
+              type="button" role="tab" aria-selected="true">
+              {{ date }}
             </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button
-              class="nav-link"
-              id="profile-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#profile"
-              type="button"
-              role="tab"
-              aria-controls="profile"
-              aria-selected="false"
-            >
-              8/26
-            </button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button
-              class="nav-link"
-              id="contact-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#contact"
-              type="button"
-              role="tab"
-              aria-controls="contact"
-              aria-selected="false"
-            >
-              8/27
-            </button>
-          </li>
+
         </ul>
-        <div class="tab-content" id="myTabContent">
-          <div
-            class="tab-pane fade show active"
-            id="home"
-            role="tabpanel"
-            aria-labelledby="home-tab"
-          >
+        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
+          <div class="tab-pane fade show  " :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
             <!--呼叫PlaceCard-->
-            <div class="container">
-              <div v-if="places2.length > 0">
-                <PlaceCard
-                  v-for="(place, index) in places2"
-                  :key="index"
-                  :data="place"
-                />
-              </div>
-              <div v-else>
-                <p>目前沒有行程資料</p>
-              </div>
-            </div>
+            {{ dateList[index] }}
             <!---------------->
           </div>
-          <div
-            class="tab-pane fade"
-            id="profile"
-            role="tabpanel"
-            aria-labelledby="profile-tab"
-          >
-            <!--呼叫PlaceCard-->
-            <!-- {{ date }} -->
-            <ul>
-              <li v-for="date in dateList" :key="date">{{ date }}</li>
-            </ul>
-            <!---------------->
-          </div>
-          <div
-            class="tab-pane fade"
-            id="contact"
-            role="tabpanel"
-            aria-labelledby="contact-tab"
-          >
+
+
+
+
+
+          <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="itineraryItems.length > 0">
-                <PlaceCard
-                  v-for="(place, index) in itineraryItems"
-                  :key="place.id"
-                  :data="place"
-                  :deletePlaceHandler="deletePlace"
-                >
-                  <li
-                    v-if="index < itineraryItems.length - 1"
-                    class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`"
-                  >
+                <PlaceCard v-for="(place, index) in itineraryItems" :key="place.id" :data="place"
+                  :deletePlaceHandler="deletePlace">
+                  <li v-if="index < itineraryItems.length - 1" class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`">
                     計算中...
-                  </li></PlaceCard
-                >
+                  </li>
+                </PlaceCard>
               </div>
               <div v-else>
                 <p>目前沒有行程資料</p>
@@ -125,18 +55,9 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input
-            v-model="textsearchInput"
-            class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別"
-            id="textsearch-input-overlay"
-          />
-          <input
-            v-model="searchInput"
-            class="form-control mt-2"
-            placeholder="地點搜尋"
-            id="search-input"
-          />
+          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別" id="textsearch-input-overlay" />
+          <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
         </div>
       </div>
       <div id="map" class="map-container col-8"></div>
@@ -155,6 +76,8 @@ import { format } from "date-fns";
 const baseAddress = "https://localhost:7092";
 const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
 ///////////////////////////////////////////////////////////////
+const array1 = [2, 4, 6, 8, 0];
+
 // const date_St = ref(dayjs("2025-02-11"));
 // const date_Ed = dayjs("2025-02-16");
 // const date = ref(date_Ed.diff(date_St, "day"));
@@ -176,7 +99,7 @@ const dateDiff = computed(() => date_Ed.diff(date_St, "day"));
 
 const dateList = computed(() => {
   return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
-    date_St.add(i, "day").format("YYYY-MM-DD")
+    date_St.add(i, "day").format("MM/DD")
   );
 });
 
