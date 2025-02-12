@@ -19,7 +19,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="travel-location" class="col-form-label">旅程地點</label>
-                                <input type="text" class="form-control" id="travel-location" placeholder="請輸國家或城市">
+                                <input type="text" class="form-control" id="travel-location" placeholder="請輸國家或城市" v-model="itinerarylocation">
                             </div>
                             <label class="col-form-label">旅程日期</label>
                             <div class="container">
@@ -101,15 +101,16 @@
     import axios from 'axios';
     import { format } from "date-fns"; // 格式化日期
 
+    const baseAddress = 'https://localhost:7092';
+
     // 控制 v-date-picker 顯示與隱藏
     const showDatePicker = ref(false);
 
-    // 存儲選擇的日期
+    const itinerarytitle = ref("");
+    const itinerarylocation = ref("");
     const startDate = ref("");  // 顯示格式 YYYY-MM-DD
     const endDate = ref("");  
     const selectedDate = ref(null); // v-date-picker 使用 Date 物件
-    const baseAddress = 'https://localhost:7092';
-    const itinerarytitle = ref("");
 
     // 追蹤當前選擇的是哪個輸入框
     const activeInput = ref(null);
@@ -172,7 +173,8 @@
     {
         try
         {
-            const insert = {itineraryId: 0, itineraryTitle: itinerarytitle.value, itineraryImage: "t", itineraryStartDate: startDate.value ,ItineraryEndDate: endDate.value, itineraryCreateDate: null };
+            const insert = {itineraryId: 0, itineraryTitle: itinerarytitle.value, itineraryLocation: itinerarylocation.value, itineraryCoordinate:"",
+                itineraryImage: "t", itineraryStartDate: startDate.value ,ItineraryEndDate: endDate.value, itineraryCreateDate: null };
             const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`, insert);
 
 
