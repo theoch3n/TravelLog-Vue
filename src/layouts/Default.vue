@@ -47,6 +47,7 @@ Footer {
     display: flex;
     flex-direction: column;
     /* flex-shrink: 0; */
+    background-color: white;
 }
 
 /* 確保 <v-app> 佔滿視窗高度 */

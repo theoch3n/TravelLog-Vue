@@ -45,11 +45,13 @@ provide("currentStep", currentStep);
 }
 
 .content-container {
-    margin-top: 136px;
     /* Header + StepperHeader 的高度 */
+    /* margin-top: 136px; */
     height: 100%;
     width: 100%;
     /* background-color: #f5f5f5; */
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .content {
