@@ -2,7 +2,7 @@
     <!-- 將 h-100 移除，改用 min-height -->
     <div class="authincation" style="min-height: 100vh;">
         <div class="container-fluid">
-            <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+            <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
                 <!-- 調整欄位寬度，例如 col-md-8 -->
                 <div class="col-md-6 col-lg-4">
                     <div class="authincation-content">

@@ -1,7 +1,6 @@
 <template>
     <div class="authincation">
         <div class="container">
-            <div class="spacer"></div>
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="authincation-content">
@@ -70,18 +69,18 @@
                                         {{ errors.confirmPassword }}
                                     </div>
                                 </div>
+                                <div class="new-account mt-3 text-right">
+                        <p>
+                            已經有帳號了?
+                            <router-link to="/account" class="text-primary">登入</router-link>
+                        </p>
+                    </div>
                                 <!-- 註冊按鈕 -->
                                 <div class="mb-3">
                                     <button type="submit" class="btn btn-primary w-100">註冊</button>
                                 </div>
                             </form>
                         </div>
-                    </div>
-                    <div class="new-account mt-3 text-center">
-                        <p>
-                            已經有帳號了?
-                            <router-link to="/account" class="text-primary">登入</router-link>
-                        </p>
                     </div>
                 </div>
             </div>
@@ -202,7 +201,7 @@ export default {
 
 .authincation-content {
     max-width: 500px;
-    width: 90%;
+    width: 100%;
     margin: auto;
     padding: 50px;
     border-radius: 12px;
