@@ -20,6 +20,8 @@
             </span>
           </div>
           <p>到達時間: {{ data.time }}</p>
+          <!--插槽 從父元件-->
+          <slot></slot>
         </div>
       </div>
     </div>

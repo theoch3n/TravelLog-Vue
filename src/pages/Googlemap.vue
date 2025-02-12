@@ -112,11 +112,19 @@
             <div class="container">
               <div v-if="itineraryItems.length > 0">
                 <PlaceCard
-                  v-for="place in itineraryItems"
+                  v-for="(place, index) in itineraryItems"
                   :key="place.id"
                   :data="place"
                   :deletePlaceHandler="deletePlace"
-                />
+                >
+                  <li
+                    v-if="index < itineraryItems.length - 1"
+                    class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`"
+                  >
+                    計算中...
+                  </li></PlaceCard
+                >
               </div>
               <div v-else>
                 <p>目前沒有行程資料</p>
@@ -151,13 +159,13 @@
               ></button>
             </li>
             <!-- 路線資訊 -->
-            <li
+            <!-- <li
               v-if="index < itineraryItems.length - 1"
               class="list-group-item text-center text-muted route-info"
               :id="`route-info-${index}`"
             >
               計算中...
-            </li>
+            </li> -->
           </div>
         </ul>
         <button class="btn btn-primary mt-4" id="draw-route" @click="drawRoute">
