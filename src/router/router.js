@@ -8,7 +8,7 @@ import Products from "../pages/Products.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
 import AccountLayout from "../layouts/AccountLayout.vue";
-import testPayment from "../pages/testPayment.vue";
+import testPayment from "../pages/testPayment copy.vue";
 import Googlemap from "../pages/Googlemap.vue";
 import Account from "../pages/Account.vue";
 import Register from "../pages/Register.vue";
@@ -16,6 +16,7 @@ import Itinerary from "../pages/Itinerary.vue";
 import share from "../pages/Share.vue";
 import Contact from "../pages/Contact.vue";
 import OrderDetail from "../pages/OrderDetail.vue";
+import PaymentResult from "../pages/PaymentResult.vue";
 
 // 定義路由配置
 const routes = [
@@ -63,6 +64,16 @@ const routes = [
                 name: "OrderDetail",
                 component: OrderDetail,
             },
+            {
+                path: "/paymentResult/:merchantTradeNo",
+                name: "PaymentResult",
+                component: PaymentResult,
+                props: true,
+            },
+            // {
+            //     path: "/:catchAll(.*)",
+            //     redirect: "/",
+            // },
         ],
     },
     {
@@ -88,18 +99,18 @@ const routes = [
         },
         children: [
             {
-                path: "",            // 當訪問 /account 時，顯示 Account 組件
+                path: "", // 當訪問 /account 時，顯示 Account 組件
                 name: "Account",
                 component: Account,
             },
             {
-                path: "register",    // 當訪問 /account/register 時，顯示 Register 組件
+                path: "register", // 當訪問 /account/register 時，顯示 Register 組件
                 name: "Register",
                 component: Register,
             },
         ],
     },
-]
+];
 
 // 建立路由實例
 const router = createRouter({
