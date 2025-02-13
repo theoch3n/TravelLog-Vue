@@ -44,11 +44,23 @@ const pages = [
         to: "/Googlemap",
     },
     {
+        value: "products",
+        text: "Products",
+        to: "/products",
+    },
+    {
         value: "Itinerary",
         text: "行程",
         icon: "mdi-phone-incoming",
         textClass: "text-yellow-darken-4",
-        to: "/Itinerary",
+        to: "/itinerary",
+    },
+    {
+        value:"Account",
+        text: "會員登入",
+        icon: "mdi-account",
+        textClass: "text-black",
+        to: "/account",
     },
 ];
 
@@ -59,10 +71,10 @@ const pages = [
 // });
 
 // 頁面載入時同步導航按鈕狀態
-onMounted(() => {
-    const matchedButton = buttons.find((btn) => btn.to === route.path);
-    pageTitle.value = matchedButton ? matchedButton.value : "";
-});
+// onMounted(() => {
+//     const matchedButton = buttons.find((btn) => btn.to === route.path);
+//     pageTitle.value = matchedButton ? matchedButton.value : "";
+// });
 </script>
 
 <template>

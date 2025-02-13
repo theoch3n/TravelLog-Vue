@@ -74,28 +74,26 @@ const routes = [
             },
         ],
     },
-
     {
         path: "/account",
-        // 移除這裡的 name 屬性
         component: AccountLayout,
         meta: {
             layout: "AccountLayout",
         },
         children: [
             {
-                path: "",
-                name: "Account", // 只有這裡保留 name
+                path: "",            // 當訪問 /account 時，顯示 Account 組件
+                name: "Account",
                 component: Account,
             },
             {
-                path: "/",
-                name: "Register", // 只有這裡保留 name
+                path: "register",    // 當訪問 /account/register 時，顯示 Register 組件
+                name: "Register",
                 component: Register,
             },
         ],
     },
-];
+]
 
 // 建立路由實例
 const router = createRouter({
