@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
+import LoginModal from "@/components/LoginModal.vue";
 
 // 控制登入對話框 & 行動選單
 const loginDialog = ref(false);
@@ -28,7 +29,7 @@ const pages = [
   { value: "about", text: "關於我們", textClass: "text-blue", to: "/about" },
   { value: "contact", text: "客服中心", textClass: "text-yellow-darken-4", to: "/contact" },
   { value: "products", text: "Products", textClass: "text-purple-darken-4", to: "/products" },
-  { value: "Account", text: "會員登入", icon: "mdi-account", textClass: "text-black", to: "/account", },
+  { value: "Account", text: "會員登入", icon: "mdi-account", textClass: "text-black", to: "/account" },
   {
     value: "share",
     text: "share",
@@ -69,9 +70,24 @@ const pages = [
 //     const matchedButton = buttons.find((btn) => btn.to === route.path);
 //     pageTitle.value = matchedButton ? matchedButton.value : "";
 // });
+
+// 從 pages 陣列中找出會員登入項目
+const accountPage = computed(() => pages.find(page => page.value === "Account"));
+
+// 建立 ref 以存取子組件 LoginModel 的實例
+const loginModalRef = ref(null);
+
+// 按鈕點擊觸發子組件的方法
+function openLoginModal() {
+  loginModalRef.value.show(); 
+}
+
 </script>
 
 <template>
+    <!-- 引入子組件 -->
+  <LoginModal ref="loginModalRef" />
+
   <div>
     <!-- #region Header -->
     <!-- Desktop Header -->
@@ -134,6 +150,8 @@ const pages = [
               class="bi bi-shop-window fs-4 me-3"></i></a>
           <a class="tool-button text-black" href="./contact.html" data-bs-toggle="" aria-controls=""><i
               class="bi bi-chat-fill fs-4 me-3"></i></a>
+              <!-- 會員登入按鈕：點擊後執行 openLoginModal() -->
+
           <a class="tool-button text-black" href="javascript:;" data-bs-toggle="modal" data-bs-target="#exampleModal"><i
               class="bi bi-person-fill fs-4 me-3"></i></a>
           <a class="tool-button text-black" href="#cartMenu" data-bs-toggle="offcanvas" aria-controls="cartMenu"><i
@@ -152,6 +170,12 @@ const pages = [
           <v-btn v-for="(page, index) in pages" :to="page.to" :key="index">{{
             page.text
           }}</v-btn>
+          <!-- 會員登入按鈕：點擊後執行 openLoginModal() -->
+          <v-btn v-if="accountPage" @click="openLoginModal" class="mx-2" :class="accountPage.textClass">
+            <v-icon left>{{ accountPage.icon }}</v-icon>
+            {{ accountPage.text }}
+          </v-btn>
+
         </nav>
 
         <!-- <form class="d-flex">

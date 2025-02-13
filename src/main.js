@@ -10,6 +10,8 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css"; // 引入 Material Design Icons
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';
 // 創建 Vuetify 物件，並註冊所有組件與指令
 const vuetify = createVuetify({
     components,
