@@ -9,36 +9,58 @@
         <button class="btn btn-primary mt-4" id="draw-route" @click="drawRoute">
           規劃路線
         </button>
-
-        <ul class="nav nav-tabs " id="myTab" role="tablist">
-          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
-            <button class="nav-link " id="home-tab" data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]"
-              type="button" role="tab" aria-selected="true">
+        <!-------------動態生成日期導覽列--------------------->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li
+            class="nav-item"
+            v-for="(date, index) in dateList"
+            :key="index"
+            role="presentation"
+          >
+            <button
+              class="nav-link"
+              id="home-tab"
+              :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab"
+              :data-bs-target="'#' + dateList[index]"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              @click="handleDateClick(date)"
+            >
               {{ date }}
             </button>
           </li>
-
         </ul>
-        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
-          <div class="tab-pane fade show  " :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
-            <!--呼叫PlaceCard-->
+        <div
+          class="tab-content"
+          v-for="(date, index) in dateList"
+          :key="index"
+          id="myTabContent"
+        >
+          <div
+            class="tab-pane fade show"
+            :id="dateList[index]"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
             {{ dateList[index] }}
-            <!---------------->
-          </div>
 
-
-
-
-
-          <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
             <!--呼叫PlaceCard-->
 
             <div class="container">
-              <div v-if="itineraryItems.length > 0">
-                <PlaceCard v-for="(place, index) in itineraryItems" :key="place.id" :data="place"
-                  :deletePlaceHandler="deletePlace">
-                  <li v-if="index < itineraryItems.length - 1" class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`">
+              <div v-if="places.length > 0">
+                <PlaceCard
+                  v-for="(place, index) in places"
+                  :key="place.id"
+                  :data="place"
+                  :deletePlaceHandler="deletePlace"
+                >
+                  <li
+                    v-if="index < places.length - 1"
+                    class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`"
+                  >
                     計算中...
                   </li>
                 </PlaceCard>
@@ -55,9 +77,18 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別" id="textsearch-input-overlay" />
-          <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
+          <input
+            v-model="textsearchInput"
+            class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別"
+            id="textsearch-input-overlay"
+          />
+          <input
+            v-model="searchInput"
+            class="form-control mt-2"
+            placeholder="地點搜尋"
+            id="search-input"
+          />
         </div>
       </div>
       <div id="map" class="map-container col-8"></div>
@@ -99,11 +130,20 @@ const dateDiff = computed(() => date_Ed.diff(date_St, "day"));
 
 const dateList = computed(() => {
   return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
-    date_St.add(i, "day").format("MM/DD")
+    date_St.add(i, "day").format("YYYY-MM-DD")
   );
 });
 
 console.log(dateList.value); // 測試輸出
+
+////////////////////////得知當前所選的導覽業面////////////////////////////////
+// 當前選擇的日期
+const selectedDate = ref(dateList.value[0]); // 預設為第一天
+// 處理點擊事件
+const handleDateClick = (date) => {
+  selectedDate.value = date;
+  console.log("選擇的日期是：", date); // 這裡你可以改成發 API 請求
+};
 
 ///////////////////////////////////////////////////////////////
 // Reactive references
@@ -269,7 +309,7 @@ const addToItinerary = async (place) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        date: 1,
+        date: selectedDate.value,
         scheduleId: 1,
         name: place.name,
         address: place.address,
@@ -279,13 +319,14 @@ const addToItinerary = async (place) => {
         rating: String(place.rating),
       }),
     });
+    console.log(selectedDate.value);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
     searchInput.value = "";
-    await fetchPlaces();
+    // await fetchPlaces();
+    await fetchPlacesByDate();
   } catch (error) {
     console.error("儲存地點時發生錯誤：", error);
     alert("儲存地點時發生錯誤，請稍後再試。");
@@ -392,7 +433,9 @@ const deletePlace = async (placeId) => {
       throw new Error("刪除失敗");
     }
 
-    await fetchPlaces();
+    // await fetchPlaces();
+    await fetchPlacesByDate();
+
     initMap();
   } catch (error) {
     console.error("刪除請求錯誤:", error);
@@ -410,14 +453,14 @@ const drawRoute = () => {
 
   const colors = ["#FF0000", "#0000FF", "#00FF00", "#FFA500", "#800080"];
 
-  for (let i = 0; i < itineraryItems.value.length - 1; i++) {
+  for (let i = 0; i < places.value.length - 1; i++) {
     const origin = {
-      lat: itineraryItems.value[i].latitude,
-      lng: itineraryItems.value[i].longitude,
+      lat: places.value[i].latitude,
+      lng: places.value[i].longitude,
     };
     const destination = {
-      lat: itineraryItems.value[i + 1].latitude,
-      lng: itineraryItems.value[i + 1].longitude,
+      lat: places.value[i + 1].latitude,
+      lng: places.value[i + 1].longitude,
     };
 
     const renderer = new google.maps.DirectionsRenderer({
@@ -452,7 +495,7 @@ const drawRoute = () => {
   }
 
   markers.value.forEach((marker) => marker.setMap(null));
-  itineraryItems.value.forEach((place, index) => {
+  places.value.forEach((place, index) => {
     const marker = new google.maps.Marker({
       position: { lat: place.latitude, lng: place.longitude },
       label: `${index + 1}`,
@@ -463,18 +506,44 @@ const drawRoute = () => {
 };
 
 // Fetch places
-const fetchPlaces = async () => {
+// const fetchPlaces = async () => {
+//   try {
+//     const response = await fetch(`${baseAddress}/api/Places`);
+//     if (!response.ok) {
+//       throw new Error("Network response was not ok");
+//     }
+//     const data = await response.json();
+//     itineraryItems.value = data;
+//   } catch (error) {
+//     console.error("Error fetching places:", error);
+//   }
+// };
+///////////////////傳送選擇的日期抓對應的地點////////////////////////
+const fetchPlacesByDate = async () => {
   try {
-    const response = await fetch(`${baseAddress}/api/Places`);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    itineraryItems.value = data;
+    const response = await fetch(
+      `${baseAddress}/api/Places?date=${selectedDate.value}`
+    );
+    if (!response.ok) throw new Error("無法取得資料");
+
+    const allData = await response.json();
+    places.value = allData.filter((place) => {
+      const placeDate = place.date.split("T")[0]; // 去掉時間部分
+      const selectedDateStr = selectedDate.value.split("T")[0]; // 去掉時間部分
+      return placeDate === selectedDateStr;
+    });
+    console.log("取得的資料:", JSON.stringify(places.value));
   } catch (error) {
-    console.error("Error fetching places:", error);
+    console.error("獲取資料時發生錯誤：", error);
   }
 };
+
+// 監聽 selectedDate 變化，自動讀取對應日期的資料
+watch(selectedDate, () => {
+  fetchPlacesByDate();
+});
+
+/////////////////////////////////////////////////////////////////////////////
 
 // Initialize Sortable
 // const initSortable = () => {
@@ -494,7 +563,9 @@ const fetchPlaces = async () => {
 // Lifecycle hooks
 onMounted(() => {
   loadGoogleMapsAPI();
-  fetchPlaces();
+  // fetchPlaces();
+  fetchPlacesByDate();
+
   // initSortable()
 });
 </script>
@@ -557,7 +628,7 @@ onMounted(() => {
   /* 讓控制項目佔滿左邊空間 */
   overflow-y: auto;
   /* 如果控制項目內容超出，則允許滾動 */
-  background-color: rgb(159, 167, 181);
+  background-color: rgb(245, 235, 236);
   position: relative;
   /* 確保內部元素可以相對於它進行絕對定位 */
 }
