@@ -1,6 +1,6 @@
 
 <template>
-
+    <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/>
     <div class="container mt-5 mb-5">
         <button type="button" class="btn btn-outline-primary bi bi-plus-lg" data-bs-toggle="modal" data-bs-target="#ItineraryModal" data-bs-whatever="@mdo"> 新增行程</button>
 
@@ -20,6 +20,8 @@
                             <div class="mb-3">
                                 <label for="travel-location" class="col-form-label">旅程地點</label>
                                 <input type="text" class="form-control" id="travel-location" placeholder="請輸國家或城市" v-model="itinerarylocation">
+                                <!-- <LocationSearch /> -->
+
                                 <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/> -->
                             </div>
                             <label class="col-form-label">旅程日期</label>
@@ -52,47 +54,19 @@
     </div>
 
     <div class="container mt-5">
-
         <div class="row row-cols-1 row-cols-md-3 g-4">
-        <div class="col">
-            <div class="card h-100">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            <div class="col" v-for="card in CardData" :key="card.itineraryId">
+                <div class="card h-100">
+                    <img :src="card.itineraryImage" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ card.itineraryTitle }}</h5>
+                        <p class="card-text">{{ card.itineraryStartDate.split('T')[0] + ' ~ ' + card.itineraryEndDate.split('T')[0] }}</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-footer">
-                <small class="text-muted">Last updated 3 mins ago</small>
-            </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card h-100">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">Last updated 3 mins ago</small>
-            </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card h-100">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">Last updated 3 mins ago</small>
-            </div>
-            </div>
-        </div>
         </div>
     </div>
-    <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/>
+    <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/> -->
     <!-- <input
           class="form-control mt-2"
           placeholder="地點搜尋"
@@ -111,6 +85,7 @@
     import { ref, onMounted } from "vue";
     import axios from 'axios';
     import { format } from "date-fns"; // 格式化日期
+    import LocationSearch from "../components/LocationSearch.vue";
 
     const baseAddress = 'https://localhost:7092';
 
@@ -179,20 +154,24 @@
         showDatePicker.value = false;
     };
 
+    onMounted(() => {
+        loadGoogleMapsAPI();
+        itineraryData();
+    });
+    
     const insertdata = async () => 
     {
         try
         {
-            const insert = {itineraryId: 0, itineraryTitle: itinerarytitle.value, itineraryLocation: itinerarylocation.value, itineraryCoordinate:"",
-                itineraryImage: "t", itineraryStartDate: startDate.value ,ItineraryEndDate: endDate.value, itineraryCreateDate: null };
+            const insert = {itineraryId: 0, itineraryTitle: itinerarytitle.value, itineraryLocation: CardName.value, itineraryCoordinate: CardCoordinate.value, itineraryImage: CardImg.value, itineraryStartDate: startDate.value ,ItineraryEndDate: endDate.value, itineraryCreateDate: null };
             const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`, insert);
 
 
-            console.log(itinerarytitle.value);
-            console.log(startDate.value);
-            console.log(endDate.value);
+            // console.log(itinerarytitle.value);
+            // console.log(startDate.value);
+            // console.log(endDate.value);
             console.log(JSON.stringify(response.data));
-            //categoryArray.value = response.data;
+            await itineraryData();
         } 
         catch (error)
         {
@@ -225,19 +204,7 @@
     
     // Initialize map
     const initMap = () => {
-        // map.value = new google.maps.Map(document.getElementById("map"), {
-        //     center: { lat: 23.553118, lng: 121.0211024 },
-        //     zoom: 7,
-        // });
-
-        // navigator.geolocation.getCurrentPosition((position) => {
-        //     const currentPosition = {
-        //     lat: position.coords.latitude,
-        //     lng: position.coords.longitude,
-        //     };
-        //     map.value.setCenter(currentPosition);
-        //     map.value.setZoom(16);
-        // });
+        
         initAutocomplete();
     };
     // Initialize autocomplete
@@ -248,6 +215,13 @@
         );
       setupMarkerListener(autocomplete);
     };
+
+    
+    const CardName = ref("");
+    const CardImg = ref("");
+    const CardCoordinate = ref("");
+    const CardData = ref([]);
+
 
     // Setup marker listener
     const setupMarkerListener = (autocomplete) => {
@@ -270,22 +244,36 @@
             img: place.photos?.[0]?.getUrl() || "",
             opening: place.current_opening_hours?.weekday_text || "無營業時間資訊",
         };
-        // console.log(place);
-        console.log(place.geometry.location.lng());
-        console.log(place.geometry.location.lat());
-        console.log(place.photos[0].getUrl());
+
+        CardName.value = place.name;
+        CardImg.value = place.photos?.[0]?.getUrl() || "";
+        CardCoordinate.value = place.geometry.location.lat()+','+place.geometry.location.lng();
+
+        // console.log(place.name);
+        // console.log(place.geometry.location.lat()+','+place.geometry.location.lng());
+        // console.log(place.geometry.location.lng());
+        // console.log(place.geometry.location.lat());
+        // console.log(place.photos[0].getUrl());
         //map.value.setCenter(selectRestaurant.location);
     });
     };
 
-    onMounted(() => {
-        loadGoogleMapsAPI();
-        //initAutocomplete();
-    });
+    // 取得卡片資料
+    const itineraryData = async () => 
+    {
+        try
+        {
+            const response = await axios.get(`${baseAddress}/api/Itinerary/getitineraryData`);
+            CardData.value = response.data;
 
-    // const pop =() => {
-    //     alert('123')
-    // }
+            //console.log(JSON.stringify(response.data));
+        } 
+        catch (error)
+        {
+            alert(error.message + "\n檢查你的api有沒有開");
+        }
+    };
+
 </script>
 
 
