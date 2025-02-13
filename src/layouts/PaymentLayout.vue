@@ -17,7 +17,7 @@ provide("currentStep", currentStep);
     <v-container fluid class="content-container">
         <v-stepper v-model="currentStep">
             <!-- 固定在 Header 下方的 StepperHeader -->
-            <v-sheet class="stepper-header-container" position="fixed">
+            <v-sheet class="stepper-header-container">
                 <!-- 確保 StepperHeader 在 v-stepper 內 -->
                 <StepperHeader v-model="currentStep" :steps="[
                     { title: '選擇方案' },
@@ -37,7 +37,7 @@ provide("currentStep", currentStep);
 
 <style scoped>
 .stepper-header-container {
-    top: 64px;
+    top: 244px;
     left: 0;
     right: 0;
     z-index: 2;
@@ -45,11 +45,13 @@ provide("currentStep", currentStep);
 }
 
 .content-container {
-    margin-top: 136px;
     /* Header + StepperHeader 的高度 */
+    /* margin-top: 136px; */
     height: 100%;
     width: 100%;
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .content {

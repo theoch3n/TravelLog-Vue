@@ -50,6 +50,12 @@ const pages = [
     textClass: "text-yellow-darken-4",
     to: "/Itinerary",
   },
+  {
+    value: "OrderDetail",
+    text: "訂單詳情",
+    textClass: "text-yellow-darken-4",
+    to: "/orderDetail",
+  },
 ];
 
 // 監聽路由變化，確保導航按鈕與路由同步
@@ -145,7 +151,7 @@ const pages = [
         <nav class="desktop-nav">
           <v-btn v-for="(page, index) in pages" :to="page.to" :key="index">{{
             page.text
-            }}</v-btn>
+          }}</v-btn>
         </nav>
 
         <!-- <form class="d-flex">

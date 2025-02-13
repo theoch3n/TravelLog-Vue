@@ -24,7 +24,7 @@ onMounted(getData);
 </script>
 
 <template>
-    <div id="app" class="container my-3">
+    <div id="app" class="my-3">
         <SearchBar @updateKeyword="getData" />
         <ProductList :categoryArray="categoryArray" />
     </div>

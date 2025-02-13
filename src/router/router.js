@@ -15,6 +15,7 @@ import Register from "../pages/Register.vue";
 import Itinerary from "../pages/Itinerary.vue";
 import share from "../pages/Share.vue";
 import Contact from "../pages/Contact.vue";
+import OrderDetail from "../pages/OrderDetail.vue";
 
 // 定義路由配置
 const routes = [
@@ -56,6 +57,11 @@ const routes = [
                 path: "/contact",
                 name: "Contact",
                 component: Contact,
+            },
+            {
+                path: "/orderDetail",
+                name: "OrderDetail",
+                component: OrderDetail,
             },
         ],
     },

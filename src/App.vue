@@ -1,6 +1,6 @@
 <template>
     <!-- Vuetify 根組件，所有內容必須包在 <v-app> 內 -->
-    <v-app>
+    <v-app class="h-100 d-flex flex-column">
         <!-- 使用 router-view 的作用域插槽獲取當前路由的 Component 與 route -->
         <router-view v-slot="{ Component, route }">
             <!-- 根據當前路由 meta 中的 layout 屬性值動態選擇佈局組件 -->
@@ -43,7 +43,7 @@ function getLayout(layoutName) {
 #app {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    /* height: 100vh; */
     /* 讓整個應用佔滿畫面 */
     display: flex;
     flex-direction: column;
