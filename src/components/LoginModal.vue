@@ -1,13 +1,10 @@
 <template>
-    <div ref="modalElement" class="modal fade" tabindex="-1" aria-hidden="true">
-        <!-- Modal 結構 -->
-
-        <!-- Bootstrap Modal 結構 -->
+    <div ref="modalElement" class="modal fade" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="authModalLabel">
+                    <h5 class="modal-title" id="loginModalLabel">
                         <template v-if="currentView === 'login'">帳號登入</template>
                         <template v-else>帳號註冊</template>
                     </h5>
@@ -18,7 +15,7 @@
                     <!-- 登入視窗 -->
                     <div v-if="currentView === 'login'">
                         <div class="auth-form">
-                            <form @submit.prevent="login">
+                            <form @submit.prevent="loginHandler">
                                 <!-- Email 輸入框 -->
                                 <div class="mb-3">
                                     <label for="loginEmail" class="form-label"><strong>Email</strong></label>
@@ -148,6 +145,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 // 登入、註冊資料與驗證邏輯
 const currentView = ref("login");
@@ -192,16 +191,20 @@ function toggleRegisterPasswordConfirm() {
     register.value.showPasswordConfirm = !register.value.showPasswordConfirm;
 }
 async function loginHandler() {
+
+    const loginData = {
+        email: login.value.email,
+        password: login.value.password,
+        rememberMe: login.value.rememberMe
+    };
     // 請依原邏輯補上登入 API 呼叫
     try {
-        const loginData = {
-            email: login.value.email,
-            password: login.value.password,
-            rememberMe: login.value.rememberMe
-        };
         const response = await axios.post("https://localhost:7092/api/User/login", loginData);
         console.log("登入成功：", response.data);
-        // 登入成功後你可以選擇做些什麼，例如導頁
+        console.log("登入成功：", response.data);
+        alert("登入成功！歡迎回來！");
+        hide();
+        router.push("/");  // 導向首頁
     } catch (error) {
         console.error("登入錯誤：", error);
     }
@@ -219,6 +222,7 @@ async function registerUser() {
             password: register.value.formData.password
         });
         console.log("註冊成功：", response.data);
+        alert("註冊成功！歡迎加入！");
         switchToLogin();
     } catch (error) {
         console.error("註冊錯誤：", error);
