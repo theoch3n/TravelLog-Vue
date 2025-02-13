@@ -1,8 +1,7 @@
 <!-- TripPlanner.vue -->
 <template>
-  <div class="trip-planner  ">
-    <div class="flex-container ">
-
+  <div class="trip-planner">
+    <div class="flex-container">
       <!-- 動態生成日期按鈕 -->
       <!--  <ul class="nav">
         <li v-for="(day, index) in days" :key="index" class="nav-item">
@@ -10,33 +9,70 @@
         </li>
       </ul>-->
 
-
-      <div class="controls-container  col-4 rounded-3">
+      <div class="controls-container col-4 rounded-3">
         <h4 class="title mt-4">高雄五日遊</h4>
 
-        <img src="/public/台中.jpeg" alt="" class="titleimg">
-
-
+        <img src="/台中.jpeg" alt="" class="titleimg" />
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
-              role="tab" aria-controls="home" aria-selected="true">8/25</button>
+            <button
+              class="nav-link active"
+              id="home-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#home"
+              type="button"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+            >
+              8/25
+            </button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-              role="tab" aria-controls="profile" aria-selected="false">8/26</button>
+            <button
+              class="nav-link"
+              id="profile-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#profile"
+              type="button"
+              role="tab"
+              aria-controls="profile"
+              aria-selected="false"
+            >
+              8/26
+            </button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button"
-              role="tab" aria-controls="contact" aria-selected="false">8/27</button>
+            <button
+              class="nav-link"
+              id="contact-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#contact"
+              type="button"
+              role="tab"
+              aria-controls="contact"
+              aria-selected="false"
+            >
+              8/27
+            </button>
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"><!--呼叫PlaceCard-->
+          <div
+            class="tab-pane fade show active"
+            id="home"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
+            <!--呼叫PlaceCard-->
             <div class="container">
               <div v-if="places2.length > 0">
-                <PlaceCard v-for="(place, index) in places2" :key="index" :data="place" />
+                <PlaceCard
+                  v-for="(place, index) in places2"
+                  :key="index"
+                  :data="place"
+                />
               </div>
               <div v-else>
                 <p>目前沒有行程資料</p>
@@ -44,11 +80,20 @@
             </div>
             <!---------------->
           </div>
-          <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+          <div
+            class="tab-pane fade"
+            id="profile"
+            role="tabpanel"
+            aria-labelledby="profile-tab"
+          >
             <!--呼叫PlaceCard-->
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="index" :data="place" />
+                <PlaceCard
+                  v-for="(place, index) in places"
+                  :key="index"
+                  :data="place"
+                />
               </div>
               <div v-else>
                 <p>目前沒有行程資料</p>
@@ -56,20 +101,61 @@
             </div>
             <!---------------->
           </div>
-          <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">weweweew</div>
-        </div>
-        <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
-        <ul class="list-group list-group-flush" ref="itineraryList" id="itinerary-list">
+          <div
+            class="tab-pane fade"
+            id="contact"
+            role="tabpanel"
+            aria-labelledby="contact-tab"
+          >
+            <!--呼叫PlaceCard-->
 
+            <div class="container">
+              <div v-if="itineraryItems.length > 0">
+                <PlaceCard
+                  v-for="place in itineraryItems"
+                  :key="place.id"
+                  :data="place"
+                  :deletePlaceHandler="deletePlace"
+                />
+              </div>
+              <div v-else>
+                <p>目前沒有行程資料</p>
+              </div>
+            </div>
+
+            <!---------------->
+          </div>
+        </div>
+        <!---------------------------------------------------------->
+        <input
+          v-model="searchInput"
+          class="form-control mt-2"
+          placeholder="地點搜尋"
+          id="search-input"
+        />
+        <ul
+          class="list-group list-group-flush"
+          ref="itineraryList"
+          id="itinerary-list"
+        >
           <div v-for="(place, index) in itineraryItems" :key="place.id">
             <!-- 行程項目 -->
-            <li class="list-group-item d-flex justify-content-between align-items-center" :data-index="index">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+              :data-index="index"
+            >
               <span>{{ place.name }}</span>
-              <button class="btn-close remove" @click="deletePlace(place.id)"></button>
+              <button
+                class="btn-close remove"
+                @click="deletePlace(place.id)"
+              ></button>
             </li>
             <!-- 路線資訊 -->
-            <li v-if="index < itineraryItems.length - 1" class="list-group-item text-center text-muted route-info"
-              :id="`route-info-${index}`">
+            <li
+              v-if="index < itineraryItems.length - 1"
+              class="list-group-item text-center text-muted route-info"
+              :id="`route-info-${index}`"
+            >
               計算中...
             </li>
           </div>
@@ -78,14 +164,17 @@
           規劃路線
         </button>
       </div>
-      <div class="pt-2 ">
-        <div class="input ">
-          <input v-model="textsearchInput" class="form-control search-input-overlay  p-1 border-5 border-primary"
-            placeholder="關鍵字搜尋" id="textsearch-input-overlay" />
+      <div class="pt-2">
+        <div class="input">
+          <input
+            v-model="textsearchInput"
+            class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="關鍵字搜尋"
+            id="textsearch-input-overlay"
+          />
         </div>
       </div>
-      <div id="map" class="map-container col-8">
-      </div>
+      <div id="map" class="map-container col-8"></div>
       <div class="additional-controls"></div>
     </div>
   </div>
@@ -95,6 +184,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import PlaceCard from "../components/PlaceCard.vue";
+
 // Constants
 const baseAddress = "https://localhost:7092";
 const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
@@ -111,49 +201,45 @@ const directionsRenderers = ref([]);
 const infoWindow = ref(null);
 const placesList = ref([]);
 
-
 //假的vard資料
 
 const places = ref([
   {
     title: "一蘭拉麵 心齋橋店",
     rating: "3.6",
-    image: "/public/湯婆婆.jpg",
+    img: "/湯婆婆.jpg",
     time: "19:00",
   },
   {
     title: "大阪城",
     rating: "2",
-    image: "/public/湯婆婆.jpg",
+    img: "/湯婆婆.jpg",
     time: "10:00",
   },
   {
     title: "TST麵包坊",
     rating: "4.5",
-    image: "/public/777.jpeg",
+    img: "/777.jpeg",
     time: "10:00",
   },
 ]);
 
 const places2 = ref([
-
   {
     title: "TST麵包坊",
     rating: "4.5",
-    image: "/public/777.jpeg",
+    img: "/777.jpeg",
     time: "10:00",
   },
   {
     title: "光之穹頂",
     rating: "4",
-    image: "/public/666.jpeg",
+    img: "/666.jpeg",
     time: "10:00",
   },
 ]);
 
 //標籤頁
-
-
 
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
@@ -192,8 +278,6 @@ const initMap = () => {
 
   initAutocomplete();
 };
-
-
 
 // Initialize autocomplete
 const initAutocomplete = () => {
@@ -238,7 +322,7 @@ const setupInfoWindow = (marker, place) => {
             </button>
           </div>
         `);
-
+    console.log(place.rating);
     infoWindow.value.open(map.value, marker);
 
     google.maps.event.addListenerOnce(infoWindow.value, "domready", () => {
@@ -265,6 +349,8 @@ const addToItinerary = async (place) => {
         address: place.address,
         latitude: place.lat,
         longitude: place.lng,
+        img: place.img,
+        rating: String(place.rating),
       }),
     });
 
@@ -289,7 +375,6 @@ const setupMarkerListener = (autocomplete) => {
       console.error("搜尋結果無法取得地點資訊");
       return;
     }
-
     const selectRestaurant = {
       location: place.geometry.location,
       placeId: place.place_id,
@@ -502,7 +587,6 @@ onMounted(() => {
   /* 讓控制項目在左邊 */
   height: 100vh;
   width: 100%;
-
 }
 
 .title {
@@ -538,7 +622,6 @@ onMounted(() => {
   /* 為了定位覆蓋層 */
   /* border: none; */
   /* 移除邊界 */
-
 }
 
 .controls-container {
