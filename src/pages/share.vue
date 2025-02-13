@@ -11,7 +11,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">
-                        標題:這邊用行程名稱
+                        {{ thisTestTitle }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -80,7 +80,7 @@
                     </div>
                     <!-- radio button -->
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary">你要確</button>
+                    <button type="button" class="btn btn-primary" @click="getData">你要確</button>
                 </div>
             </div>
         </div>
@@ -88,8 +88,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from "vue";
-
+import { onMounted, reactive, ref, watch } from "vue";
+import axios from 'axios';
 let isUpdating = false;
 const totalPrice = ref();
 const members = [
@@ -109,6 +109,43 @@ onMounted(() => {
         });
     });
 });
+// 非同步 測試區域
+const baseAddress = "https://localhost:7092";
+const thisTestTitle = "標題:這邊用行程名稱";
+const bill = ref({
+    Title: "標題測試",
+    TotalAmount: 2000,
+    PaidBy: "測試1",
+    CreatedAt: new Date(),
+});
+
+const billDetails = ref([
+    { BillId: 1, MemberName: "測試1", Amount: 1000, Paid: true },
+    { BillId: 1, MemberName: "測試2", Amount: 2000, Paid: false },
+    { BillId: 1, MemberName: "測試3", Amount: 3000, Paid: false },
+]);
+
+const getData = async () => {
+    const billDto = {
+        bill: { ...bill.value }, // 拷貝資料
+        details: [...billDetails.value] // 拷貝資料
+    };
+
+    try {
+        const response = await axios.post(`${baseAddress}/api/Bill/AddBillWithDetails`, billDto);
+        if (response.data.success) {
+            alert("Test Bill created successfully!");
+        } else {
+            alert("Failed to create bill.");
+        }
+    } catch (error) {
+        console.log("Error submitting test bill:", error);
+        alert("An error occurred while submitting the bill.");
+    }
+};
+// 非同步 測試區域
+
+
 
 const getMaxPercentage = (index) => {
     const manualSum = insideData.reduce((sum, item, i) => {
