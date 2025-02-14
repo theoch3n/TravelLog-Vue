@@ -203,8 +203,9 @@ async function loginHandler() {
         console.log("登入成功：", response.data);
         console.log("登入成功：", response.data);
         alert("登入成功！歡迎回來！");
+        localStorage.setItem("token", response.data.token);
         hide();
-        router.push("/");  // 導向首頁
+        router.push("/");
     } catch (error) {
         console.error("登入錯誤：", error);
     }
