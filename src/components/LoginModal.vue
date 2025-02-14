@@ -143,10 +143,13 @@
 </template>
 
 <script setup>
+import { useUserStore } from '@/stores/userStore'
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 const router = useRouter();
+
+const userStore = useUserStore();
 
 // 登入、註冊資料與驗證邏輯
 const currentView = ref("login");
@@ -191,18 +194,18 @@ function toggleRegisterPasswordConfirm() {
     register.value.showPasswordConfirm = !register.value.showPasswordConfirm;
 }
 async function loginHandler() {
-
     const loginData = {
         email: login.value.email,
         password: login.value.password,
         rememberMe: login.value.rememberMe
     };
-    // 請依原邏輯補上登入 API 呼叫
     try {
         const response = await axios.post("https://localhost:7092/api/User/login", loginData);
         console.log("登入成功：", response.data);
         alert("登入成功！歡迎回來！");
-        localStorage.setItem("token", response.data.token);
+        // 使用 Pinia store 儲存 token，而不是直接存 localStorage
+        userStore.setToken(response.data.token);
+        // 如果需要，你也可以同步 localStorage 於 store 的 action 中進行保存
         hide();
         router.push("/");
     } catch (error) {
