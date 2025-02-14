@@ -36,7 +36,7 @@ if (token) {
 }
 
 // 或是使用攔截器，每次發送請求時都讀取最新的 token：
-import axios from "axios";
+
 
 axios.interceptors.request.use(
     (config) => {

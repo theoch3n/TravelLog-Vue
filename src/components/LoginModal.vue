@@ -201,7 +201,6 @@ async function loginHandler() {
     try {
         const response = await axios.post("https://localhost:7092/api/User/login", loginData);
         console.log("登入成功：", response.data);
-        console.log("登入成功：", response.data);
         alert("登入成功！歡迎回來！");
         localStorage.setItem("token", response.data.token);
         hide();
