@@ -56,6 +56,13 @@ const pages = [
     textClass: "text-yellow-darken-4",
     to: "/orderDetail",
   },
+  {
+    value: "Itinerary",
+    text: "行程",
+    icon: "mdi-phone-incoming",
+    textClass: "text-yellow-darken-4",
+    to: "/ItineraryTemp",
+  },
 ];
 
 // 監聽路由變化，確保導航按鈕與路由同步

@@ -1,6 +1,5 @@
-
 <template>
-    <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/>
+    <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/>
     <div class="container mt-5 mb-5">
         <button type="button" class="btn btn-outline-primary bi bi-plus-lg" data-bs-toggle="modal" data-bs-target="#ItineraryModal" data-bs-whatever="@mdo"> 新增行程</button>
 
@@ -20,22 +19,17 @@
                             <div class="mb-3">
                                 <label for="travel-location" class="col-form-label">旅程地點</label>
                                 <input type="text" class="form-control" id="travel-location" placeholder="請輸國家或城市" v-model="itinerarylocation">
-                                <!-- <LocationSearch /> -->
-
-                                <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/> -->
+                              
                             </div>
                             <label class="col-form-label">旅程日期</label>
                             <div class="container">
                                 <div class="row">
                                     <div class="col-6">
-                                        <!-- 開始日期輸入框 -->
                                         <input type="text" id="startdate"  @click="openDatePicker('start')" :value="startDate" placeholder="開始日期" readonly style="border: 1px solid black; padding: 5px 10px; cursor: pointer;">
                                     </div> 
                                     <div class="col-6">
-                                        <!-- 結束日期輸入框 -->
                                         <input type="text" id="enddate"  @click="openDatePicker('end')" :value="endDate" placeholder="結束日期" readonly style="border: 1px solid black; padding: 5px 10px; cursor: pointer;">
                                     </div> 
-                                    <!-- 日期選擇器 -->
                                     <v-menu v-model="showDatePicker" transition="scale-transition" offset-y :style="{ position: 'absolute', left: '35%', transform: 'translateX(-50%)', top: '70%', transform: 'translateY(-50%)' }">
                                         <v-card>
                                             <v-date-picker v-model="selectedDate" :min="minDate" @update:model-value="setDate"></v-date-picker>
@@ -48,6 +42,75 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertdata()">完成</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    
+    <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/> -->
+    <!-- <input
+          class="form-control mt-2"
+          placeholder="地點搜尋"
+          id="search-input"
+        /> -->
+        <!-- <div
+        v-show="showMap"
+        id="map"
+        style="height: 400px; width: 100%"
+        class="hiden"
+        ></div> -->
+
+
+    <div class="container mt-5 mb-5">
+        <div class="row">
+            <div class="col-4">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            新增行程
+                        </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="travel-themes" class="col-form-label">旅程主題</label>
+                                    <input type="text" class="form-control" id="travel-themes" placeholder="請輸入主題" v-model="itinerarytitle">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="travel-location" class="col-form-label">旅程地點</label>
+                                    <input type="text" class="form-control" id="travel-location" placeholder="請輸國家或城市" v-model="itinerarylocation">
+                                </div>
+                                <label class="col-form-label">旅程日期</label>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <!-- 開始日期輸入框 -->
+                                            <input type="text" id="startdate" class="form-control"  @click="openDatePicker('start')" :value="startDate" placeholder="開始日期" readonly style="padding: 5px 10px; cursor: pointer;">
+                                        </div> 
+                                        <div class="col-6">
+                                            <!-- 結束日期輸入框 -->
+                                            <input type="text" id="enddate" class="form-control"  @click="openDatePicker('end')" :value="endDate" placeholder="結束日期" readonly style="padding: 5px 10px; cursor: pointer;">
+                                        </div> 
+                                        <!-- 日期選擇器 -->
+                                        <v-menu v-model="showDatePicker" transition="scale-transition" offset-y :style="{ position: 'absolute', left: '35%', transform: 'translateX(-50%)', top: '70%', transform: 'translateY(-50%)' }">
+                                            <v-card>
+                                                <v-date-picker v-model="selectedDate" :min="minDate" @update:model-value="setDate"></v-date-picker>
+                                            </v-card>
+                                        </v-menu>
+                                    </div>
+                                </div>
+                            </form>
+                            <br>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-target="#collapseOne" @click="insertdata()">完成</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -66,18 +129,6 @@
             </div>
         </div>
     </div>
-    <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/> -->
-    <!-- <input
-          class="form-control mt-2"
-          placeholder="地點搜尋"
-          id="search-input"
-        /> -->
-        <!-- <div
-        v-show="showMap"
-        id="map"
-        style="height: 400px; width: 100%"
-        class="hiden"
-        ></div> -->
 </template>
 
 <script setup>
@@ -166,12 +217,19 @@
             const insert = {itineraryId: 0, itineraryTitle: itinerarytitle.value, itineraryLocation: CardName.value, itineraryCoordinate: CardCoordinate.value, itineraryImage: CardImg.value, itineraryStartDate: startDate.value ,ItineraryEndDate: endDate.value, itineraryCreateDate: null };
             const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`, insert);
 
-
+            
             // console.log(itinerarytitle.value);
             // console.log(startDate.value);
             // console.log(endDate.value);
             console.log(JSON.stringify(response.data));
             await itineraryData();
+
+            // 手動摺疊 Accordion
+            // const collapseElement = document.getElementById('collapseOne');
+            // const bsCollapse = new bootstrap.Collapse(collapseElement, {
+            //     toggle: false
+            // });
+            // bsCollapse.hide();
         } 
         catch (error)
         {
@@ -210,7 +268,7 @@
     // Initialize autocomplete
     const initAutocomplete = () => {
         const autocomplete = new google.maps.places.Autocomplete(
-            document.getElementById("search-input"),
+            document.getElementById("travel-location"),
             { type: ["restaurant"] }
         );
       setupMarkerListener(autocomplete);
@@ -249,11 +307,11 @@
         CardImg.value = place.photos?.[0]?.getUrl() || "";
         CardCoordinate.value = place.geometry.location.lat()+','+place.geometry.location.lng();
 
-        // console.log(place.name);
-        // console.log(place.geometry.location.lat()+','+place.geometry.location.lng());
-        // console.log(place.geometry.location.lng());
-        // console.log(place.geometry.location.lat());
-        // console.log(place.photos[0].getUrl());
+        console.log(place.name);
+        console.log(place.geometry.location.lat()+','+place.geometry.location.lng());
+        console.log(place.geometry.location.lng());
+        console.log(place.geometry.location.lat());
+        console.log(place.photos[0].getUrl());
         //map.value.setCenter(selectRestaurant.location);
     });
     };
