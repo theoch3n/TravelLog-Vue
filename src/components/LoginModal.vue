@@ -1,5 +1,5 @@
 <template>
-    <div ref="modalElement" class="modal fade" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div ref="modalElement" class="modal fade" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <!-- Modal Header -->
@@ -212,10 +212,45 @@ async function loginHandler() {
         console.error("登入錯誤：", error);
     }
 }
-async function validateForm() {
-    // 請依原邏輯補上驗證與註冊流程
-    await registerUser();
+
+// 驗證確認密碼是否一致
+function validateConfirmPassword() {
+  console.log("validateConfirmPassword triggered");
+  if (register.value.formData.confirmPassword !== register.value.formData.password) {
+    register.value.errors.confirmPassword = "確認密碼不相符！";
+  } else {
+    register.value.errors.confirmPassword = "";
+  }
+  console.log("confirm password error:", register.value.errors.confirmPassword);
 }
+
+// 驗證電話格式
+function validatePhone() {
+  console.log("validatePhone triggered");
+  if (!/^09\d{8}$/.test(register.value.formData.phone)) {
+    register.value.errors.phone = "電話格式不正確，必須以09開頭且為10位數字。";
+  } else {
+    register.value.errors.phone = "";
+  }
+  console.log("phone error:", register.value.errors.phone);
+}
+
+// 總驗證並發送註冊請求
+async function validateForm() {
+  // 先呼叫各個驗證函式
+  validatePassword();
+  validateConfirmPassword();
+  validatePhone();
+  console.log("目前錯誤:", register.value.errors);
+  // 如果有任一驗證錯誤，不發送請求
+  if (register.value.errors.password || register.value.errors.confirmPassword || register.value.errors.phone) {
+    console.warn("驗證失敗，不提交註冊請求");
+    return;
+  }
+  // 若無錯誤，呼叫 registerUser
+  await registerUser();
+}
+
 async function registerUser() {
     try {
         const response = await axios.post("https://localhost:7092/api/User/register", {
@@ -226,12 +261,29 @@ async function registerUser() {
         });
         console.log("註冊成功：", response.data);
         alert("註冊成功！歡迎加入！");
-        switchToLogin();
+        hide();
+        router.push("/");
     } catch (error) {
         console.error("註冊錯誤：", error);
+        // 如果後端回應有錯誤訊息，則顯示它
+        if (error.response && error.response.data && error.response.data.message) {
+            alert("註冊失敗：" + error.response.data.message);
+        } else {
+            alert("註冊時發生錯誤!可能是API沒開");
+        }
     }
 }
 
+async function validatePassword() {
+    console.log("validatePassword triggered");
+    // 改成使用 register.value.formData.password
+    if (!/^(?=.*[A-Z]).{6,20}$/.test(register.value.formData.password)) {
+        register.value.errors.password = "密碼必須為 6-20 字元，並包含至少一個大寫英文字母。";
+    } else {
+        register.value.errors.password = "";
+    }
+    console.log("password error:", register.value.errors.password);
+}
 // 取得 Modal DOM 元素並建立 Bootstrap Modal 實例
 const modalElement = ref(null);
 let modalInstance = null;
