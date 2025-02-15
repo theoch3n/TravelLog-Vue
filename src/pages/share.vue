@@ -1,45 +1,49 @@
 <template>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary my-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        你是一顆土豆
-    </button>
+    <div class="container d-flex justify-content-center">
+        <button type="button" class="btn btn-primary my-3 text-light" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop">
+            你是一顆土豆
+        </button>
+    </div>
 
-    <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        aria-labelledby="staticBackdropLabel">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">
-                        {{ thisTestTitle }}
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100 ms-5" id="staticBackdropLabel">
+                        {{ TestTitle }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex my-3">
-                        <div class="form-group w-100 me-3">
+                        <div class="form-group w-100 me-3 text-center">
                             <label class="form-label">品項</label>
-                            <input type="text" class="form-control w-100">
+                            <input type="text" class="form-control w-100 text-center" v-model="TestItem">
                         </div>
-                        <div class="form-group w-100">
+                        <div class="form-group w-100 text-center">
                             <label class="form-label">價格</label>
-                            <input type="number" class="form-control w-100" v-model="totalPrice">
+                            <input type="number" class="form-control w-100 text-center" v-model.number="totalPrice"
+                                @click="selectAllText" @input="handleTotalPrice"
+                                @keydown="handleTotalPriceInput($event)">
                         </div>
                     </div>
 
                     <div class="container border rounded-1">
                         <table class="table table-hover">
                             <thead class="table-light">
-                                <tr>
-                                    <th class="w-25">姓名</th>
-                                    <th class="w-25">比例(%)</th>
-                                    <th class="w-25">金額</th>
-                                    <th style="width:1%">#</th>
+                                <tr class="text-center">
+                                    <th class="w-25 pe-5">姓名</th>
+                                    <th class="w-25 pe-5">比例(%)</th>
+                                    <th class="w-25 pe-5">金額</th>
+                                    <th class="pe-4" style="width:1%">#</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(p, index) in insideData" :key="index">
-                                    <td>
+                                    <td class="ps-4">
                                         <select class="form-select text-center" disabled>
                                             <option v-for="(option, optIndex) in members" :key="optIndex"
                                                 :value="option" :selected="optIndex === index">
@@ -49,17 +53,20 @@
                                     </td>
                                     <td>
                                         <input class="form-control text-center" type="number"
-                                            v-model.number="p.percentage" @input="updatePriceFromPercentage(index)"
-                                            @keydown="handleKeydown(index, $event)">
+                                            v-model.number="p.percentage" @input="updateValue(index, 'percentage')"
+                                            @keydown="handleKeydown(index, $event, 'percentage')"
+                                            @click="selectAllText($event)" :class="{ 'border-danger': p.manual }">
                                     </td>
                                     <td>
                                         <input class="form-control text-center" type="number" v-model.number="p.price"
-                                            @input="updatePercentageFromPrice(index)">
+                                            @input="updateValue(index, 'price')"
+                                            @keydown="handleKeydown(index, $event, 'price')"
+                                            @click="selectAllText($event)" :class="{ 'border-danger': p.manual }">
                                     </td>
                                     <th class="align-middle">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value=""
-                                                id="flexCheckDefault">
+                                            <input class="form-check-input" type="checkbox" id="flexCheckDefault"
+                                                v-model="insideData[index].paid">
                                         </div>
                                     </th>
                                 </tr>
@@ -69,7 +76,7 @@
                 </div>
                 <div class="modal-footer">
                     <!-- radio button -->
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <div class="btn-group">
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="avg"
                             autocomplete="off" v-model="selectedOption" @change="selectionChange">
                         <label class="btn btn-outline-primary" for="btnradio1">平分</label>
@@ -79,8 +86,11 @@
                         <label class="btn btn-outline-primary" for="btnradio3">自訂</label>
                     </div>
                     <!-- radio button -->
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" @click="getData">你要確</button>
+                    <div>
+                        <button type="button" class="btn btn-secondary text-light me-1"
+                            data-bs-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary text-light" @click="getData">儲存</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,130 +100,176 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";
 import axios from 'axios';
+
 let isUpdating = false;
-const totalPrice = ref();
+const selectedOption = ref('avg');
+const insideData = reactive([]);
+const totalPrice = ref(0);
 const members = [
     "蘋果",
     "香蕉",
     "草莓",
-    // "蜘蛛"
+    // "西瓜",
 ];
 
-const insideData = reactive([]);
 onMounted(() => {
     members.forEach(() => {
         insideData.push({
+            exactPercentage: null,
+            exactPrice: null,
             percentage: null,
             price: null,
-            manual: false
+            manual: false,
+            Paid: false,
         });
     });
 });
+
 // 非同步 測試區域
 const baseAddress = "https://localhost:7092";
-const thisTestTitle = "標題:這邊用行程名稱";
-const bill = ref({
-    Title: "標題測試",
-    TotalAmount: 2000,
-    PaidBy: "測試1",
-    CreatedAt: new Date(),
-});
+const TestTitle = "標題:標題測試";
+const TestItem = "品項測試";
 
-const billDetails = ref([
-    { BillId: 1, MemberName: "測試1", Amount: 1000, Paid: true },
-    { BillId: 1, MemberName: "測試2", Amount: 2000, Paid: false },
-    { BillId: 1, MemberName: "測試3", Amount: 3000, Paid: false },
-]);
+const billDetails = ref([]);
+const bill = ref({});
+
+// const billDetails = ref([
+//     { BillId: 1, MemberName: "測試1", Amount: 1000, Paid: true },
+//     { BillId: 1, MemberName: "測試2", Amount: 2000, Paid: false },
+//     { BillId: 1, MemberName: "測試3", Amount: 3000, Paid: false },
+// ]);
+const generateBill = () => {
+    return {
+        Title: TestTitle,
+        TotalAmount: totalPrice.value,
+        PaidBy: "測試1",
+        CreatedAt: new Date(),
+    };
+};
+
+const generateBillDetails = () => {
+    return insideData.map((item, index) => ({
+        BillId: 1,
+        MemberName: members[index],
+        Amount: item.price,
+        Paid: item.paid
+    }));
+};
 
 const getData = async () => {
     const billDto = {
-        bill: { ...bill.value }, // 拷貝資料
-        details: [...billDetails.value] // 拷貝資料
+        bill: generateBill(),
+        details: generateBillDetails()
     };
 
     try {
         const response = await axios.post(`${baseAddress}/api/Bill/AddBillWithDetails`, billDto);
         if (response.data.success) {
-            alert("Test Bill created successfully!");
+            alert("資料創建成功!");
         } else {
-            alert("Failed to create bill.");
+            alert("資料創建失敗!");
         }
     } catch (error) {
-        console.log("Error submitting test bill:", error);
-        alert("An error occurred while submitting the bill.");
+        console.log("Error: ", error);
+        alert("提交失敗!");
     }
 };
 // 非同步 測試區域
 
+const selectAllText = (event) => {
+    event.target.select();
+};
 
-
-const getMaxPercentage = (index) => {
+const getMaxValue = (index, type) => {
     const manualSum = insideData.reduce((sum, item, i) => {
-        return sum + (i !== index && item.manual && item.percentage != null ? Number(item.percentage) : 0);
+        if (i !== index && item.manual && item[type] != null) {
+            return sum + Number(item[type]);
+        }
+        return sum;
     }, 0);
-    return Math.max(0, 100 - manualSum);
+
+    const maxValue = type === 'percentage' ? 100 : totalPrice.value;
+    return Math.max(0, maxValue - manualSum);
 };
 
-const getMaxPrice = (index) => {
-    const manualSum = insideData.reduce((sum, item, i) => {
-        return sum + (i !== index && item.manual && item.price != null ? Number(item.price) : 0);
-    }, 0);
-    return Math.max(0, totalPrice.value - manualSum);
-};
-
-const updatePriceFromPercentage = (index) => {
-    const item = insideData[index];
-    item.manual = true;
-    checkRange(index);
-    if (totalPrice.value && item.percentage != null) {
-        item.price = (totalPrice.value * item.percentage) / 100;
-    }
-};
-
-const updatePercentageFromPrice = (index) => {
-    const item = insideData[index];
-    item.manual = true;
-    if (totalPrice.value && item.price != null) {
-        item.percentage = ((item.price / totalPrice.value) * 100);
-    }
-};
-
-const checkRange = (index) => {
+const checkRange = (index, type) => {
     selectedOption.value = 'custom';
-    if (insideData[index].percentage < 0) {
-        insideData[index].percentage = 0;
-    } else if (insideData[index].percentage > 100) {
-        insideData[index].percentage = 100;
+    const maxValue = getMaxValue(index, type)
+    if (insideData[index][type] <= 0) {
+        insideData[index][type] = 0;
+    } else if (insideData[index][type] >= maxValue) {
+        insideData[index][type] = maxValue;
     }
 };
 
-const selectedOption = ref('avg');
+const updateValue = (index, type) => {
+    const item = insideData[index];
+    item.manual = true;
+    checkRange(index, type);
+
+    if (totalPrice.value && item[type] != null) {
+        if (type === 'percentage') {
+            item.price = ((totalPrice.value * item.percentage) / 100);
+        } else if (type === 'price') {
+            item.percentage = ((item.price / totalPrice.value) * 100);
+        }
+    }
+};
 
 const selectionChange = () => {
     insideData.forEach(item => {
         if (selectedOption.value === 'avg') {
             item.manual = false;
             item.price = totalPrice.value ? (totalPrice.value * item.percentage) / 100 : 0;
-        } else {
-            item.manual = true;
         }
     })
 }
-const handleKeydown = (index, event) => {
+
+const handleKeydown = (index, event, type) => {
     if (!insideData[index].manual) {
         insideData[index].manual = true;
     }
-
-    if (event.key === "Backspace") {
-        const currentValue = String(insideData[index].percentage)
-
-        if (currentValue.length === 1) {
-            insideData[index].percentage = 0
-            insideData[index].price = 0
-            event.preventDefault()
+    if (insideData[index][type] == 0) {
+        if (event.key == '0') {
+            insideData[index][type] = 0;
+            event.preventDefault();
         }
     }
 }
+
+const handleTotalPriceInput = (event) => {
+    if (totalPrice.value == 0) {
+        if (event.key == 0) {
+            totalPrice.value = 0;
+            event.preventDefault();
+        }
+    }
+
+}
+
+const handleTotalPrice = () => {
+    insideData.forEach((item) => {
+        item.price = totalPrice.value ? (totalPrice.value * item.percentage) / 100 : 0;
+    });
+}
+
+watch(
+    [insideData, totalPrice],
+    ([newInsideData, newTotalPrice]) => {
+        newInsideData.forEach((item) => {
+            if (item.percentage === '') {
+                item.percentage = 0;
+            }
+            if (item.price === '') {
+                item.price = 0;
+            }
+        });
+        if (newTotalPrice <= 0 || newTotalPrice === '') {
+            totalPrice.value = 0;
+        }
+    },
+    { deep: true }
+);
 
 watch(
     [insideData, totalPrice],
@@ -235,14 +291,16 @@ watch(
             const autoValue = remaining / autoCount;
             insideData.forEach(item => {
                 if (!item.manual) {
-                    item.percentage = autoValue
+                    item.exactPercentage = autoValue;
+                    item.percentage = parseFloat(autoValue.toFixed(2));
                 }
             });
         }
 
-        insideData.forEach((item) => {
+        insideData.forEach(item => {
             if (!item.manual) {
-                item.price = totalPrice.value ? (totalPrice.value * item.percentage) / 100 : 0;
+                item.exactPrice = totalPrice.value ? (totalPrice.value * item.exactPercentage) / 100 : 0;
+                item.price = parseFloat(item.exactPrice.toFixed(2));
             }
         });
         isUpdating = false;
