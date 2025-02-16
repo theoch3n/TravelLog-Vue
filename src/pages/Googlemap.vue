@@ -6,61 +6,31 @@
         <h4 class="title mt-4">高雄五日遊</h4>
 
         <img src="/台中.jpeg" alt="" class="titleimg" />
-        <button class="btn btn-primary mt-4" id="draw-route" @click="drawRoute">
+        <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
           規劃路線
         </button>
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li
-            class="nav-item"
-            v-for="(date, index) in dateList"
-            :key="index"
-            role="presentation"
-          >
-            <button
-              class="nav-link"
-              id="home-tab"
-              :class="{ active: selectedDate === date }"
-              data-bs-toggle="tab"
-              :data-bs-target="'#' + dateList[index]"
-              type="button"
-              role="tab"
-              aria-selected="true"
-              @click="handleDateClick(date)"
-            >
+          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
+            <button class="nav-link btn btn-outline-secondary" id="home-tab" :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]" type="button" role="tab" aria-selected="true"
+              @click="handleDateClick(date)">
               {{ date }}
             </button>
           </li>
         </ul>
-        <div
-          class="tab-content"
-          v-for="(date, index) in dateList"
-          :key="index"
-          id="myTabContent"
-        >
-          <div
-            class="tab-pane fade show"
-            :id="dateList[index]"
-            role="tabpanel"
-            aria-labelledby="home-tab"
-          >
+        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
+          <div class="tab-pane fade show" :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
             {{ dateList[index] }}
 
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard
-                  v-for="(place, index) in places"
-                  :key="place.id"
-                  :data="place"
-                  :deletePlaceHandler="deletePlace"
-                >
-                  <li
-                    v-if="index < places.length - 1"
-                    class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`"
-                  >
+                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
+                  :deletePlaceHandler="deletePlace">
+                  <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`">
                     計算中...
                   </li>
                 </PlaceCard>
@@ -77,18 +47,9 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input
-            v-model="textsearchInput"
-            class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別"
-            id="textsearch-input-overlay"
-          />
-          <input
-            v-model="searchInput"
-            class="form-control mt-2"
-            placeholder="地點搜尋"
-            id="search-input"
-          />
+          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別" id="textsearch-input-overlay" />
+          <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
         </div>
       </div>
       <div id="map" class="map-container col-8"></div>
@@ -275,19 +236,21 @@ const setupInfoWindow = (marker, place) => {
     }
 
     infoWindow.value.setContent(`
-          <h3>${place.name}</h3>
-          <img src="${place.img}" style="height:250px">
-          <div>地址：${place.address}</div>
-          <div>電話：${place.phoneNumber}</div>
-          <div>評分：${place.rating}</div>
-          <div>營業時間：</div>
-          <div>${place.opening}</div>
-          <div>
-            <button class="btn btn-primary mt-2" id="add-to-itinerary">
-              加入行程
-            </button>
-          </div>
-        `);
+  <div style="font-family: Arial, sans-serif; padding: 10px; max-width: 300px;">
+    <h3 style="color: #007bff; margin-bottom: 5px;">${place.name}</h3>
+    <img src="${place.img}" style="height: 200px; width: 100%; object-fit: cover; border-radius: 8px;">
+    <div style="margin-top: 8px; font-size: 14px;">
+      <strong>地址：</strong>${place.address}<br>
+      <strong>電話：</strong>${place.phoneNumber}<br>
+      <strong>評分：</strong>${place.rating}<br>
+      <strong>營業時間：</strong><br>${place.opening}
+    </div>
+    <button class="btn btn-primary mt-2" id="add-to-itinerary" style="width: 100%; margin-top: 10px;">
+      加入行程
+    </button>
+  </div>
+`);
+
     console.log(place.rating);
     infoWindow.value.open(map.value, marker);
 
@@ -583,6 +546,14 @@ onMounted(() => {
   /* 讓控制項目在左邊 */
   height: 100vh;
   width: 100%;
+}
+
+
+
+
+.draw_btn {
+  display: block;
+  margin-left: auto;
 }
 
 .title {

@@ -6,7 +6,7 @@ import router from "./router/router"; // 引入路由配置
 
 // 引入 Vuetify
 import "vuetify/styles";
-import { createVuetify } from "vuetify";
+import { createVuetify } from "vuetify";//vuex 類似於bootstrap 提供現有樣式及元件
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css"; // 引入 Material Design Icons
