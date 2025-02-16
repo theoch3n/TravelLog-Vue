@@ -2,11 +2,11 @@
 import { ref } from "vue";
 
 // 導入 banner 圖片
-import banner01 from "../assets/banner01.png";
-import banner02 from "../assets/banner02.png";
-import banner03 from "../assets/banner03.png";
-import banner04 from "../assets/banner04.png";
-import banner05 from "../assets/banner05.png";
+import banner01 from "../assets/banner01.jpg";
+import banner02 from "../assets/banner02.jpg";
+import banner03 from "../assets/banner03.jpg";
+import banner04 from "../assets/banner04.jpeg";
+import banner05 from "../assets/banner05.jpg";
 
 const banners = ref([
     { src: banner01, alt: "Banner 1" },
