@@ -497,6 +497,12 @@ onMounted(() => {
   fetchPlaces();
   // initSortable()
 });
+
+// import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+console.log("卡片ID:"+route.params.id);
 </script>
 
 <style scoped>

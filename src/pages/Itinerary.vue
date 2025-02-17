@@ -118,7 +118,7 @@
 
     <div class="container mt-5">
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div class="col" v-for="card in CardData" :key="card.itineraryId">
+            <div class="col" v-for="card in CardData" :key="card.itineraryId" @click="navigateToGoogleMap(card.itineraryId)">
                 <div class="card h-100">
                     <img :src="card.itineraryImage" class="card-img-top" alt="...">
                     <div class="card-body">
@@ -137,6 +137,7 @@
     import axios from 'axios';
     import { format } from "date-fns"; // 格式化日期
     import LocationSearch from "../components/LocationSearch.vue";
+    import { useRouter } from 'vue-router';
 
     const baseAddress = 'https://localhost:7092';
 
@@ -332,6 +333,13 @@
         }
     };
 
+    // 路由導向 傳遞行程ID
+    const router = useRouter();
+
+    const navigateToGoogleMap = (itineraryId) => {
+        console.log(itineraryId);
+         router.push({ name: 'Googlemap', params: { id: itineraryId } });
+    };
 </script>
 
 
