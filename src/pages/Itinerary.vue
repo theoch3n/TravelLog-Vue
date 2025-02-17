@@ -105,7 +105,7 @@
                             </form>
                             <br>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-bs-target="#collapseOne" @click="insertdata()">完成</button>
+                                <button type="button" class="btn btn-outline-primary" data-bs-target="#collapseOne" @click="insertdata()">完成</button>
                             </div>
                         </div>
                         </div>
@@ -138,6 +138,8 @@
     import { format } from "date-fns"; // 格式化日期
     import LocationSearch from "../components/LocationSearch.vue";
     import { useRouter } from 'vue-router';
+    // import 'bootstrap/dist/css/bootstrap.min.css';
+    // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
     const baseAddress = 'https://localhost:7092';
 
@@ -222,18 +224,21 @@
             // console.log(itinerarytitle.value);
             // console.log(startDate.value);
             // console.log(endDate.value);
-            console.log(JSON.stringify(response.data));
+            // console.log(JSON.stringify(response.data));
             await itineraryData();
 
             // 手動摺疊 Accordion
-            // const collapseElement = document.getElementById('collapseOne');
-            // const bsCollapse = new bootstrap.Collapse(collapseElement, {
-            //     toggle: false
-            // });
-            // bsCollapse.hide();
+            const collapseElement = document.getElementById('collapseOne');
+            import('bootstrap').then(({ Collapse }) => {
+            const bsCollapse = new Collapse(collapseElement, {
+                toggle: false
+            });
+            bsCollapse.toggle(); // 使用 toggle 方法來切換摺疊狀態
+        });
         } 
         catch (error)
         {
+            alert(error.message)
             alert(error.message + "\n檢查你的api有沒有開");
         }
     };
