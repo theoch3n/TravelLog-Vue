@@ -7,21 +7,20 @@
         </button>
     </div>
 
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h5 class="modal-title w-100 ms-5" id="staticBackdropLabel">
-                        {{ TestTitle }}
+                        {{ "行程名: " + ItineraryName + " 行程ID: " + ItineraryId }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex my-3">
                         <div class="form-group w-100 me-3 text-center">
                             <label class="form-label">品項</label>
-                            <input type="text" class="form-control w-100 text-center" v-model="TestItem">
+                            <input type="text" class="form-control w-100 text-center" v-model="Title">
                         </div>
                         <div class="form-group w-100 text-center">
                             <label class="form-label">價格</label>
@@ -74,7 +73,28 @@
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer justify-content-between">
+                    <div class="form-group d-flex">
+                        <input type="text" class="form-control text-center w-25 me-1" v-model="keyword"
+                            placeholder="搜尋">
+                        <select class="form-select text-center w-50" v-model="selectedCurrency">
+                            <option value="" disabled>選擇幣別</option>
+                            <option v-for="(rate, currency) in filteredRates" :key="currency" :value="rate">
+                                {{ currency }} -
+                                {{ rate }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <select class="form-select text-center" v-model="PaidBy">
+                            <option value="" disabled>選擇墊款人</option>
+                            <option v-for="(option, optIndex) in members" :key="optIndex" :value="option">
+                                {{ option }}
+                            </option>
+                        </select>
+                    </div>
+
                     <!-- radio button -->
                     <div class="btn-group">
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="avg"
@@ -98,7 +118,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import axios from 'axios';
 
 let isUpdating = false;
@@ -113,6 +133,8 @@ const members = [
 ];
 
 onMounted(() => {
+    getExchangeRates();
+
     members.forEach(() => {
         insideData.push({
             exactPercentage: null,
@@ -124,25 +146,48 @@ onMounted(() => {
         });
     });
 });
+// mark
+const options = ref([111, 123, 12345]);
+const keyword = ref('');
+const filteredRates = computed(() => {
+    if (!keyword.value) {
+        return rates.value;
+    }
+    return Object.fromEntries(
+        Object.entries(rates.value).filter(([currency]) => currency.includes(keyword.value.toUpperCase()))
+    );
+});
+// 
+//匯率api測試
+let ExchangeRates = ref();
+let rates = ref();
+const selectedCurrency = ref('');
+const getExchangeRates = async () => {
+    // 後端自己叫的期交所api，現在用另一個
+    // const response = await axios.get(`${baseAddress}/api/ExchangeRates`)
+    const ExchangeRatesApiKey = "3bbb6fbca51af86d327efec8";
+    const response = await axios.get(`https://v6.exchangerate-api.com/v6/${ExchangeRatesApiKey}/latest/TWD`);
+    ExchangeRates.value = response.data;
+    rates.value = ExchangeRates.value.conversion_rates;
+    // console.log("=================");
+    // console.log(rates.value)
+}
+//
 
 // 非同步 測試區域
 const baseAddress = "https://localhost:7092";
-const TestTitle = "標題:標題測試";
-const TestItem = "品項測試";
+const ItineraryId = ref(0);
+const ItineraryName = ref("測試用行程名稱");
+const Title = ref("測試品項");
+const PaidBy = ref("");
 
-const billDetails = ref([]);
-const bill = ref({});
-
-// const billDetails = ref([
-//     { BillId: 1, MemberName: "測試1", Amount: 1000, Paid: true },
-//     { BillId: 1, MemberName: "測試2", Amount: 2000, Paid: false },
-//     { BillId: 1, MemberName: "測試3", Amount: 3000, Paid: false },
-// ]);
 const generateBill = () => {
     return {
-        Title: TestTitle,
+        ItineraryId: ItineraryId.value,
+        ItineraryName: ItineraryName.value,
+        Title: Title.value,
         TotalAmount: totalPrice.value,
-        PaidBy: "測試1",
+        PaidBy: PaidBy.value,
         CreatedAt: new Date(),
     };
 };
