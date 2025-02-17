@@ -1,32 +1,64 @@
 import axios from "axios";
 
 class testECPayService {
-    constructor() {
-        this.ApiBaseUrl = "https://localhost:7092/api";
-    }
+    ApiBaseUrl = "https://localhost:7092/api/Ecpay";
 
+    /**
+     * 建立訂單 (對應後端 `/CreateOrder`)
+     * @param {Object} orderDetails 訂單資料
+     * @returns {Promise<Object>} 訂單資訊
+     */
     async createOrder(orderDetails) {
         try {
             const response = await axios.post(
-                `${this.ApiBaseUrl}/Ecpay/CreateOrder`,
+                `https://localhost:7092/api/Ecpay/CreateOrder`,
                 {
-                    totalAmount: orderDetails.totalAmount,
-                    itemName: orderDetails.itemName,
-                    tradeDesc: orderDetails.tradeDesc || "旅遊訂單",
+                    order: {
+                        OrderTotalAmount: orderDetails.totalAmount,
+                        UserId: 1,
+                        OrderStatus: 1,
+                        OrderPaymentStatus: 1,
+                        OrderTime: new Date().toISOString(), // 確保時間不為 null
+                    },
                 }
             );
 
-            return response.data;
+            console.log("✅ 訂單建立成功:", response.data);
+            return response.data; // 回傳訂單資訊
         } catch (error) {
-            console.error("Order creation error", error);
+            console.error("❌ Order creation error:", error);
             throw error;
         }
     }
 
+    /**
+     * 發起綠界金流付款請求 (對應 `/Payment`)
+     * @param {string} merchantTradeNo 訂單交易編號
+     * @returns {Promise<void>} 直接導向綠界金流
+     */
+    async paymentRequest(merchantTradeNo) {
+        try {
+            const response = await axios.post(`${ApiBaseUrl}/Payment`, {
+                order: {
+                    MerchantTradeNo: merchantTradeNo,
+                },
+            });
+
+            console.log("✅ 取得綠界付款參數:", response.data);
+            this.submitToECPay(response.data);
+        } catch (error) {
+            console.error("❌ Payment initiation error:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * 提交表單至綠界 (用於將參數送出)
+     * @param {Object} orderParams 綠界所需的付款參數
+     */
     submitToECPay(orderParams) {
-        // 創建一個動態表單並提交
         const form = document.createElement("form");
-        form.method = "post";
+        form.method = "POST";
         form.action =
             "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5";
 
@@ -42,49 +74,20 @@ class testECPayService {
         form.submit();
     }
 
-    // 直接支付方法
-    async processDirectPayment(paymentData) {
+    /**
+     * 查詢訂單狀態 (對應 `/GetOrderInfo/{tradeNo}`)
+     * @param {string} tradeNo 訂單交易編號
+     * @returns {Promise<Object>} 訂單資訊
+     */
+    async getOrderStatus(tradeNo) {
         try {
-            const response = await axios.post(
-                `${this.ApiBaseUrl}/Ecpay/DirectPayment`,
-                {
-                    paymentMethod: paymentData.paymentMethod,
-                    cardInfo: paymentData.cardInfo,
-                    orderDetails: paymentData.orderDetails,
-                }
+            const response = await axios.get(
+                `${ApiBaseUrl}/GetOrderInfo/${tradeNo}`
             );
-
+            console.log("✅ 訂單查詢成功:", response.data);
             return response.data;
         } catch (error) {
-            console.error("Direct payment error", error);
-            throw error;
-        }
-    }
-
-    // 發送驗證碼方法
-    async sendVerificationCode(cardInfo) {
-        try {
-            const response = await axios.post(
-                `${this.ApiBaseUrl}/Ecpay/SendVerificationCode`,
-                cardInfo
-            );
-            return response.data;
-        } catch (error) {
-            console.error("Send verification code error", error);
-            throw error;
-        }
-    }
-
-    // 驗證支付方法
-    async verifyPayment(paymentData) {
-        try {
-            const response = await axios.post(
-                `${this.ApiBaseUrl}/Ecpay/VerifyPayment`,
-                paymentData
-            );
-            return response.data;
-        } catch (error) {
-            console.error("Verify payment error", error);
+            console.error("❌ Error fetching order status:", error);
             throw error;
         }
     }

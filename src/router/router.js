@@ -8,7 +8,7 @@ import Products from "../pages/Products.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
 import AccountLayout from "../layouts/AccountLayout.vue";
-import testPayment from "../pages/testPayment copy.vue";
+import testPayment from "../pages/testPayment.vue";
 import Googlemap from "../pages/Googlemap.vue";
 import Account from "../pages/Account.vue";
 import Register from "../pages/Register.vue";

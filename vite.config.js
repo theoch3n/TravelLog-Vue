@@ -13,9 +13,12 @@ export default defineConfig({
         },
     },
     server: {
+        proxy: {
+            "/api": "https://localhost:7092",
+        },
         https: {
-            key: fs.readFileSync("./localhost-key.pem"),
-            cert: fs.readFileSync("./localhost.pem"),
+            key: fs.readFileSync("./localhost+2-key.pem"),
+            cert: fs.readFileSync("./localhost+2.pem"),
         },
         host: "localhost",
         port: 5173,

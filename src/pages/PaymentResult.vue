@@ -13,27 +13,38 @@ export default {
     props: ['merchantTradeNo'],
     data() {
         return {
-            message: '正在檢查付款狀態...'
+            message: '正在檢查付款狀態...',
+            retryCount: 0
         };
     },
     mounted() {
-        this.fetchOrderStatus();
+        this.checkPaymentStatus();
     },
     methods: {
-        async fetchOrderStatus() {
+        async checkPaymentStatus() {
             try {
-                const response = await axios.get(`https://localhost:7092/api/Ecpay/GetOrder?merchantTradeNo=${this.merchantTradeNo}`);
+                const response = await axios.get(`https://localhost:7092/api/Ecpay/GetOrderInfo/${this.merchantTradeNo}`);
                 if (response.data && response.data.orderPaymentStatus === 2) {
                     this.message = '✅ 付款成功！';
                 } else {
-                    this.message = '❌ 付款失敗或尚未完成。';
+                    this.retryCheckPayment();
                 }
             } catch (error) {
-                this.message = '⚠️ 錯誤：無法取得付款狀態。';
+                this.retryCheckPayment();
+            }
+        },
+        retryCheckPayment() {
+            if (this.retryCount < 5) {
+                setTimeout(() => {
+                    this.retryCount++;
+                    this.checkPaymentStatus();
+                }, 3000);
+            } else {
+                this.message = '⚠️ 錯誤：無法確認付款狀態，請稍後再試。';
             }
         }
     }
-}
+};
 </script>
 
 <style scoped>
