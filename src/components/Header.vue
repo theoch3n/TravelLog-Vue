@@ -79,6 +79,7 @@ const pages = [
     textClass: "text-yellow-darken-4",
     to: "/Googlemap",
   },
+  { value: "Profile", text: "會員資料", icon: "mdi-account", textClass: "text-black", to: "/profile" },
 ];
 
 // 監聽路由變化，確保導航按鈕與路由同步
@@ -95,6 +96,7 @@ const pages = [
 
 // 從 pages 陣列中找出會員登入項目
 const accountPage = computed(() => pages.find(page => page.value === "Account"));
+const filteredPages = computed(() => pages.filter(page => page.value !== "Account"));
 
 // 建立 ref 以存取子組件 LoginModel 的實例
 const loginModalRef = ref(null);
@@ -189,9 +191,14 @@ function openLoginModal() {
 
         <!-- 導航菜單 -->
         <nav class="desktop-nav">
-          <v-btn v-for="(page, index) in pages" :to="page.to" :key="index">{{
-            page.text
-          }}</v-btn>
+          <v-btn 
+  v-for="(page, index) in filteredPages" 
+  :to="page.to" 
+  :key="index"
+>
+  {{ page.text }}
+</v-btn>
+
           <!-- 會員登入按鈕：僅在未登入時顯示 -->
           <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2"
             :class="accountPage.textClass">
