@@ -41,7 +41,7 @@ const pages = [
     text: "Googlemap",
     icon: "mdi-phone-incoming",
     textClass: "text-yellow-darken-4",
-    to: "/Googlemap",
+    to: "/Googlemap:id",
   },
   {
     value: "Itinerary",
