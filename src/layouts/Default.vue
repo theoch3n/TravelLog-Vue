@@ -9,6 +9,7 @@ import PageTop from "../components/PageTop.vue";
 <template>
     <v-app>
         <!-- 公告欄 -->
+        <!-- 跑馬燈會擋到底下按鈕，修好再放回去 -->
         <Announcement />
         <!-- 頁首區域 -->
         <Header />
