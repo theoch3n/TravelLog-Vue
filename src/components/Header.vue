@@ -41,7 +41,7 @@ const pages = [
     text: "Googlemap",
     icon: "mdi-phone-incoming",
     textClass: "text-yellow-darken-4",
-    to: "/Googlemap",
+    to: "/Googlemap:id",
   },
   {
     value: "Itinerary",
@@ -55,6 +55,13 @@ const pages = [
     text: "訂單詳情",
     textClass: "text-yellow-darken-4",
     to: "/orderDetail",
+  },
+  {
+    value: "Itinerary",
+    text: "行程",
+    icon: "mdi-phone-incoming",
+    textClass: "text-yellow-darken-4",
+    to: "/Googlemap",
   },
 ];
 
