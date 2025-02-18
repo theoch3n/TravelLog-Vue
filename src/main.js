@@ -8,17 +8,17 @@ import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
-import { createPinia } from 'pinia'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import "./style.css";
 
 // 建立 Vuetify 實例
 const vuetify = createVuetify({
-  components,
-  directives,
-  icons: {
-    defaultSet: "mdi",
-  },
+    components,
+    directives,
+    icons: {
+        defaultSet: "mdi",
+    },
 });
 
 // 建立 Pinia 實例
@@ -38,12 +38,12 @@ axios.defaults.baseURL = "https://localhost:7092"; // API 伺服器 URL
 
 // 每次發送請求時自動附加最新 token
 axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
+    (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
 );
