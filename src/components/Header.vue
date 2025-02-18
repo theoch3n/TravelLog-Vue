@@ -25,11 +25,31 @@ const pageTitle = ref("");
 // ];
 // 定義選單
 const pages = [
-  { value: "payment", text: "Payment", textClass: "text-brown-darken-1", to: "/payment" },
-  { value: "about", text: "關於我們", textClass: "text-blue", to: "/about" },
-  { value: "contact", text: "客服中心", textClass: "text-yellow-darken-4", to: "/contact" },
-  { value: "products", text: "Products", textClass: "text-purple-darken-4", to: "/products" },
-  { value: "Account", text: "會員登入", icon: "mdi-account", textClass: "text-black", to: "/account" },
+  {
+    value: "payment",
+    text: "Payment",
+    textClass: "text-brown-darken-1",
+    to: "/payment"
+  },
+  {
+    value: "about",
+    text: "關於我們",
+    textClass: "text-blue",
+    to: "/about"
+  },
+  {
+    value: "contact",
+    text: "客服中心",
+    textClass: "text-yellow-darken-4",
+    to: "/contact"
+  },
+  {
+    value: "products",
+    text: "Products",
+    textClass: "text-purple-darken-4",
+    to: "/products"
+  },
+
   {
     value: "share",
     text: "share",
@@ -57,13 +77,6 @@ const pages = [
     textClass: "text-yellow-darken-4",
     to: "/orderDetail",
   },
-  {
-    value: "Itinerary",
-    text: "行程",
-    icon: "mdi-phone-incoming",
-    textClass: "text-yellow-darken-4",
-    to: "/Googlemap",
-  },
 ];
 
 // 監聽路由變化，確保導航按鈕與路由同步
@@ -86,13 +99,13 @@ const loginModalRef = ref(null);
 
 // 按鈕點擊觸發子組件的方法
 function openLoginModal() {
-  loginModalRef.value.show(); 
+  loginModalRef.value.show();
 }
 
 </script>
 
 <template>
-    <!-- 引入子組件 -->
+  <!-- 引入子組件 -->
   <LoginModal ref="loginModalRef" />
 
   <div>
@@ -157,7 +170,7 @@ function openLoginModal() {
               class="bi bi-shop-window fs-4 me-3"></i></a>
           <a class="tool-button text-black" href="./contact.html" data-bs-toggle="" aria-controls=""><i
               class="bi bi-chat-fill fs-4 me-3"></i></a>
-              <!-- 會員登入按鈕：點擊後執行 openLoginModal() -->
+          <!-- 會員登入按鈕：點擊後執行 openLoginModal() -->
 
           <a class="tool-button text-black" href="javascript:;" data-bs-toggle="modal" data-bs-target="#exampleModal"><i
               class="bi bi-person-fill fs-4 me-3"></i></a>
