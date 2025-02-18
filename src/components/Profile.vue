@@ -20,7 +20,6 @@
             <label for="userPhone" class="form-label">電話</label>
             <input type="text" id="userPhone" class="form-control" v-model="profile.userPhone" />
           </div>
-          <!-- 如有其他欄位，也可以繼續添加 -->
           <button type="submit" class="btn btn-primary">更新資料</button>
         </form>
       </div>
@@ -33,24 +32,23 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
-  import { useUserStore } from '@/stores/userStore'; // 若需要使用 Pinia 存取登入資訊，可加入
+  import { useRouter } from 'vue-router';
   
-  // 這裡定義一個 reactive 物件儲存使用者資料
   const profile = ref({
     userId: '',
     userName: '',
     userEmail: '',
     userPhone: ''
   });
-  
   const loading = ref(true);
   const error = ref(null);
+  const router = useRouter();
   
-  // 取得使用者資料，假設後端提供 GET /api/User/profile 端點
   async function fetchProfile() {
     try {
-      const response = await axios.get("https://localhost:7092/api/User/profile");
-      // 假設回傳的資料格式與 profile 結構一致
+      // 呼叫 GET /api/Profile 端點
+      const response = await axios.get("https://localhost:7092/api/Profile");
+      // 假設後端回傳的資料與 profile 結構一致
       profile.value = response.data;
     } catch (err) {
       console.error("取得資料錯誤：", err);
@@ -60,13 +58,13 @@
     }
   }
   
-  // 更新使用者資料，假設後端提供 PUT /api/User/profile 端點
   async function updateProfile() {
     try {
-      const response = await axios.put("https://localhost:7092/api/User/profile", profile.value);
-      alert("資料更新成功！");
-      // 若需要，可以更新 Pinia store 中的資訊
-      // userStore.setUserInfo(response.data);
+      // 呼叫 PUT /api/Profile 端點，將 profile.value 傳送到後端
+      const response = await axios.put("https://localhost:7092/api/Profile", profile.value);
+      alert("個人資料更新成功！");
+      // 更新成功後，你可以選擇導向其他頁面或刷新頁面
+      // router.push("/");
     } catch (err) {
       console.error("更新資料錯誤：", err);
       alert("更新資料失敗！");
@@ -87,7 +85,6 @@
     border-radius: 8px;
     box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
   }
-  
   h2 {
     text-align: center;
     margin-bottom: 20px;
