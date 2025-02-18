@@ -88,16 +88,14 @@ async function validateForm(formRef) {
     const { valid } = await formRef.validate();
     return valid;
 }
-async function checkOrderStatus() {
-    try {
-        const response = await axios.post("https://localhost:7092/api/Ecpay/QueryOrder", {
-            MerchantTradeNo: "你的訂單編號",
-        });
+async function dummyData() {
+    participants.value = [
+        { lastName: '王', firstName: '小明', gender: '男' },
+        { lastName: '陳', firstName: '小美', gender: '女' },
+    ];
+    contactInfo.value =
+        { name: '王小明', email: 'a123@gmail.com', 'phone': '0912345678', country: '台灣' };
 
-        this.orderStatus = response.data.TradeStatus === "1" ? "已付款" : "未付款";
-    } catch (error) {
-        console.error("查詢失敗:", error);
-    }
 }
 </script>
 
@@ -239,8 +237,7 @@ async function checkOrderStatus() {
                             確認付款
                         </v-btn>
                     </v-card-actions>
-                    <v-btn @click="checkOrderStatus">查詢訂單狀態</v-btn>
-                    <p v-if="orderStatus">訂單狀態: {{ orderStatus }}</p>
+                    <v-btn @click="dummyData"></v-btn>
                 </v-card>
             </v-col>
         </v-row>
