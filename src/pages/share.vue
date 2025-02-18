@@ -253,10 +253,18 @@ const updateValue = (index, type) => {
     checkRange(index, type);
 
     if (totalPrice.value && item[type] != null) {
+        // if (type === 'percentage') {
+        //     item.price = ((totalPrice.value * item.percentage) / 100);
+        // } else if (type === 'price') {
+        //     item.percentage = ((item.price / totalPrice.value) * 100);
+        // }
+        //----------------  
         if (type === 'percentage') {
-            item.price = ((totalPrice.value * item.percentage) / 100);
+            item.exactPrice = ((totalPrice.value * item.percentage) / 100);
+            item.price = parseFloat(item.exactPrice.toFixed(2));
         } else if (type === 'price') {
-            item.percentage = ((item.price / totalPrice.value) * 100);
+            item.exactPercentage = ((item.price / totalPrice.value) * 100);
+            item.percentage = parseFloat(item.exactPercentage.toFixed(2));
         }
     }
 };
@@ -346,6 +354,7 @@ watch(
             if (!item.manual) {
                 item.exactPrice = totalPrice.value ? (totalPrice.value * item.exactPercentage) / 100 : 0;
                 item.price = parseFloat(item.exactPrice.toFixed(2));
+                // item.percentage = parseFloat(item.exactPercentage.toFixed(2));
             }
         });
         isUpdating = false;
