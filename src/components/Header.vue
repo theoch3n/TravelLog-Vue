@@ -132,6 +132,17 @@ function openLoginModal() {
   loginModalRef.value.show();
 }
 
+// 點擊按鈕時依據登入狀態處理
+function handleProfileClick() {
+  if (!userStore.isAuthenticated) {
+    // 未登入時打開登入模態框
+    openLoginModal();
+  } else {
+    // 已登入則導向 /profile
+    router.push("/profile");
+  }
+}
+
 </script>
 
 <template>
@@ -200,10 +211,10 @@ function openLoginModal() {
               class="bi bi-shop-window fs-4 me-3"></i></a>
           <a class="tool-button text-black" href="./contact.html" data-bs-toggle="" aria-controls=""><i
               class="bi bi-chat-fill fs-4 me-3"></i></a>
-          <!-- 會員登入按鈕：點擊後執行 openLoginModal() -->
-
-          <a class="tool-button text-black" href="javascript:;" data-bs-toggle="modal" data-bs-target="#exampleModal"><i
-              class="bi bi-person-fill fs-4 me-3"></i></a>
+          <!-- 這裡示範以 a 標籤包裝按鈕圖示，點擊時觸發 handleProfileClick -->
+          <a class="tool-button text-black" href="javascript:;" @click.prevent="handleProfileClick">
+            <i class="bi bi-person-fill fs-4 me-3"></i>
+          </a>
           <a class="tool-button text-black" href="#cartMenu" data-bs-toggle="offcanvas" aria-controls="cartMenu"><i
               class="bi bi-bag-fill fs-4 me-3"></i></a>
         </div>
@@ -222,7 +233,8 @@ function openLoginModal() {
           </v-btn>
 
           <!-- 會員登入按鈕：僅在未登入時顯示 -->
-          <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2" :class="accountPage.textClass">
+          <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2"
+            :class="accountPage.textClass">
             <v-icon left>{{ accountPage.icon }}</v-icon>
             {{ accountPage.text }}
           </v-btn>
@@ -416,5 +428,14 @@ function openLoginModal() {
 
 #cartMenu {
   max-width: 280px;
+}
+
+.tool-button {
+  transition: transform 0.1s ease;
+}
+
+/* 當按鈕被點擊（active 狀態），縮小至 95% */
+.tool-button:active {
+  transform: scale(0.75);
 }
 </style>
