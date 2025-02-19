@@ -6,11 +6,11 @@
 
             <div class="wrap">
                 <router-link to="/itinerary" class="icon-container">
-                    <img src="/public/icon/icon01.png" alt="行程規劃" class="img">
+                    <img src="/icon/icon01.png" alt="行程規劃" class="img">
                     <span class="icon-text">行程規劃</span>
                 </router-link>
                 <router-link to="/Products" class="icon-container">
-                    <img src="/public/icon/travel-and-tourism.png" alt="包套行程" class="img">
+                    <img src="/icon/travel-and-tourism.png" alt="包套行程" class="img">
                     <span class="icon-text">包套行程</span>
 
                 </router-link>
