@@ -91,13 +91,13 @@ const pages = [
     textClass: "text-yellow-darken-4",
     to: "/orderDetail",
   },
-  {
-    value: "Itinerary",
-    text: "行程",
-    icon: "mdi-phone-incoming",
-    textClass: "text-yellow-darken-4",
-    to: "/Googlemap",
-  },
+  // {
+  //   value: "Itinerary",
+  //   text: "行程",
+  //   icon: "mdi-phone-incoming",
+  //   textClass: "text-yellow-darken-4",
+  //   to: "/Googlemap",
+  // },
   {
     value: "Account",
     text: "會員登入",
@@ -159,7 +159,7 @@ function handleProfileClick() {
 <template>
   <div>
     <!-- 引入子組件 -->
-    <LoginModal ref="loginModalRef" />
+    <!-- <LoginModal ref="loginModalRef" /> -->
     <!-- #region Header -->
     <!-- Desktop Header -->
     <header class="desktop-header">
