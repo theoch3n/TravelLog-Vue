@@ -40,7 +40,7 @@ const routes = [
                 component: Products, // 顯示的頁面
             },
             {
-                path: "/Googlemap:id", // 路由路徑 (根目錄)
+                path: "/Googlemap/:id", // 路由路徑 (根目錄)
                 name: "Googlemap", // 路由名稱 (用於程式內部識別)
                 component: Googlemap, // 顯示的頁面
             },
