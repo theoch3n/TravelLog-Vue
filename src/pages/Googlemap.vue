@@ -148,13 +148,33 @@ const Itinerarydata = ref({
   itineraryEndDate: "",
   itineraryImage: "",
 });
-console.log("卡片ID:" + itineraryId);
-
-//////////////////////////計算日期/////////////////////////////////////
-
 // 初始化為當前時間，避免 undefined 問題
 const date_St = ref(dayjs());
 const date_Ed = ref(dayjs());
+
+console.log("卡片ID:" + itineraryId);
+
+// Lifecycle hooks
+onMounted(() => {
+  console.log("準備呼叫 fetchItineraryById 函式...");
+
+  loadGoogleMapsAPI();
+  // fetchPlaces();
+  fetchPlacesByDate();
+  fetchItineraryById();
+
+  // initSortable()
+});
+
+// 使用 Vue 的 onMounted 來初始化地圖
+onMounted(() => {
+  if (typeof google !== "undefined" && google.maps) {
+    initMap();
+  } else {
+    console.error("Google Maps API 尚未加載完成！");
+  }
+});
+//////////////////////////計算日期/////////////////////////////////////
 
 // 監聽 Itinerarydata 變化，確保有值後才設定日期
 watch(
@@ -276,15 +296,6 @@ const initMap = () => {
 
   initAutocomplete();
 };
-
-// 使用 Vue 的 onMounted 來初始化地圖
-onMounted(() => {
-  if (typeof google !== "undefined" && google.maps) {
-    initMap();
-  } else {
-    console.error("Google Maps API 尚未加載完成！");
-  }
-});
 
 // Initialize autocomplete
 const initAutocomplete = () => {
@@ -570,20 +581,7 @@ const drawRoute = () => {
   });
 };
 
-// Fetch places
-// const fetchPlaces = async () => {
-//   try {
-//     const response = await fetch(`${baseAddress}/api/Places`);
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-//     const data = await response.json();
-//     itineraryItems.value = data;
-//   } catch (error) {
-//     console.error("Error fetching places:", error);
-//   }
-// };
-///////////////////傳送選擇的日期抓對應的地點////////////////////////
+//傳送選擇的日期抓對應的地點
 const fetchPlacesByDate = async () => {
   try {
     const response = await fetch(
@@ -608,7 +606,7 @@ watch(selectedDate, () => {
   fetchPlacesByDate();
 });
 
-/////////////////////根據建立行程ID抓取資料庫//////////////////
+//根據建立行程ID抓取資料庫
 const fetchItineraryById = async () => {
   console.log("進入 fetchItineraryById 函式...");
 
@@ -644,7 +642,7 @@ const fetchItineraryById = async () => {
   }
 };
 
-/////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////
 
 // Initialize Sortable
 // const initSortable = () => {
@@ -660,18 +658,6 @@ const fetchItineraryById = async () => {
 //     })
 //   }
 // }
-
-// Lifecycle hooks
-onMounted(() => {
-  console.log("準備呼叫 fetchItineraryById 函式...");
-
-  loadGoogleMapsAPI();
-  // fetchPlaces();
-  fetchPlacesByDate();
-  fetchItineraryById();
-
-  // initSortable()
-});
 </script>
 
 <style scoped>
