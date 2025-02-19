@@ -117,7 +117,10 @@ const pages = [
 
 // 從 pages 陣列中找出會員登入項目
 const accountPage = computed(() => pages.find(page => page.value === "Account"));
-const filteredPages = computed(() => pages.filter(page => page.value !== "Account"));
+const filteredPages = computed(() => 
+  pages.filter(page => page.value !== "Account" && page.value !== "Profile")
+);
+
 
 // 建立 ref 以存取子組件 LoginModel 的實例
 const loginModalRef = ref(null);
@@ -217,10 +220,14 @@ function openLoginModal() {
           </v-btn>
 
           <!-- 會員登入按鈕：僅在未登入時顯示 -->
-          <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2"
-            :class="accountPage.textClass">
+          <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2" :class="accountPage.textClass">
             <v-icon left>{{ accountPage.icon }}</v-icon>
             {{ accountPage.text }}
+          </v-btn>
+          <!-- 會員資料按鈕：僅在已登入時顯示 -->
+          <v-btn v-if="userStore.isAuthenticated" @click="router.push('/profile')" class="mx-2" color="primary">
+            <v-icon left>mdi-account-circle</v-icon>
+            會員資料
           </v-btn>
           <!-- 登出按鈕：僅在已登入時顯示 -->
           <v-btn v-if="userStore.isAuthenticated" @click="logout" class="mx-2" color="error">
@@ -399,7 +406,9 @@ function openLoginModal() {
 .tool-button svg {
   width: 20px;
   height: 20px;
-}#mobileMenu {
+}
+
+#mobileMenu {
   max-width: 280px;
 }
 
