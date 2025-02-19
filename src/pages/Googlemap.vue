@@ -3,34 +3,81 @@
   <div class="trip-planner">
     <div class="flex-container">
       <div class="controls-container col-4 rounded-3">
-        <h4 class="title mt-4">高雄五日遊</h4>
-
-        <img src="/台中.jpeg" alt="" class="titleimg" />
-        <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
+        <h4 class="title mt-4">{{ Itinerarydata.itineraryTitle }}</h4>
+        <img
+          :src="Itinerarydata.itineraryImage"
+          alt=""
+          class="titleimg"
+          :style="{ height: '30%', width: '100%' }"
+        />
+        <div class="date">
+          <label for="itineraryStartDate">{{
+            Itinerarydata.itineraryStartDate
+          }}</label>
+          <label for=""> ~ </label>
+          <label for="itineraryEndDate">{{
+            Itinerarydata.itineraryEndDate
+          }}</label>
+        </div>
+        <button
+          class="btn btn-primary mt-4 draw_btn"
+          id="draw-route"
+          @click="drawRoute"
+        >
           規劃路線
         </button>
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
-            <button class="nav-link btn btn-outline-secondary" id="home-tab" :class="{ active: selectedDate === date }"
-              data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]" type="button" role="tab" aria-selected="true"
-              @click="handleDateClick(date)">
+          <li
+            class="nav-item"
+            v-for="(date, index) in dateList"
+            :key="index"
+            role="presentation"
+          >
+            <button
+              class="nav-link btn btn-outline-secondary"
+              id="home-tab"
+              :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab"
+              :data-bs-target="'#' + dateList[index]"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              @click="handleDateClick(date)"
+            >
               {{ date }}
             </button>
           </li>
         </ul>
-        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
-          <div class="tab-pane fade show" :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
+        <div
+          class="tab-content"
+          v-for="(date, index) in dateList"
+          :key="index"
+          id="myTabContent"
+        >
+          <div
+            class="tab-pane fade show"
+            :id="dateList[index]"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
             {{ dateList[index] }}
 
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
-                  :deletePlaceHandler="deletePlace">
-                  <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`">
+                <PlaceCard
+                  v-for="(place, index) in places"
+                  :key="place.id"
+                  :data="place"
+                  :deletePlaceHandler="deletePlace"
+                >
+                  <li
+                    v-if="index < places.length - 1"
+                    class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`"
+                  >
                     計算中...
                   </li>
                 </PlaceCard>
@@ -47,9 +94,19 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別" id="textsearch-input-overlay" />
-          <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
+          <input
+            v-model="textsearchInput"
+            class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別"
+            id="textsearch-input-overlay"
+          />
+          <button class="btn btn-danger" id="searchButton">sds</button>
+          <input
+            v-model="searchInput"
+            class="form-control mt-2"
+            placeholder="地點搜尋"
+            id="search-input"
+          />
         </div>
       </div>
       <div id="map" class="map-container col-8"></div>
@@ -64,49 +121,12 @@ import { ref, onMounted, watch, computed } from "vue";
 import PlaceCard from "../components/PlaceCard.vue";
 import dayjs from "dayjs";
 import { format } from "date-fns";
+import { useRoute } from "vue-router";
+
 // Constants
 const baseAddress = "https://localhost:7092";
 const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
-///////////////////////////////////////////////////////////////
-const array1 = [2, 4, 6, 8, 0];
 
-// const date_St = ref(dayjs("2025-02-11"));
-// const date_Ed = dayjs("2025-02-16");
-// const date = ref(date_Ed.diff(date_St, "day"));
-
-// const dateList = computed(() => {
-//   return Array.from(
-//     {
-//       length: date.value + 1,
-//     },
-//     (_, i) => date_St.value.add(i, "day").format("YYYY-MM-DD")
-//   );
-// });
-
-const date_St = dayjs("2025-02-11");
-const date_Ed = dayjs("2025-02-16");
-
-// 計算相差天數
-const dateDiff = computed(() => date_Ed.diff(date_St, "day"));
-
-const dateList = computed(() => {
-  return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
-    date_St.add(i, "day").format("YYYY-MM-DD")
-  );
-});
-
-console.log(dateList.value); // 測試輸出
-
-////////////////////////得知當前所選的導覽業面////////////////////////////////
-// 當前選擇的日期
-const selectedDate = ref(dateList.value[0]); // 預設為第一天
-// 處理點擊事件
-const handleDateClick = (date) => {
-  selectedDate.value = date;
-  console.log("選擇的日期是：", date); // 這裡你可以改成發 API 請求
-};
-
-///////////////////////////////////////////////////////////////
 // Reactive references
 const map = ref(null);
 const textsearchInput = ref("");
@@ -118,6 +138,83 @@ const directionsService = ref(null);
 const directionsRenderers = ref([]);
 const infoWindow = ref(null);
 const placesList = ref([]);
+const route = useRoute();
+const itineraryId = route.params.id; // 從建立行程取得 ID
+const Itinerarydata = ref({
+  //儲存從itinerary資料庫裡抓的資料
+  itineraryId: "",
+  itineraryTitle: "",
+  itineraryStartDate: "",
+  itineraryEndDate: "",
+  itineraryImage: "",
+});
+// 初始化為當前時間，避免 undefined 問題
+const date_St = ref(dayjs());
+const date_Ed = ref(dayjs());
+
+console.log("卡片ID:" + itineraryId);
+
+// Lifecycle hooks
+onMounted(() => {
+  console.log("準備呼叫 fetchItineraryById 函式...");
+
+  loadGoogleMapsAPI();
+  // fetchPlaces();
+  fetchPlacesByDate();
+  fetchItineraryById();
+
+  // initSortable()
+});
+
+// 使用 Vue 的 onMounted 來初始化地圖
+onMounted(() => {
+  if (typeof google !== "undefined" && google.maps) {
+    initMap();
+  } else {
+    console.error("Google Maps API 尚未加載完成！");
+  }
+});
+//////////////////////////計算日期/////////////////////////////////////
+
+// 監聽 Itinerarydata 變化，確保有值後才設定日期
+watch(
+  () => Itinerarydata.value,
+  (newData) => {
+    if (newData?.itineraryStartDate && newData?.itineraryEndDate) {
+      date_St.value = dayjs(newData.itineraryStartDate);
+      date_Ed.value = dayjs(newData.itineraryEndDate);
+      console.log(
+        "更新後的日期:",
+        date_St.value.format("YYYY-MM-DD"),
+        date_Ed.value.format("YYYY-MM-DD")
+      );
+    }
+  },
+  { deep: true, immediate: true }
+);
+
+// 計算相差天數
+const dateDiff = computed(() => date_Ed.value.diff(date_St.value, "day"));
+
+// 生成日期列表
+const dateList = computed(() => {
+  return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
+    date_St.value.add(i, "day").format("YYYY-MM-DD")
+  );
+});
+
+// console.log(dateList.value); // 測試輸出
+
+////////////////////////得知當前所選的導覽業面////////////////////////////////
+// 當前選擇的日期
+const selectedDate = ref(dateList.value[0]); // 預設為第一天
+// 處理點擊事件
+const handleDateClick = (date) => {
+  selectedDate.value = date;
+  // console.log("選擇的日期是：", date); // 這裡你可以改成發 API 請求
+};
+
+///////////////////////////////////////////////////////////////
 
 //假的vard資料
 
@@ -157,7 +254,10 @@ const places2 = ref([
   },
 ]);
 
-//標籤頁
+////////////mixsearch///////////////
+const mixsearch = () => {};
+
+/////////////////////////////
 
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
@@ -196,15 +296,6 @@ const initMap = () => {
 
   initAutocomplete();
 };
-
-// 使用 Vue 的 onMounted 來初始化地圖
-onMounted(() => {
-  if (typeof google !== "undefined" && google.maps) {
-    initMap();
-  } else {
-    console.error("Google Maps API 尚未加載完成！");
-  }
-});
 
 // Initialize autocomplete
 const initAutocomplete = () => {
@@ -251,7 +342,7 @@ const setupInfoWindow = (marker, place) => {
   </div>
 `);
 
-    console.log(place.rating);
+    // console.log(place);
     infoWindow.value.open(map.value, marker);
 
     google.maps.event.addListenerOnce(infoWindow.value, "domready", () => {
@@ -273,7 +364,7 @@ const addToItinerary = async (place) => {
       },
       body: JSON.stringify({
         date: selectedDate.value,
-        scheduleId: 1,
+        scheduleId: itineraryId,
         name: place.name,
         address: place.address,
         latitude: place.lat,
@@ -282,7 +373,7 @@ const addToItinerary = async (place) => {
         rating: String(place.rating),
       }),
     });
-    console.log(selectedDate.value);
+    // console.log(selectedDate.value);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -331,10 +422,11 @@ const clearMarkers = () => {
   markers.value = [];
 };
 
-// Setup text search
+//setupTextSearch
 const setupTextSearch = (autocomplete) => {
   const service = new google.maps.places.PlacesService(map.value);
 
+  // 自動完成事件監聽（當選擇地點時觸發）
   autocomplete.addListener("place_changed", () => {
     const place = autocomplete.getPlace();
     const query = textsearchInput.value.trim();
@@ -344,44 +436,65 @@ const setupTextSearch = (autocomplete) => {
       return;
     }
 
+    // 使用 autocomplete 提供的地點，否則用地圖中心
     const searchLocation = place.geometry?.location || map.value.getCenter();
 
-    service.textSearch(
-      {
-        query: query,
-        location: searchLocation,
-        radius: 2000,
-        type: "restaurant",
-      },
-      (results, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          clearMarkers();
-
-          results.forEach((result) => {
-            const placeData = {
-              location: result.geometry.location,
-              placeId: result.place_id,
-              name: result.name,
-              address: result.formatted_address || "地址未知",
-              lat: result.geometry.location.lat(),
-              lng: result.geometry.location.lng(),
-              phoneNumber: result.formatted_phone_number || "無資料",
-              rating: result.rating || "無評分",
-              img: result.photos?.[0]?.getUrl() || "",
-              opening:
-                result.current_opening_hours?.weekday_text || "無營業時間資訊",
-            };
-            const newMarker = addMarker(placeData);
-            setupInfoWindow(newMarker, placeData);
-          });
-
-          map.value.setCenter(searchLocation);
-        } else {
-          alert("搜尋失敗：" + status);
-        }
-      }
-    );
+    performSearch(service, query, searchLocation);
   });
+
+  // 新增搜尋按鈕功能（使用當前地圖中心點搜尋）
+  document.getElementById("searchButton").addEventListener("click", () => {
+    const query = textsearchInput.value.trim();
+    if (!query) {
+      alert("請輸入搜尋關鍵字！");
+      return;
+    }
+    // 直接使用目前地圖的中心點作為搜尋位置
+    const searchLocation = map.value.getCenter();
+
+    performSearch(service, query, searchLocation);
+    document.getElementById("textsearchInput").value = ""; //清空搜尋欄位
+  });
+};
+
+// 封裝搜尋功能，避免重複程式碼
+const performSearch = (service, query, searchLocation) => {
+  service.textSearch(
+    {
+      query: query,
+      location: searchLocation,
+      radius: 2000, // 搜尋範圍
+      type: "restaurant",
+    },
+    (results, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        initMap(); //重新載入地圖 刪除點
+
+        results.forEach((result) => {
+          const placeData = {
+            location: result.geometry.location,
+            placeId: result.place_id,
+            name: result.name,
+            address: result.formatted_address || "地址未知",
+            lat: result.geometry.location.lat(),
+            lng: result.geometry.location.lng(),
+            phoneNumber: result.formatted_phone_number || "無資料",
+            rating: result.rating || "無評分",
+            img: result.photos?.[0]?.getUrl() || "",
+            opening:
+              result.current_opening_hours?.weekday_text || "無營業時間資訊",
+          };
+
+          const newMarker = addMarker(placeData);
+          setupInfoWindow(newMarker, placeData);
+        });
+
+        map.value.setCenter(searchLocation);
+      } else {
+        alert("搜尋失敗：" + status);
+      }
+    }
+  );
 };
 
 // Delete place
@@ -468,20 +581,7 @@ const drawRoute = () => {
   });
 };
 
-// Fetch places
-// const fetchPlaces = async () => {
-//   try {
-//     const response = await fetch(`${baseAddress}/api/Places`);
-//     if (!response.ok) {
-//       throw new Error("Network response was not ok");
-//     }
-//     const data = await response.json();
-//     itineraryItems.value = data;
-//   } catch (error) {
-//     console.error("Error fetching places:", error);
-//   }
-// };
-///////////////////傳送選擇的日期抓對應的地點////////////////////////
+//傳送選擇的日期抓對應的地點
 const fetchPlacesByDate = async () => {
   try {
     const response = await fetch(
@@ -506,7 +606,43 @@ watch(selectedDate, () => {
   fetchPlacesByDate();
 });
 
-/////////////////////////////////////////////////////////////////////////////
+//根據建立行程ID抓取資料庫
+const fetchItineraryById = async () => {
+  console.log("進入 fetchItineraryById 函式...");
+
+  try {
+    // if (!itineraryId.value) {
+    //   throw new Error("行程 ID 未設定！");
+    // }
+    console.log("卡片IklklD:", itineraryId); // 輸出獲取的 itineraryId
+
+    // 改正請求的 URL 格式
+    const response = await fetch(
+      `${baseAddress}/api/Itinerary/Itinerary/${itineraryId}`
+    );
+    if (!response.ok) throw new Error("無法取得資料");
+
+    // 直接處理返回的單一物件
+    const itinerary = await response.json();
+    if (!itinerary) throw new Error("查無資料");
+
+    // 更新行程資料
+    Itinerarydata.value = {
+      itineraryId: itinerary.itineraryId,
+      itineraryTitle: itinerary.itineraryTitle,
+      itineraryStartDate: itinerary.itineraryStartDate.split("T")[0], // 去掉時間部分
+      itineraryEndDate: itinerary.itineraryEndDate.split("T")[0], // 去掉時間部分
+      itineraryImage: itinerary.itineraryImage,
+    };
+    console.log("取得的資料1:", String(Itinerarydata.value.itineraryStartDate));
+
+    console.log("取得的資料2:", "2025-02-16");
+  } catch (error) {
+    console.error("獲取資料時發生錯誤：", error);
+  }
+};
+
+//////////////////////////////////////////////
 
 // Initialize Sortable
 // const initSortable = () => {
@@ -522,21 +658,6 @@ watch(selectedDate, () => {
 //     })
 //   }
 // }
-
-// Lifecycle hooks
-onMounted(() => {
-  loadGoogleMapsAPI();
-  // fetchPlaces();
-  fetchPlacesByDate();
-
-  // initSortable()
-});
-
-// import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-console.log("卡片ID:"+route.params.id);
 </script>
 
 <style scoped>
@@ -553,9 +674,6 @@ console.log("卡片ID:"+route.params.id);
   height: 100vh;
   width: 100%;
 }
-
-
-
 
 .draw_btn {
   display: block;

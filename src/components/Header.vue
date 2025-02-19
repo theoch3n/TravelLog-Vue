@@ -114,12 +114,23 @@ function openLoginModal() {
     <header class="desktop-header">
       <div class="container">
         <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div
+          class="modal fade"
+          id="exampleModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">登入</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
               <div class="modal-body">
                 <!-- #region 表單 -->
@@ -134,22 +145,42 @@ function openLoginModal() {
                     <div class="col-md-8 offset-md-2">
                       <form action="" class="needs-validation" novalidate>
                         <div class="form-group mb-3">
-                          <input type="text" class="form-control" id="account" name="account" placeholder="電郵或手機號碼"
-                            required />
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="account"
+                            name="account"
+                            placeholder="電郵或手機號碼"
+                            required
+                          />
                           <div class="invalid-feedback">
                             電郵或手機號碼是必須的
                           </div>
                         </div>
                         <div class="form-group mb-3">
-                          <input type="password" class="form-control" id="password" name="password" placeholder="密碼"
-                            required />
+                          <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="密碼"
+                            required
+                          />
                           <div class="invalid-feedback">密碼是必須的</div>
                         </div>
                         <p class="text-start">
-                          <a href="" class="text-primary text-decoration-none a-pwd">忘記密碼?</a>
+                          <a
+                            href=""
+                            class="text-primary text-decoration-none a-pwd"
+                            >忘記密碼?</a
+                          >
                         </p>
                         <div class="text-center btn-login">
-                          <input type="submit" value="開始購物吧!" class="btn text-white" />
+                          <input
+                            type="submit"
+                            value="開始購物吧!"
+                            class="btn text-white"
+                          />
                         </div>
                       </form>
                     </div>
@@ -209,12 +240,23 @@ function openLoginModal() {
     <header class="mobile-header">
       <div class="container">
         <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div
+          class="modal fade"
+          id="exampleModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
           <div class="modal-dialog modal-sm">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">登入</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
               <div class="modal-body">
                 <!-- #region 表單 -->
@@ -241,10 +283,18 @@ function openLoginModal() {
                           <div class="invalid-feedback">密碼是必須的</div>
                         </div>
                         <p class="text-start">
-                          <a href="" class="text-primary text-decoration-none a-pwd">忘記密碼?</a>
+                          <a
+                            href=""
+                            class="text-primary text-decoration-none a-pwd"
+                            >忘記密碼?</a
+                          >
                         </p>
                         <div class="text-center btn-login">
-                          <input type="submit" value="開始購物吧!" class="btn text-white" />
+                          <input
+                            type="submit"
+                            value="開始購物吧!"
+                            class="btn text-white"
+                          />
                         </div>
                       </form>
                     </div>
@@ -259,12 +309,24 @@ function openLoginModal() {
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center px-3 py-2">
+        <div
+          class="d-flex justify-content-between align-items-center px-3 py-2"
+        >
           <div class="d-flex gap-2">
-            <a class="tool-button text-black" href="./store.html" data-bs-toggle="" aria-controls=""><i
-                class="bi bi-shop-window fs-4 me-3"></i></a>
-            <a class="tool-button text-black" href="javascript:;" data-bs-toggle="modal"
-              data-bs-target="#exampleModal"><i class="bi bi-person-fill fs-3"></i></a>
+            <a
+              class="tool-button text-black"
+              href="./store.html"
+              data-bs-toggle=""
+              aria-controls=""
+              ><i class="bi bi-shop-window fs-4 me-3"></i
+            ></a>
+            <a
+              class="tool-button text-black"
+              href="javascript:;"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              ><i class="bi bi-person-fill fs-3"></i
+            ></a>
           </div>
           <div class="logo" style="width: 80px">
             <a href="/">
@@ -272,11 +334,30 @@ function openLoginModal() {
             </a>
           </div>
           <div class="d-flex gap-2">
-            <a class="tool-button text-black" href="#cartMenu" data-bs-toggle="offcanvas" aria-controls="cartMenu"><i
-                class="bi bi-bag-fill fs-3 me-3"></i></a>
-            <button class="tool-button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <a
+              class="tool-button text-black"
+              href="#cartMenu"
+              data-bs-toggle="offcanvas"
+              aria-controls="cartMenu"
+              ><i class="bi bi-bag-fill fs-3 me-3"></i
+            ></a>
+            <button
+              class="tool-button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#mobileMenu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>
