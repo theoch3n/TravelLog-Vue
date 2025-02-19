@@ -89,11 +89,11 @@ onMounted(() => {
 
 <style scoped>
 .profile {
-  max-width: 600px;
-  margin: 20px auto;
+  width: 50%;              /* 占據畫面寬度的50% */
+  margin: 20px 0 20px 20px;         /* 僅設定上下邊距，水平靠左 */
   padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
+  background-color: #fdfdfd ;
+  border-radius: 20px;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -101,4 +101,7 @@ h2 {
   text-align: center;
   margin-bottom: 20px;
 }
+
+
 </style>
+

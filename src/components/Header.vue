@@ -117,7 +117,9 @@ const pages = [
 
 // 從 pages 陣列中找出會員登入項目
 const accountPage = computed(() => pages.find(page => page.value === "Account"));
-const filteredPages = computed(() => 
+
+const filteredPages = computed(() =>
+  // 過濾條件：排除 value 為 "Account" 和 "Profile" 的項目
   pages.filter(page => page.value !== "Account" && page.value !== "Profile")
 );
 
