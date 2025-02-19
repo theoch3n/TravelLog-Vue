@@ -1,8 +1,10 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
 import LoginModal from "@/components/LoginModal.vue";
+import { useUserStore } from '@/stores/userStore';
+
 
 // 控制登入對話框 & 行動選單
 const loginDialog = ref(false);
@@ -14,6 +16,19 @@ const { mdAndUp, mobile } = useDisplay();
 // 取得當前路由
 const route = useRoute();
 const pageTitle = ref("");
+
+// 取得 Pinia store 與 router
+const userStore = useUserStore();
+const router = useRouter();
+
+// 登出方法
+function logout() {
+  userStore.clearToken(); // 清除 Pinia 中的 token
+  // 導向首頁後強制刷新頁面
+  router.push("/").then(() => {
+    window.location.reload();
+  });
+}
 
 // 定義按鈕選單
 // const buttons = [
@@ -221,12 +236,17 @@ function openLoginModal() {
           <v-btn v-for="(page, index) in pages" :to="page.to" :key="index">{{
             page.text
           }}</v-btn>
-          <!-- 會員登入按鈕：點擊後執行 openLoginModal() -->
-          <v-btn v-if="accountPage" @click="openLoginModal" class="mx-2" :class="accountPage.textClass">
+          <!-- 會員登入按鈕：僅在未登入時顯示 -->
+          <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2"
+            :class="accountPage.textClass">
             <v-icon left>{{ accountPage.icon }}</v-icon>
             {{ accountPage.text }}
           </v-btn>
-
+          <!-- 登出按鈕：僅在已登入時顯示 -->
+          <v-btn v-if="userStore.isAuthenticated" @click="logout" class="mx-2" color="error">
+            <v-icon left>mdi-logout</v-icon>
+            登出
+          </v-btn>
         </nav>
 
         <!-- <form class="d-flex">
