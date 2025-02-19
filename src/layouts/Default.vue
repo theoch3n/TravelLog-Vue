@@ -10,7 +10,7 @@ import PageTop from "../components/PageTop.vue";
     <v-app>
         <!-- 公告欄 -->
         <!-- 跑馬燈會擋到底下按鈕，修好再放回去 -->
-        <Announcement />
+        <!-- <Announcement /> -->
         <!-- 頁首區域 -->
         <Header />
         <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->

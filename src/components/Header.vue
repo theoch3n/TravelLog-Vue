@@ -229,14 +229,14 @@ function openLoginModal() {
                     <div class="col-sm-4 offset-sm-2">
                       <form action="" class="needs-validation" novalidate>
                         <div class="form-group mb-3">
-                          <input type="text" class="form-control" id="account" name="account" placeholder="電郵或手機號碼"
+                          <input type="text" class="form-control" id="sm-account" name="sm-account" placeholder="電郵或手機號碼"
                             required />
                           <div class="invalid-feedback">
                             電郵或手機號碼是必須的
                           </div>
                         </div>
                         <div class="form-group mb-3">
-                          <input type="password" class="form-control" id="password" name="password" placeholder="密碼"
+                          <input type="password" class="form-control" id="sm-password" name="sm-password" placeholder="密碼"
                             required />
                           <div class="invalid-feedback">密碼是必須的</div>
                         </div>
