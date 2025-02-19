@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 
 // 使用 defineProps 接收父元件傳遞的資料
 const props = defineProps({
