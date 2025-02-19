@@ -17,6 +17,7 @@ import share from "../pages/Share.vue";
 import Contact from "../pages/Contact.vue";
 import OrderDetail from "../pages/OrderDetail.vue";
 import ItineraryTemp from "../pages/ItineraryTemp.vue";
+import Profile from '@/components/Profile.vue';
 
 // 定義路由配置
 const routes = [
@@ -69,6 +70,11 @@ const routes = [
                 name: "ItineraryTemp",
                 component: ItineraryTemp,
             },
+            {
+                path: '/profile',
+                name: 'Profile',
+                component: Profile, 
+              },
         ],
     },
     {
