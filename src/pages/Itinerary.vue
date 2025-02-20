@@ -290,10 +290,10 @@ onMounted(async () => {
 
 const insertdata = async () => {
   try {
-    if (!profile.value.userID) {
+    if (!profile.value.userId) {
       await fetchProfile();
     }
-    alert(profile.value.userID)
+    alert(profile.value.userId)
     const insert = {
       itineraryId: 0,
       itineraryTitle: itinerarytitle.value,
@@ -302,7 +302,7 @@ const insertdata = async () => {
       itineraryImage: CardImg.value,
       itineraryStartDate: startDate.value,
       ItineraryEndDate: endDate.value,
-      ItineraryCreateUser: profile.value.userID,
+      ItineraryCreateUser: profile.value.userId,
       itineraryCreateDate: null,
     };
     const response = await axios.post(
