@@ -6,28 +6,60 @@ import router from "./router/router"; // 引入路由配置
 
 // 引入 Vuetify
 import "vuetify/styles";
-import { createVuetify } from "vuetify";//vuex 類似於bootstrap 提供現有樣式及元件
+import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css"; // 引入 Material Design Icons
-// 創建 Vuetify 物件，並註冊所有組件與指令
+
+// 引入 Pinia 與持久化插件
+import { createPinia } from "pinia";
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+
+// 建立 Vuetify 實例，並設定主題
 const vuetify = createVuetify({
-    components,
-    directives,
-    icons: {
-        defaultSet: "mdi",
+  components,
+  directives,
+  icons: {
+    defaultSet: "mdi",
+  },
+  theme: {
+    defaultTheme: 'light',
+    themes: {
+      light: {
+        dark: false,
+        colors: {
+          background: '#FFFFFF',
+          surface: '#FFFFFF',
+          primary: '#1976D2',
+          // 其他顏色
+        },
+      },
+      dark: {
+        dark: true,
+        colors: {
+          background: '#121212',
+          surface: '#121212',
+          primary: '#BB86FC',
+          // 其他顏色
+        },
+      },
     },
+  },
 });
 
-// 引入 Pinia
-import { createPinia } from "pinia";
-const pinia = createPinia(); // 創建 Pinia 物件
+// 建立 Vue 應用，掛載 router、Vuetify 與 Pinia
+const app = createApp(App);
+app.use(router);
+app.use(vuetify);
+app.use(pinia);
+app.mount("#app");
 
-// 引入 axios
+// 設定 axios 預設 API URL
 import axios from "axios";
 axios.defaults.baseURL = "https://localhost:7092"; // API 伺服器 URL
 
+// 載入 Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-// 創建 Vue 應用程式，並使用路由、Vuetify、Pinia
-createApp(App).use(router).use(vuetify).use(pinia).mount("#app");
