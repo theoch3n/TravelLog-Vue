@@ -77,10 +77,10 @@
                   <br />
                   <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-bs-target="#collapseOne"
-                      @click="insertdata()">
-                      <button type="button" class="btn btn-primary" data-bs-target="#collapseOne" @click="insertdata()">
-                        完成
-                      </button>
+                      @click="insertdata()"></button>
+                    <button type="button" class="btn btn-primary" data-bs-target="#collapseOne" @click="insertdata()">
+                      完成
+                    </button>
                   </div>
                 </div>
               </div>
