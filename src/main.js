@@ -13,41 +13,41 @@ import "@mdi/font/css/materialdesignicons.css"; // 引入 Material Design Icons
 
 // 引入 Pinia 與持久化插件
 import { createPinia } from "pinia";
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
 // 建立 Vuetify 實例，並設定主題
 const vuetify = createVuetify({
-  components,
-  directives,
-  icons: {
-    defaultSet: "mdi",
-  },
-  theme: {
-    defaultTheme: 'light',
-    themes: {
-      light: {
-        dark: false,
-        colors: {
-          background: '#FFFFFF',
-          surface: '#FFFFFF',
-          primary: '#1976D2',
-          // 其他顏色
-        },
-      },
-      dark: {
-        dark: true,
-        colors: {
-          background: '#121212',
-          surface: '#121212',
-          primary: '#BB86FC',
-          // 其他顏色
-        },
-      },
+    components,
+    directives,
+    icons: {
+        defaultSet: "mdi",
     },
-  },
+    theme: {
+        defaultTheme: "light",
+        themes: {
+            light: {
+                dark: false,
+                colors: {
+                    background: "#FFFFFF",
+                    surface: "#FFFFFF",
+                    primary: "#1976D2",
+                    // 其他顏色
+                },
+            },
+            dark: {
+                dark: true,
+                colors: {
+                    background: "#121212",
+                    surface: "#121212",
+                    primary: "#BB86FC",
+                    // 其他顏色
+                },
+            },
+        },
+    },
 });
 
 // 建立 Vue 應用，掛載 router、Vuetify 與 Pinia
@@ -61,5 +61,12 @@ app.mount("#app");
 import axios from "axios";
 axios.defaults.baseURL = "https://localhost:7092"; // API 伺服器 URL
 
-// 載入 Bootstrap CSS
-import 'bootstrap/dist/css/bootstrap.min.css';
+// bootstrap缺一不可
+import "bootstrap/dist/css/bootstrap.min.css";
+import * as bootstrap from "bootstrap";
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// 將 bootstrap 掛載到 window 上
+window.bootstrap = bootstrap;
+
+// 創建 Vue 應用程式，並使用路由、Vuetify、Pinia
+createApp(App).use(router).use(vuetify).use(pinia).mount("#app");

@@ -72,13 +72,19 @@ const pages = [
     textClass: "text-purple-darken-4",
     to: "/products",
   },
-
   {
-    value: "share",
-    text: "share",
+    value: "bill",
+    text: "bill",
     icon: "mdi-phone-incoming",
     textClass: "text-yellow-darken-4",
-    to: "/share",
+    to: "/bill",
+  },
+  {
+    value: "billList",
+    text: "billList",
+    icon: "mdi-phone-incoming",
+    textClass: "text-yellow-darken-4",
+    to: "/billList",
   },
   {
     value: "Googlemap",
@@ -224,12 +230,12 @@ function handleProfileClick() {
             </div>
           </div>
         </div>
-        
-        
+
+
         <div class="d-flex gap-3 justify-content-end mt-5">
           <v-btn @click="toggleDarkMode" color="primary">
-    {{ isDark ? '切換至亮色模式' : '切換至深色模式' }}
-  </v-btn>
+            {{ isDark ? '切換至亮色模式' : '切換至深色模式' }}
+          </v-btn>
           <!-- 店面連結 -->
           <v-btn icon class="tool-button text-black" to="/store">
             <v-icon size="24">mdi-storefront</v-icon>

@@ -129,7 +129,7 @@ const members = [
     "蘋果",
     "香蕉",
     "草莓",
-    // "西瓜",
+    "西瓜",
 ];
 
 onMounted(() => {
@@ -147,7 +147,6 @@ onMounted(() => {
     });
 });
 // mark
-const options = ref([111, 123, 12345]);
 const keyword = ref('');
 const filteredRates = computed(() => {
     if (!keyword.value) {
@@ -176,7 +175,7 @@ const getExchangeRates = async () => {
 
 // 非同步 測試區域
 const baseAddress = "https://localhost:7092";
-const ItineraryId = ref(0);
+const ItineraryId = ref(1);
 const ItineraryName = ref("測試用行程名稱");
 const Title = ref("測試品項");
 const PaidBy = ref("");
@@ -206,6 +205,7 @@ const getData = async () => {
         bill: generateBill(),
         details: generateBillDetails()
     };
+    console.log(JSON.stringify(billDto));
 
     try {
         const response = await axios.post(`${baseAddress}/api/Bill/AddBillWithDetails`, billDto);
@@ -302,7 +302,8 @@ const handleTotalPriceInput = (event) => {
 
 const handleTotalPrice = () => {
     insideData.forEach((item) => {
-        item.price = totalPrice.value ? (totalPrice.value * item.percentage) / 100 : 0;
+        item.exactPrice = totalPrice.value ? (totalPrice.value * item.exactPercentage) / 100 : 0;
+        item.price = item.exactPrice.toFixed(2);
     });
 }
 
