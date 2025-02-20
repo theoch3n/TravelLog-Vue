@@ -358,9 +358,9 @@ const addToItinerary = async (place) => {
 };
 
 // Setup marker listener
-const setupMarkerListener = (autocomplete) => {
-  autocomplete.addListener("place_changed", () => {
-    const place = autocomplete.getPlace();
+const setupMarkerListener = (autocomplete1) => {
+  autocomplete1.addListener("place_changed", () => {
+    const place = autocomplete1.getPlace();
 
     if (!place.geometry || !place.geometry.location) {
       console.error("搜尋結果無法取得地點資訊");
@@ -464,7 +464,6 @@ const performSearch = (service, query, searchLocation) => {
             opening:
               result.current_opening_hours?.weekday_text || "無營業時間資訊",
           };
-
           const newMarker = addMarker(placeData);
           setupInfoWindow(newMarker, placeData);
         });
