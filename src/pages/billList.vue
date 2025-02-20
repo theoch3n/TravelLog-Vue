@@ -33,13 +33,30 @@
     </div>
     <BillDetails></BillDetails>
     <div class="container d-flex justify-content-center">
-        <a class="btn btn-primary" data-bs-toggle="modal" href="#modalBillList" role="button">開啟列表</a>
+        <a class="btn btn-primary" data-bs-toggle="modal" href="#modalBillList">開啟列表</a>
     </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, watch } from 'vue';
 import BillDetails from './billDetails.vue';
+//測試區
+const props = defineProps({
+    getParaId: Number, // 透過 v-model 傳遞選取的行程 ID
+});
+
+watch(() => props.getParaId, (newValue) => {
+    if (newValue) {
+        const modalEl = document.getElementById("modalBillList");
+        let modal = bootstrap.Modal.getInstance(modalEl);
+        if (!modal) {
+            modal = new bootstrap.Modal(modalEl);
+        }
+        modal.show();
+    }
+});
+//
+
 const dataList = ref([
     { id: 1, name: '商品 A', price: 100 },
     { id: 2, name: '商品 B', price: 200 },
