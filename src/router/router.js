@@ -18,8 +18,9 @@ import billList from "../pages/billList.vue";
 import billDetails from "../pages/billDetails.vue";
 import Contact from "../pages/Contact.vue";
 import OrderDetail from "../pages/OrderDetail.vue";
+import PaymentResult from "../pages/PaymentResult.vue";
 import ItineraryTemp from "../pages/ItineraryTemp.vue";
-import Profile from '@/components/Profile.vue';
+import Profile from "@/components/Profile.vue";
 
 // 定義路由配置
 const routes = [
@@ -73,13 +74,23 @@ const routes = [
                 component: OrderDetail,
             },
             {
+                path: "/paymentResult/:merchantTradeNo",
+                name: "PaymentResult",
+                component: PaymentResult,
+                props: true,
+            },
+            // {
+            //     path: "/:catchAll(.*)",
+            //     redirect: "/",
+            // },
+            {
                 path: "/ItineraryTemp",
                 name: "ItineraryTemp",
                 component: ItineraryTemp,
             },
             {
-                path: '/profile',
-                name: 'Profile',
+                path: "/profile",
+                name: "Profile",
                 component: Profile,
             },
         ],
@@ -107,18 +118,18 @@ const routes = [
         },
         children: [
             {
-                path: "",            // 當訪問 /account 時，顯示 Account 組件
+                path: "", // 當訪問 /account 時，顯示 Account 組件
                 name: "Account",
                 component: Account,
             },
             {
-                path: "register",    // 當訪問 /account/register 時，顯示 Register 組件
+                path: "register", // 當訪問 /account/register 時，顯示 Register 組件
                 name: "Register",
                 component: Register,
             },
         ],
     },
-]
+];
 
 // 建立路由實例
 const router = createRouter({

@@ -7,6 +7,7 @@ class testECPayService {
 
     async createOrder(orderDetails) {
         try {
+            console.log("送出 API 的訂單資料:", orderDetails);
             const response = await axios.post(
                 `${this.ApiBaseUrl}/Ecpay/CreateOrder`,
                 {
@@ -16,9 +17,13 @@ class testECPayService {
                 }
             );
 
+            console.log("後端回應:", response.data);
             return response.data;
         } catch (error) {
-            console.error("Order creation error", error);
+            console.error(
+                "Order creation error",
+                error.response?.data || error
+            );
             throw error;
         }
     }
