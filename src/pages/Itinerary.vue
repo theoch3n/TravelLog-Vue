@@ -143,7 +143,7 @@
                 }}
               </p>
             </div>
-            <button class="btn btn-primary" @click.stop="selectedItineraryId = card.itineraryId">拆帳</button>
+            <button class="btn btn-primary" @click.stop="openBillList(card.itineraryId)">拆帳</button>
           </div>
         </div>
       </div>
@@ -159,8 +159,22 @@ import { format } from "date-fns"; // 格式化日期
 // import LocationSearch from "../components/LocationSearch.vue";
 import { useRouter } from "vue-router";
 import BillList from "./billList.vue";
-const selectedItineraryId = ref(0);
 const baseAddress = "https://localhost:7092";
+
+//拆帳
+const selectedItineraryId = ref(0);
+const openBillList = (id) => {
+  if (selectedItineraryId.value === id) {
+    selectedItineraryId.value = -1; // 清空 ID 以確保 watch 會觸發
+    setTimeout(() => {
+      selectedItineraryId.value = id;
+    }, 10); // **使用 setTimeout 確保值改變**
+  } else {
+    selectedItineraryId.value = id;
+  }
+  console.log("ItineraryId: " + id);
+};
+//拆帳
 
 // 控制 v-date-picker 顯示與隱藏
 const showDatePicker = ref(false);

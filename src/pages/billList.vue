@@ -40,19 +40,45 @@
 <script setup>
 import { ref, reactive, computed, watch } from 'vue';
 import BillDetails from './billDetails.vue';
+import axios from "axios";
+
 //測試區
 const props = defineProps({
     getParaId: Number, // 透過 v-model 傳遞選取的行程 ID
 });
+const dataFromDB = ref();
+const getBillsData = async () => {
+    const id = props.getParaId
+    try {
+        const response = await axios.get(`https://localhost:7092/api/Bill/GetBillWithDetailsByItineraryId/${id}`);
+        if (response.data) {
+            dataFromDB.value = response.data;
+            // alert(JSON.stringify(dataFromDB.value));
+        } else {
+            alert("發生錯誤");
+        }
+    } catch (error) {
+        console.log("Error: ", error);
+        alert("提交失敗!");
+    }
+};
+
+//
+
+// 監聽 modelValue，當變更時顯示 Modal
+const showModal = () => {
+    const modalEl = document.getElementById("modalBillList");
+    let modal = bootstrap.Modal.getInstance(modalEl);
+    if (!modal) {
+        modal = new bootstrap.Modal(modalEl);
+    }
+    modal.show();
+};
 
 watch(() => props.getParaId, (newValue) => {
-    if (newValue) {
-        const modalEl = document.getElementById("modalBillList");
-        let modal = bootstrap.Modal.getInstance(modalEl);
-        if (!modal) {
-            modal = new bootstrap.Modal(modalEl);
-        }
-        modal.show();
+    if (newValue && newValue != -1) {
+        getBillsData();
+        //showModal();
     }
 });
 //
