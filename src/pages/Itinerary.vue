@@ -1,68 +1,8 @@
 <template>
-  <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/>
-    <div class="container mt-5 mb-5">
-        <button type="button" class="btn btn-outline-primary bi bi-plus-lg" data-bs-toggle="modal" data-bs-target="#ItineraryModal" data-bs-whatever="@mdo"> 新增行程</button>
-
-        <div class="modal fade" id="ItineraryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog custom-modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">建立行程</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="mb-3">
-                                <label for="travel-themes" class="col-form-label">旅程主題</label>
-                                <input type="text" class="form-control" id="travel-themes" placeholder="請輸入主題" v-model="itinerarytitle">
-                            </div>
-                            <div class="mb-3">
-                                <label for="travel-location" class="col-form-label">旅程地點</label>
-                                <input type="text" class="form-control" id="travel-location" placeholder="請輸國家或城市" v-model="itinerarylocation">
-                              
-                            </div>
-                            <label class="col-form-label">旅程日期</label>
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <input type="text" id="startdate"  @click="openDatePicker('start')" :value="startDate" placeholder="開始日期" readonly style="border: 1px solid black; padding: 5px 10px; cursor: pointer;">
-                                    </div> 
-                                    <div class="col-6">
-                                        <input type="text" id="enddate"  @click="openDatePicker('end')" :value="endDate" placeholder="結束日期" readonly style="border: 1px solid black; padding: 5px 10px; cursor: pointer;">
-                                    </div> 
-                                    <v-menu v-model="showDatePicker" transition="scale-transition" offset-y :style="{ position: 'absolute', left: '35%', transform: 'translateX(-50%)', top: '70%', transform: 'translateY(-50%)' }">
-                                        <v-card>
-                                            <v-date-picker v-model="selectedDate" :min="minDate" @update:model-value="setDate"></v-date-picker>
-                                        </v-card>
-                                    </v-menu>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="insertdata()">完成</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-  <!-- <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/> -->
-  <!-- <input
-          class="form-control mt-2"
-          placeholder="地點搜尋"
-          id="search-input"
-        /> -->
-  <!-- <div
-        v-show="showMap"
-        id="map"
-        style="height: 400px; width: 100%"
-        class="hiden"
-        ></div> -->
   <div>
     <div class="container mt-5 mb-5">
       <div class="row">
-        <div class="col-4">
+        <div class="col-3">
           <div class="accordion" id="accordionExample">
             <div class="accordion-item">
               <h2 class="accordion-header" id="headingOne">
@@ -166,7 +106,7 @@
                   <div class="modal-footer">
                     <button
                       type="button"
-                      class="btn btn-primary"
+                      class="btn btn-outline-primary"
                       data-bs-target="#collapseOne"
                       @click="insertdata()"
                     >
@@ -182,7 +122,22 @@
     </div>
     <div class="container mt-5">
       <div class="row row-cols-1 row-cols-md-3 g-4">
-        <div
+        <v-container>
+          <v-row>
+            <v-col cols="12" md="4" v-for="card in CardData" :key="card.itineraryId" @click="navigateToGoogleMap(card.itineraryId)">
+              <v-card class="mx-auto" max-width="344">
+                <v-img :src="card.itineraryImage" cover></v-img>
+                <v-card-title>{{ card.itineraryTitle }}</v-card-title>
+                <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " + card.itineraryEndDate.split("T")[0] }}</v-card-subtitle>
+                <v-card-actions>
+                  <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click="show = !show"></v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
+        <!-- <div
           class="col"
           v-for="card in CardData"
           :key="card.itineraryId"
@@ -201,9 +156,8 @@
               </p>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-    </div>
   </div>
 </template>
 
