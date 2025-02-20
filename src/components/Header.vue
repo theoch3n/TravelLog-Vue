@@ -5,6 +5,15 @@ import { useDisplay } from "vuetify";
 import LoginModal from "@/components/LoginModal.vue";
 import { useUserStore } from "@/stores/userStore";
 
+// 切換主題的函式
+function toggleDarkMode() {
+  if (isDark.value) {
+    theme.global.name.value = 'light'
+  } else {
+    theme.global.name.value = 'dark'
+  }
+  isDark.value = !isDark.value
+}
 // 控制登入對話框 & 行動選單
 const loginDialog = ref(false);
 const mobileMenu = ref(false);
@@ -215,24 +224,29 @@ function handleProfileClick() {
             </div>
           </div>
         </div>
+        
+        
         <div class="d-flex gap-3 justify-content-end mt-5">
-  <!-- 店面連結 -->
-  <v-btn icon class="tool-button text-black" to="/store">
-    <v-icon size="24">mdi-storefront</v-icon>
+          <v-btn @click="toggleDarkMode" color="primary">
+    {{ isDark ? '切換至亮色模式' : '切換至深色模式' }}
   </v-btn>
-  <!-- 聯絡連結 -->
-  <v-btn icon class="tool-button text-black" to="/contact">
-    <v-icon size="24">mdi-chat</v-icon>
-  </v-btn>
-  <!-- 會員按鈕：點擊觸發 handleProfileClick -->
-  <v-btn icon class="tool-button text-black" @click="handleProfileClick">
-    <v-icon size="24">mdi-account</v-icon>
-  </v-btn>
-  <!-- 購物車連結 -->
-  <v-btn icon class="tool-button text-black" to="/cart">
-    <v-icon size="24">mdi-cart</v-icon>
-  </v-btn>
-</div>
+          <!-- 店面連結 -->
+          <v-btn icon class="tool-button text-black" to="/store">
+            <v-icon size="24">mdi-storefront</v-icon>
+          </v-btn>
+          <!-- 聯絡連結 -->
+          <v-btn icon class="tool-button text-black" to="/contact">
+            <v-icon size="24">mdi-chat</v-icon>
+          </v-btn>
+          <!-- 會員按鈕：點擊觸發 handleProfileClick -->
+          <v-btn icon class="tool-button text-black" @click="handleProfileClick">
+            <v-icon size="24">mdi-account</v-icon>
+          </v-btn>
+          <!-- 購物車連結 -->
+          <v-btn icon class="tool-button text-black" to="/cart">
+            <v-icon size="24">mdi-cart</v-icon>
+          </v-btn>
+        </div>
 
         <div class="d-flex justify-content-center align-items-center py-3">
           <div class="headerLogo">
@@ -244,11 +258,7 @@ function handleProfileClick() {
 
         <!-- 導航菜單 -->
         <nav class="desktop-nav">
-          <v-btn
-            v-for="(page, index) in filteredPages"
-            :to="page.to"
-            :key="index"
-          >
+          <v-btn v-for="(page, index) in filteredPages" :to="page.to" :key="index">
             {{ page.text }}
           </v-btn>
 
