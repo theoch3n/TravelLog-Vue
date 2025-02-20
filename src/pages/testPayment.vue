@@ -1,6 +1,34 @@
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, watch, onUnmounted, onMounted } from 'vue';
 import ECPayService from '../services/testECPayService';
+import { useProductPara } from '../stores/productPara';
+import { useRoute } from 'vue-router';
+
+const isDialogVisible = ref(false);
+const route = useRoute();
+
+// 渲染頁面後清除 body 樣式
+onMounted(() => {
+    document.body.style.overflow = 'auto';
+    document.body.style.position = 'static';
+
+    // 確保 Bootstrap Modal 的灰色背景 (`modal-backdrop`) 被移除
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(backdrop => backdrop.remove());
+});
+
+// 當組件卸載時，也確保 body 樣式恢復
+onUnmounted(() => {
+    document.body.style.overflow = 'auto';
+    document.body.style.position = 'static';
+    isDialogVisible.value = false;
+});
+
+const productPara = useProductPara();
+const selectedItems = computed(() => productPara.selectItem);
+onMounted(() => {
+    console.log("接收的產品數據:", selectedItems.value);
+});
 
 const unitPrice = ref(5000);
 const peopleCount = ref(2);
@@ -51,28 +79,23 @@ const totalPrice = computed(() => {
 
 async function initiatePayment() {
     try {
-        // 驗證表單
-        const participantFormValid = await validateForm(participantFormRef.value);
-        const contactFormValid = await validateForm(contactFormRef.value);
-
-        if (!participantFormValid || !contactFormValid) {
-            return;
-        }
-
         const orderResult = await ECPayService.createOrder({
             totalAmount: totalPrice.value,
-            itemName: orderDetails.value.itemName,
-            tradeDesc: `${peopleCount.value}人 - ${orderDetails.value.departureDate}`,
+            itemName: selectedItems.value[0]?.eventName || "未知產品",
+            tradeDesc: `${selectedItems.value.length} 件商品`,
             participants: participants.value,
             contactInfo: contactInfo.value
         });
 
+        console.log("訂單成功:", orderResult);
+        productPara.clearCart(); // 清空購物車
         ECPayService.submitToECPay(orderResult.orderParams);
     } catch (error) {
         console.error('Payment initiation failed', error);
         alert('付款初始化失敗，請稍後再試');
     }
 }
+
 
 // 表單驗證方法
 async function validateForm(formRef) {
