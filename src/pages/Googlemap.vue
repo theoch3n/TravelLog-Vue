@@ -57,8 +57,8 @@
         <div class="input">
           <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
             placeholder="輸入類別" id="textsearch-input-overlay" />
-          <button class="btn btn-danger" id="searchButton">sds</button>
-          <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
+          <button class="btn btn-danger" id="searchButton">搜尋</button>
+          <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
         </div>
       </div>
       <div id="map" class="map-container col-8"></div>
@@ -246,21 +246,21 @@ const initMap = () => {
     map.value.setZoom(16);
   });
 
-  initAutocomplete();
+  // initAutocomplete();
   initAutocomplete1();
 
 };
 
 // Initialize autocomplete
-const initAutocomplete = () => {
-  const autocomplete = new google.maps.places.Autocomplete(
-    document.getElementById("search-input"),
-    { type: ["restaurant"] }
-  );
+// const initAutocomplete = () => {
+//   const autocomplete = new google.maps.places.Autocomplete(
+//     document.getElementById("search-input"),
+//     { type: ["restaurant"] }
+//   );
 
-  setupMarkerListener(autocomplete);
-  setupTextSearch(autocomplete);
-};
+//   setupMarkerListener(autocomplete);
+//   setupTextSearch(autocomplete);
+// };
 
 // Initialize autocomplete
 const initAutocomplete1 = () => {
@@ -348,7 +348,7 @@ const addToItinerary = async (place) => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    searchInput.value = "";
+    // searchInput.value = "";
     // await fetchPlaces();
     await fetchPlacesByDate();
   } catch (error) {
