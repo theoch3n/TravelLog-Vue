@@ -13,7 +13,9 @@ import Googlemap from "../pages/Googlemap.vue";
 import Account from "../pages/Account.vue";
 import Register from "../pages/Register.vue";
 import Itinerary from "../pages/Itinerary.vue";
-import share from "../pages/Share.vue";
+import bill from "../pages/bill.vue";
+import billList from "../pages/billList.vue";
+import billDetails from "../pages/billDetails.vue";
 import Contact from "../pages/Contact.vue";
 import OrderDetail from "../pages/OrderDetail.vue";
 import ItineraryTemp from "../pages/ItineraryTemp.vue";
@@ -51,9 +53,14 @@ const routes = [
                 component: Itinerary,
             },
             {
-                path: "/share", // 路由路徑 (根目錄)
-                name: "share", // 路由名稱 (用於程式內部識別)
-                component: share, // 顯示的頁面
+                path: "/bill", // 路由路徑 (根目錄)
+                name: "bill", // 路由名稱 (用於程式內部識別)
+                component: bill, // 顯示的頁面
+            },
+            {
+                path: "/billList", // 路由路徑 (根目錄)
+                name: "billList", // 路由名稱 (用於程式內部識別)
+                component: billList, // 顯示的頁面
             },
             {
                 path: "/contact",
@@ -73,8 +80,8 @@ const routes = [
             {
                 path: '/profile',
                 name: 'Profile',
-                component: Profile, 
-              },
+                component: Profile,
+            },
         ],
     },
     {

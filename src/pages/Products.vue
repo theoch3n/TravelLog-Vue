@@ -1,8 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import ProductList from '../components/ProductList.vue';
 import SearchBar from '../components/SearchBar.vue';
 

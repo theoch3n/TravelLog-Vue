@@ -27,7 +27,13 @@ const pinia = createPinia(); // 創建 Pinia 物件
 import axios from "axios";
 axios.defaults.baseURL = "https://localhost:7092"; // API 伺服器 URL
 
+// bootstrap缺一不可
 import 'bootstrap/dist/css/bootstrap.min.css';
+import * as bootstrap from 'bootstrap';
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// 將 bootstrap 掛載到 window 上
+window.bootstrap = bootstrap;
+
 
 // 創建 Vue 應用程式，並使用路由、Vuetify、Pinia
 createApp(App).use(router).use(vuetify).use(pinia).mount("#app");

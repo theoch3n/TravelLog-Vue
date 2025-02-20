@@ -63,13 +63,19 @@ const pages = [
     textClass: "text-purple-darken-4",
     to: "/products",
   },
-
   {
-    value: "share",
-    text: "share",
+    value: "bill",
+    text: "bill",
     icon: "mdi-phone-incoming",
     textClass: "text-yellow-darken-4",
-    to: "/share",
+    to: "/bill",
+  },
+  {
+    value: "billList",
+    text: "billList",
+    icon: "mdi-phone-incoming",
+    textClass: "text-yellow-darken-4",
+    to: "/billList",
   },
   {
     value: "Googlemap",
@@ -165,23 +171,12 @@ function handleProfileClick() {
     <header class="desktop-header">
       <div class="container">
         <!-- Modal -->
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">登入</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <!-- #region 表單 -->
@@ -196,42 +191,22 @@ function handleProfileClick() {
                     <div class="col-md-8 offset-md-2">
                       <form action="" class="needs-validation" novalidate>
                         <div class="form-group mb-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="account"
-                            name="account"
-                            placeholder="電郵或手機號碼"
-                            required
-                          />
+                          <input type="text" class="form-control" id="account" name="account" placeholder="電郵或手機號碼"
+                            required />
                           <div class="invalid-feedback">
                             電郵或手機號碼是必須的
                           </div>
                         </div>
                         <div class="form-group mb-3">
-                          <input
-                            type="password"
-                            class="form-control"
-                            id="password"
-                            name="password"
-                            placeholder="密碼"
-                            required
-                          />
+                          <input type="password" class="form-control" id="password" name="password" placeholder="密碼"
+                            required />
                           <div class="invalid-feedback">密碼是必須的</div>
                         </div>
                         <p class="text-start">
-                          <a
-                            href=""
-                            class="text-primary text-decoration-none a-pwd"
-                            >忘記密碼?</a
-                          >
+                          <a href="" class="text-primary text-decoration-none a-pwd">忘記密碼?</a>
                         </p>
                         <div class="text-center btn-login">
-                          <input
-                            type="submit"
-                            value="開始購物吧!"
-                            class="btn text-white"
-                          />
+                          <input type="submit" value="開始購物吧!" class="btn text-white" />
                         </div>
                       </form>
                     </div>
@@ -248,35 +223,16 @@ function handleProfileClick() {
         </div>
         <!-- 頂部工具列 -->
         <div class="d-flex gap-1 justify-content-end">
-          <a
-            class="tool-button text-black"
-            href="./store.html"
-            data-bs-toggle=""
-            aria-controls=""
-            ><i class="bi bi-shop-window fs-4 me-3"></i
-          ></a>
-          <a
-            class="tool-button text-black"
-            href="./contact.html"
-            data-bs-toggle=""
-            aria-controls=""
-            ><i class="bi bi-chat-fill fs-4 me-3"></i
-          ></a>
+          <a class="tool-button text-black" href="./store.html" data-bs-toggle="" aria-controls=""><i
+              class="bi bi-shop-window fs-4 me-3"></i></a>
+          <a class="tool-button text-black" href="./contact.html" data-bs-toggle="" aria-controls=""><i
+              class="bi bi-chat-fill fs-4 me-3"></i></a>
           <!-- 這裡示範以 a 標籤包裝按鈕圖示，點擊時觸發 handleProfileClick -->
-          <a
-            class="tool-button text-black"
-            href="javascript:;"
-            @click.prevent="handleProfileClick"
-          >
+          <a class="tool-button text-black" href="javascript:;" @click.prevent="handleProfileClick">
             <i class="bi bi-person-fill fs-4 me-3"></i>
           </a>
-          <a
-            class="tool-button text-black"
-            href="#cartMenu"
-            data-bs-toggle="offcanvas"
-            aria-controls="cartMenu"
-            ><i class="bi bi-bag-fill fs-4 me-3"></i
-          ></a>
+          <a class="tool-button text-black" href="#cartMenu" data-bs-toggle="offcanvas" aria-controls="cartMenu"><i
+              class="bi bi-bag-fill fs-4 me-3"></i></a>
         </div>
         <div class="d-flex justify-content-center align-items-center py-3">
           <div class="headerLogo">
@@ -288,41 +244,23 @@ function handleProfileClick() {
 
         <!-- 導航菜單 -->
         <nav class="desktop-nav">
-          <v-btn
-            v-for="(page, index) in filteredPages"
-            :to="page.to"
-            :key="index"
-          >
+          <v-btn v-for="(page, index) in filteredPages" :to="page.to" :key="index">
             {{ page.text }}
           </v-btn>
 
           <!-- 會員登入按鈕：僅在未登入時顯示 -->
-          <v-btn
-            v-if="accountPage && !userStore.isAuthenticated"
-            @click="openLoginModal"
-            class="mx-2"
-            :class="accountPage.textClass"
-          >
+          <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2"
+            :class="accountPage.textClass">
             <v-icon left>{{ accountPage.icon }}</v-icon>
             {{ accountPage.text }}
           </v-btn>
           <!-- 會員資料按鈕：僅在已登入時顯示 -->
-          <v-btn
-            v-if="userStore.isAuthenticated"
-            @click="router.push('/profile')"
-            class="mx-2"
-            color="primary"
-          >
+          <v-btn v-if="userStore.isAuthenticated" @click="router.push('/profile')" class="mx-2" color="primary">
             <v-icon left>mdi-account-circle</v-icon>
             會員資料
           </v-btn>
           <!-- 登出按鈕：僅在已登入時顯示 -->
-          <v-btn
-            v-if="userStore.isAuthenticated"
-            @click="logout"
-            class="mx-2"
-            color="error"
-          >
+          <v-btn v-if="userStore.isAuthenticated" @click="logout" class="mx-2" color="error">
             <v-icon left>mdi-logout</v-icon>
             登出
           </v-btn>
@@ -339,23 +277,12 @@ function handleProfileClick() {
     <header class="mobile-header">
       <div class="container">
         <!-- Modal -->
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-sm">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">登入</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
                 <!-- #region 表單 -->
@@ -370,42 +297,22 @@ function handleProfileClick() {
                     <div class="col-sm-4 offset-sm-2">
                       <form action="" class="needs-validation" novalidate>
                         <div class="form-group mb-3">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="sm-account"
-                            name="sm-account"
-                            placeholder="電郵或手機號碼"
-                            required
-                          />
+                          <input type="text" class="form-control" id="sm-account" name="sm-account"
+                            placeholder="電郵或手機號碼" required />
                           <div class="invalid-feedback">
                             電郵或手機號碼是必須的
                           </div>
                         </div>
                         <div class="form-group mb-3">
-                          <input
-                            type="password"
-                            class="form-control"
-                            id="sm-password"
-                            name="sm-password"
-                            placeholder="密碼"
-                            required
-                          />
+                          <input type="password" class="form-control" id="sm-password" name="sm-password"
+                            placeholder="密碼" required />
                           <div class="invalid-feedback">密碼是必須的</div>
                         </div>
                         <p class="text-start">
-                          <a
-                            href=""
-                            class="text-primary text-decoration-none a-pwd"
-                            >忘記密碼?</a
-                          >
+                          <a href="" class="text-primary text-decoration-none a-pwd">忘記密碼?</a>
                         </p>
                         <div class="text-center btn-login">
-                          <input
-                            type="submit"
-                            value="開始購物吧!"
-                            class="btn text-white"
-                          />
+                          <input type="submit" value="開始購物吧!" class="btn text-white" />
                         </div>
                       </form>
                     </div>
@@ -420,24 +327,12 @@ function handleProfileClick() {
             </div>
           </div>
         </div>
-        <div
-          class="d-flex justify-content-between align-items-center px-3 py-2"
-        >
+        <div class="d-flex justify-content-between align-items-center px-3 py-2">
           <div class="d-flex gap-2">
-            <a
-              class="tool-button text-black"
-              href="./store.html"
-              data-bs-toggle=""
-              aria-controls=""
-              ><i class="bi bi-shop-window fs-4 me-3"></i
-            ></a>
-            <a
-              class="tool-button text-black"
-              href="javascript:;"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-              ><i class="bi bi-person-fill fs-3"></i
-            ></a>
+            <a class="tool-button text-black" href="./store.html" data-bs-toggle="" aria-controls=""><i
+                class="bi bi-shop-window fs-4 me-3"></i></a>
+            <a class="tool-button text-black" href="javascript:;" data-bs-toggle="modal"
+              data-bs-target="#exampleModal"><i class="bi bi-person-fill fs-3"></i></a>
           </div>
           <div class="logo" style="width: 80px">
             <a href="/">
@@ -445,30 +340,11 @@ function handleProfileClick() {
             </a>
           </div>
           <div class="d-flex gap-2">
-            <a
-              class="tool-button text-black"
-              href="#cartMenu"
-              data-bs-toggle="offcanvas"
-              aria-controls="cartMenu"
-              ><i class="bi bi-bag-fill fs-3 me-3"></i
-            ></a>
-            <button
-              class="tool-button"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#mobileMenu"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+            <a class="tool-button text-black" href="#cartMenu" data-bs-toggle="offcanvas" aria-controls="cartMenu"><i
+                class="bi bi-bag-fill fs-3 me-3"></i></a>
+            <button class="tool-button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
           </div>
