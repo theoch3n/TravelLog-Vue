@@ -154,7 +154,7 @@
                 <v-card-title>{{ card.itineraryTitle }}</v-card-title>
                 <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " + card.itineraryEndDate.split("T")[0] }}</v-card-subtitle>
                 <v-card-actions>
-                  <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click.stop="showDialog"></v-btn>
+                  <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click.stop="showDialog(card.itineraryId)"></v-btn>
                   <v-dialog
                       v-model="dialog"
                       width="400"
@@ -167,12 +167,13 @@
                         :rules="rules"
                         hide-details="auto"
                         label="請輸入帳號"
+                        v-model="GroupEmmail"
                       ></v-text-field>
                         <template v-slot:actions>
                           <v-btn
-                            class="ms-auto"
-                            text="加入"
-                            @click="dialog = false"
+                          class="ms-auto"
+                          text="加入"
+                          @click="invitefriends(card.itineraryId)"
                           ></v-btn>
                         </template>
                       </v-card>
@@ -195,10 +196,6 @@ import { format } from "date-fns"; // 格式化日期
 import { useRouter } from "vue-router";
 
 
-
-  
-  
-  
  
 const baseAddress = "https://localhost:7092";
 
@@ -216,6 +213,36 @@ const activeInput = ref(null);
 
 // 限制結束日期不能早於開始日期
 const minDate = ref(null);
+
+const profile = ref({
+  userId: '',
+  userName: '',
+  userEmail: '',
+  userPhone: ''
+})
+
+async function fetchProfile() {
+  try {
+    const response = await axios.get(`${baseAddress}/api/Profile`);
+    // 假設後端回傳的資料與 profile 結構一致
+    profile.value = response.data;
+
+    console.log(profile.value);
+    console.log(profile.value.userId);
+    console.log("會員資料");
+  } catch (err) {
+    console.error("取得資料錯誤：", err);
+  } 
+}
+
+// 攔截器：自動將 token 加入請求標頭
+axios.interceptors.request.use(config => {
+  const token = localStorage.getItem("token")
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+}, error => Promise.reject(error))
 
 // 打開日期選擇器
 const openDatePicker = (type) => {
@@ -255,13 +282,18 @@ const setDate = (date) => {
   showDatePicker.value = false;
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchProfile();
+  await itineraryData();
   loadGoogleMapsAPI();
-  itineraryData();
 });
 
 const insertdata = async () => {
   try {
+    if (!profile.value.userID) {
+      await fetchProfile();
+    }
+    alert(profile.value.userID)
     const insert = {
       itineraryId: 0,
       itineraryTitle: itinerarytitle.value,
@@ -270,6 +302,7 @@ const insertdata = async () => {
       itineraryImage: CardImg.value,
       itineraryStartDate: startDate.value,
       ItineraryEndDate: endDate.value,
+      ItineraryCreateUser: profile.value.userID,
       itineraryCreateDate: null,
     };
     const response = await axios.post(
@@ -290,6 +323,7 @@ const insertdata = async () => {
     // });
     // bsCollapse.hide();
   } catch (error) {
+    alert(error.message);
     alert(error.message + "\n檢查你的api有沒有開");
   }
 };
@@ -375,8 +409,10 @@ const setupMarkerListener = (autocomplete) => {
 // 取得卡片資料
 const itineraryData = async () => {
   try {
+    console.log("ID:"+profile.value.userId);
+
     const response = await axios.get(
-      `${baseAddress}/api/Itinerary/getitineraryData`
+      `${baseAddress}/api/Itinerary/ByUser/${profile.value.userId}`
     );
     CardData.value = response.data;
 
@@ -398,15 +434,41 @@ const navigateToGoogleMap = (itineraryId) => {
 };
 
 const dialog = ref(false);
+const selectedItineraryId = ref(null);
 
-function showDialog() {
+function showDialog(itineraryId) {
   dialog.value = true;
-  // 或者，如果你需要確保 DOM 更新後才執行某些操作：
-  // nextTick(() => { /* ... */ });
+  selectedItineraryId.value = itineraryId; // 儲存當前卡片的 itineraryId
 }
 
 // 不需要 export default {}，<script setup> 會自動導出
 defineExpose({ dialog, showDialog });
+
+const GroupEmmail = ref("");
+
+const invitefriends = async ()=>{
+  try {
+    const insertgroup = {
+      itineraryGroupId: 0,
+      itineraryGroupItineraryId: selectedItineraryId.value,
+      itineraryGroupUserEmail: GroupEmmail.value
+    };
+    const response = await axios.post(
+      `${baseAddress}/api/Itinerary/ItineraryGroup`,
+      insertgroup
+    );
+
+    GroupEmmail.value = "";
+    //console.log(selectedItineraryId.value);
+    console.log(JSON.stringify(response.data));
+   
+  } catch (error) {
+    alert(error.message);
+    alert(error.message + "\n檢查你的api有沒有開");
+  }
+  dialog.value = false;
+}
+
 </script>
 
 
