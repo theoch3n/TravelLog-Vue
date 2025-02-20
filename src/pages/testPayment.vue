@@ -1,44 +1,30 @@
 <script setup>
-import { ref, computed, nextTick, watch, onUnmounted, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import ECPayService from '../services/testECPayService';
 import { useProductPara } from '../stores/productPara';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const isDialogVisible = ref(false);
-const route = useRoute();
+const productPara = useProductPara();
+const selectedItem = computed(() => productPara.selectItem || {});
+const peopleCount = ref(1);
 
-// 渲染頁面後清除 body 樣式
+// 確保 body 樣式恢復正常
 onMounted(() => {
     document.body.style.overflow = 'auto';
     document.body.style.position = 'static';
-
-    // 確保 Bootstrap Modal 的灰色背景 (`modal-backdrop`) 被移除
     const backdrops = document.querySelectorAll('.modal-backdrop');
     backdrops.forEach(backdrop => backdrop.remove());
+
+    console.log("接收的商品數據:", selectedItem.value);
 });
 
-// 當組件卸載時，也確保 body 樣式恢復
 onUnmounted(() => {
     document.body.style.overflow = 'auto';
     document.body.style.position = 'static';
     isDialogVisible.value = false;
 });
-
-const productPara = useProductPara();
-const selectedItems = computed(() => productPara.selectItem);
-onMounted(() => {
-    console.log("接收的產品數據:", selectedItems.value);
-});
-
-const unitPrice = ref(5000);
-const peopleCount = ref(2);
-const participants = ref(
-    Array.from({ length: peopleCount.value }, () => ({
-        lastName: '',
-        firstName: '',
-        gender: ''
-    }))
-);
 
 const contactInfo = ref({
     name: '',
@@ -47,167 +33,94 @@ const contactInfo = ref({
     country: ''
 });
 
-const orderStatus = "";
-
-const participantFormRef = ref(null);
-const contactFormRef = ref(null);
-const isParticipantFormValid = ref(false);
-const isContactFormValid = ref(false);
-
-const orderDetails = ref({
-    itemName: '東京自由行 5 天 4 夜',
-    departureDate: '2024-07-15',
-    departureLocation: '台北松山機場',
-    description: `
-    行程特色：
-    - 暢遊東京知名景點
-    - 享受日本美食與文化
-    - 自由行程，彈性安排
-    - 包含機場接送服務
-
-    行程包含：
-    1. 來回機票
-    2. 四晚住宿
-    3. 機場接送
-    4. 旅遊保險
-  `,
-});
-
 const totalPrice = computed(() => {
-    return unitPrice.value * peopleCount.value;
+    return selectedItem.value.price || 0;
 });
 
 async function initiatePayment() {
-    try {
-        const orderResult = await ECPayService.createOrder({
-            totalAmount: totalPrice.value,
-            itemName: selectedItems.value[0]?.eventName || "未知產品",
-            tradeDesc: `${selectedItems.value.length} 件商品`,
-            participants: participants.value,
-            contactInfo: contactInfo.value
-        });
+    if (!selectedItem.value || !selectedItem.value.eventName) {
+        alert("請先選擇商品！");
+        return;
+    }
 
-        console.log("訂單成功:", orderResult);
-        productPara.clearCart(); // 清空購物車
+    const orderDetails = {
+        totalAmount: selectedItem.value.price || 0,
+        itemName: selectedItem.value.eventName,
+        tradeDesc: `訂購行程：${selectedItem.value.eventName}`,
+    };
+
+    console.log("傳送至後端的訂單資料:", orderDetails);
+
+    try {
+        const orderResult = await ECPayService.createOrder(orderDetails);
+
+        console.log("訂單成功建立:", orderResult);
+
         ECPayService.submitToECPay(orderResult.orderParams);
     } catch (error) {
-        console.error('Payment initiation failed', error);
-        alert('付款初始化失敗，請稍後再試');
+        console.error("訂單建立失敗:", error);
+        alert("付款初始化失敗，請稍後再試");
     }
 }
 
-
-// 表單驗證方法
-async function validateForm(formRef) {
-    if (!formRef) {
-        console.error('Form reference is null');
-        return false;
-    }
-
-    // 等待 DOM 更新
-    await nextTick();
-
-    // 調用 validate 方法
-    const { valid } = await formRef.validate();
-    return valid;
+const goToProduct = () => {
+    router.push("/products");
 }
-async function dummyData() {
-    participants.value = [
-        { lastName: '王', firstName: '小明', gender: '男' },
-        { lastName: '陳', firstName: '小美', gender: '女' },
-    ];
-    contactInfo.value =
-        { name: '王小明', email: 'a123@gmail.com', 'phone': '0912345678', country: '台灣' };
 
-}
 </script>
 
 <template>
     <v-container fluid class="payment-container">
         <v-row>
-            <!-- 行程資訊 -->
             <v-col cols="12" md="7" class="order-details">
                 <v-card flat>
-                    <v-card-title class="text-h5 font-weight-bold">
-                        {{ orderDetails.itemName }}
+                    <v-card-title class="text-h4 font-weight-bold">
+                        {{ selectedItem.eventName }}
                     </v-card-title>
 
                     <v-divider class="my-4"></v-divider>
 
                     <v-card-text>
-                        <v-row>
-                            <v-col cols="12" md="6">
-                                <v-icon left color="primary">mdi-calendar</v-icon>
-                                <span class="subtitle-1">出發日期：{{ orderDetails.departureDate }}</span>
-                            </v-col>
+                        <p class="product-description">{{ selectedItem.eventDescription }}</p>
+                        <v-row class="mt-4 product-details">
                             <v-col cols="12" md="6">
                                 <v-icon left color="primary">mdi-map-marker</v-icon>
-                                <span class="subtitle-1">出發地點：{{ orderDetails.departureLocation }}</span>
+                                <span class="subtitle-1 font-weight-bold">目的地：</span>
+                                <span>{{ selectedItem.destination }}</span>
+                            </v-col>
+                            <v-col cols="12" md="6">
+                                <v-icon left color="primary">mdi-airplane-takeoff</v-icon>
+                                <span class="subtitle-1 font-weight-bold">出發地點：</span>
+                                <span>{{ selectedItem.startingPoint }}</span>
+                            </v-col>
+                            <v-col cols="12" md="6">
+                                <v-icon left color="primary">mdi-calendar-start</v-icon>
+                                <span class="subtitle-1 font-weight-bold">開始日期：</span>
+                                <span>{{ selectedItem.firstDate }}</span>
+                            </v-col>
+                            <v-col cols="12" md="6">
+                                <v-icon left color="primary">mdi-calendar-end</v-icon>
+                                <span class="subtitle-1 font-weight-bold">結束日期：</span>
+                                <span>{{ selectedItem.lastDate }}</span>
+                            </v-col>
+                            <v-col cols="12" md="6">
+                                <v-icon left color="primary">mdi-phone</v-icon>
+                                <span class="subtitle-1 font-weight-bold">聯絡電話：</span>
+                                <span>{{ selectedItem.contactInfo }}</span>
+                            </v-col>
+                            <v-col cols="12" md="6" class="d-flex align-center">
+                                <v-icon left color="primary">mdi-star</v-icon>
+                                <span class="subtitle-1 font-weight-bold">評分：</span>
+                                <v-rating v-model="selectedItem.ratings" color="amber" background-color="grey lighten-2"
+                                    half-increments readonly dense size="25">
+                                </v-rating>
+                            </v-col>
+                            <v-col cols="12" md="6">
+                                <v-icon left color="primary">mdi-cash</v-icon>
+                                <span class="subtitle-1 font-weight-bold">價格：</span>
+                                <span>NT$ {{ selectedItem.price }}</span>
                             </v-col>
                         </v-row>
-
-                        <!-- 參加人資料表單 -->
-                        <v-card class="mt-6" outlined>
-                            <v-card-title class="subtitle-1 font-weight-bold">
-                                參加人資料
-                            </v-card-title>
-                            <v-card-text>
-                                <v-form ref="participantFormRef" v-model="isParticipantFormValid">
-                                    <v-row v-for="(participant, index) in participants" :key="index">
-                                        <v-col cols="12">
-                                            <v-subheader class="pl-0 font-weight-bold">
-                                                參加人 {{ index + 1 }}:
-                                            </v-subheader>
-                                        </v-col>
-                                        <v-col cols="12" md="4">
-                                            <v-text-field v-model="participant.lastName" label="姓"
-                                                :rules="[v => !!v || '請輸入姓']" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="4">
-                                            <v-text-field v-model="participant.firstName" label="名"
-                                                :rules="[v => !!v || '請輸入名']" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="4">
-                                            <v-select v-model="participant.gender" :items="['男', '女']" label="性別"
-                                                :rules="[v => !!v || '請選擇性別']" required></v-select>
-                                        </v-col>
-                                    </v-row>
-                                </v-form>
-                            </v-card-text>
-                        </v-card>
-
-                        <!-- 聯絡資料表單 -->
-                        <v-card class="mt-6" outlined>
-                            <v-card-title class="subtitle-1 font-weight-bold">
-                                聯絡資料
-                            </v-card-title>
-                            <v-card-text>
-                                <v-form ref="contactFormRef" v-model="isContactFormValid">
-                                    <v-row>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.name" label="聯絡人姓名"
-                                                :rules="[v => !!v || '請輸入聯絡人姓名']" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.email" label="電子信箱" :rules="[
-                                                v => !!v || '請輸入電子信箱',
-                                                v => /.+@.+\..+/.test(v) || '請輸入有效的電子信箱'
-                                            ]" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.phone" label="聯絡電話" :rules="[
-                                                v => !!v || '請輸入聯絡電話',
-                                                v => /^09\d{8}$/.test(v) || '請輸入有效的手機號碼'
-                                            ]" required></v-text-field>
-                                        </v-col>
-                                        <v-col cols="12" md="6">
-                                            <v-text-field v-model="contactInfo.country" label="國籍"
-                                                :rules="[v => !!v || '請輸入國籍']" required></v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                </v-form>
-                            </v-card-text>
-                        </v-card>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -224,19 +137,19 @@ async function dummyData() {
                     <v-card-text>
                         <v-row>
                             <v-col cols="8">
-                                <span>行程費用</span>
+                                <span class="font-weight-bold">商品名稱</span>
                             </v-col>
                             <v-col cols="4" class="text-right">
-                                <span>NT$ {{ unitPrice.toLocaleString() }}</span>
+                                <span>{{ selectedItem.eventName }}</span>
                             </v-col>
                         </v-row>
 
                         <v-row>
                             <v-col cols="8">
-                                <span>人數</span>
+                                <span class="font-weight-bold">人數</span>
                             </v-col>
                             <v-col cols="4" class="text-right">
-                                <span>{{ peopleCount }} 人</span>
+                                <span>1 人</span>
                             </v-col>
                         </v-row>
 
@@ -255,22 +168,19 @@ async function dummyData() {
                     </v-card-text>
 
                     <v-card-actions>
-                        <v-btn block color="primary" large @click="initiatePayment"
-                            :disabled="!isParticipantFormValid || !isContactFormValid">
+                        <v-btn block color="primary" large @click="initiatePayment">
                             確認付款
                         </v-btn>
                     </v-card-actions>
-                    <v-btn @click="dummyData"></v-btn>
                 </v-card>
             </v-col>
         </v-row>
     </v-container>
 </template>
 
-
 <style scoped>
 .payment-container {
-    background-color: #f5f5f5;
+    background-color: #f8f9fa;
     min-height: 100vh;
     padding: 24px;
 }
@@ -278,7 +188,8 @@ async function dummyData() {
 .order-details {
     background-color: white;
     border-radius: 8px;
-    padding: 16px;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .payment-section {
@@ -289,11 +200,21 @@ async function dummyData() {
 .sticky-card {
     position: sticky;
     top: 24px;
+    padding: 16px;
 }
 
 .total-price {
     background-color: #f0f0f0;
     border-radius: 4px;
-    padding: 8px;
+    padding: 10px;
+    font-size: 1.2rem;
+}
+
+.product-description {
+    font-size: 24px;
+}
+
+.product-details {
+    font-size: 16px;
 }
 </style>

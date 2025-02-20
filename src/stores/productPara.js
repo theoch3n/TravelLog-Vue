@@ -1,14 +1,15 @@
-import { defineStore, acceptHMRUpdate } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useProductPara = defineStore({
-    id: 'item',
+export const useProductPara = defineStore("productPara", {
     state: () => ({
-        selectItem: []
+        selectItem: null,
     }),
     actions: {
         selectToPay(item) {
-            this.selectItem.push(item);
-        }
-    }
-
-})
+            this.selectItem = item;
+        },
+        clearCart() {
+            this.selectItem = null;
+        },
+    },
+});
