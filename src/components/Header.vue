@@ -4,18 +4,35 @@ import { useRouter, useRoute } from "vue-router";
 import { useDisplay,useTheme } from "vuetify";
 import LoginModal from "@/components/LoginModal.vue";
 import { useUserStore } from "@/stores/userStore";
+import * as DarkReader from 'darkreader';
 
+// // 取得主題物件
+// const theme = useTheme()
+// // 宣告一個 isDark 的 ref 來追蹤目前是否為暗色模式
+// const isDark = ref(theme.global.name.value === 'dark')
+// // 定義切換主題的函式
+// function toggleDarkMode() {
+//   isDark.value = !isDark.value
+//   // 使用 theme 對象更新 Vuetify 的主题設定
+//   theme.global.name.value = isDark.value ? 'dark' : 'light'
+// }
 
-// 取得主題物件
-const theme = useTheme()
-// 宣告一個 isDark 的 ref 來追蹤目前是否為暗色模式
-const isDark = ref(theme.global.name.value === 'dark')
-// 定義切換主題的函式
+const isDark = ref(false);
 function toggleDarkMode() {
-  isDark.value = !isDark.value
-  // 使用 theme 对象更新 Vuetify 的主题設定
-  theme.global.name.value = isDark.value ? 'dark' : 'light'
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    // 設定 Dark Reader 使用 window.fetch 處理跨來源請求
+    DarkReader.setFetchMethod(window.fetch);
+    DarkReader.enable({
+      brightness: 100,
+      contrast: 90,
+      sepia: 10,
+    });
+  } else {
+    DarkReader.disable();
+  }
 }
+
 
 // 控制登入對話框 & 行動選單
 const loginDialog = ref(false);
