@@ -103,7 +103,7 @@ async function ChangePassword() {
             oldPassword: form.value.oldPassword,
             newPassword: form.value.newPassword
         }
-        const response = await axios.put('https://localhost:7092/api/User/ChangePassword', requestData)
+        const response = await axios.put('https://localhost:7092/api/ChangePassword', requestData)
         message.value = response.data.message || '密碼變更成功！'
         error.value = ''
         // 變更成功後清空表單
