@@ -53,7 +53,7 @@ const getBillsData = async () => {
         const response = await axios.get(`https://localhost:7092/api/Bill/GetBillWithDetailsByItineraryId/${id}`);
         if (response.data) {
             dataFromDB.value = response.data;
-            // alert(JSON.stringify(dataFromDB.value));
+            alert(JSON.stringify(dataFromDB.value));
         } else {
             alert("發生錯誤");
         }
