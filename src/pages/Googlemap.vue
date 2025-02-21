@@ -4,7 +4,12 @@
     <div class="flex-container">
       <div class="controls-container col-4 rounded-3">
         <h4 class="title mt-4">{{ Itinerarydata.itineraryTitle }}</h4>
-        <img :src="Itinerarydata.itineraryImage" alt="" class="titleimg" :style="{ height: '30%', width: '100%' }" />
+        <img
+          :src="Itinerarydata.itineraryImage"
+          alt=""
+          class="titleimg"
+          :style="{ height: '30%', width: '100%' }"
+        />
         <div class="date">
           <label for="itineraryStartDate">{{
             Itinerarydata.itineraryStartDate
@@ -14,31 +19,65 @@
             Itinerarydata.itineraryEndDate
           }}</label>
         </div>
-        <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
+        <button
+          class="btn btn-primary mt-4 draw_btn"
+          id="draw-route"
+          @click="drawRoute"
+        >
           規劃路線
         </button>
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
-            <button class="nav-link btn btn-outline-secondary" id="home-tab" :class="{ active: selectedDate === date }"
-              data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]" type="button" role="tab" aria-selected="true"
-              @click="handleDateClick(date)">
+          <li
+            class="nav-item"
+            v-for="(date, index) in dateList"
+            :key="index"
+            role="presentation"
+          >
+            <button
+              class="nav-link btn btn-outline-secondary"
+              id="home-tab"
+              :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab"
+              :data-bs-target="'#' + dateList[index]"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              @click="handleDateClick(date)"
+            >
               {{ date }}
             </button>
           </li>
         </ul>
-        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
-          <div class="tab-pane fade show" :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
+        <div
+          class="tab-content"
+          v-for="(date, index) in dateList"
+          :key="index"
+          id="myTabContent"
+        >
+          <div
+            class="tab-pane fade show"
+            :id="dateList[index]"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
             {{ dateList[index] }}
 
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
-                  :deletePlaceHandler="deletePlace">
-                  <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`">
+                <PlaceCard
+                  v-for="(place, index) in places"
+                  :key="place.id"
+                  :data="place"
+                  :deletePlaceHandler="deletePlace"
+                >
+                  <li
+                    v-if="index < places.length - 1"
+                    class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`"
+                  >
                     計算中...
                   </li>
                 </PlaceCard>
@@ -55,8 +94,12 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別" id="textsearch-input-overlay" />
+          <input
+            v-model="textsearchInput"
+            class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別"
+            id="textsearch-input-overlay"
+          />
           <button class="btn btn-danger" id="searchButton">搜尋</button>
           <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
         </div>
@@ -119,13 +162,13 @@ onMounted(() => {
 });
 
 // 使用 Vue 的 onMounted 來初始化地圖
-onMounted(() => {
+window.onload = () => {
   if (typeof google !== "undefined" && google.maps) {
     initMap();
   } else {
     console.error("Google Maps API 尚未加載完成！");
   }
-});
+};
 //////////////////////////計算日期/////////////////////////////////////
 
 // 監聽 Itinerarydata 變化，確保有值後才設定日期
@@ -207,14 +250,14 @@ const places2 = ref([
 ]);
 
 ////////////mixsearch///////////////
-const mixsearch = () => { };
+const mixsearch = () => {};
 
 /////////////////////////////
 
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
   const script = document.createElement("script");
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=initMap&region=TW&language=zh-TW`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&loading=async&loading=async&libraries=places&callback=initMap&region=TW&language=zh-TW`;
   script.async = true;
   script.defer = true;
 
@@ -248,7 +291,6 @@ const initMap = () => {
 
   // initAutocomplete();
   initAutocomplete1();
-
 };
 
 // Initialize autocomplete
@@ -272,11 +314,6 @@ const initAutocomplete1 = () => {
   setupMarkerListener(autocomplete);
   setupTextSearch(autocomplete);
 };
-
-
-
-
-
 
 // Add marker
 const addMarker = (place) => {
@@ -435,7 +472,6 @@ const setupTextSearch = (autocomplete) => {
     document.getElementById("textsearchInput").value = "";
   });
 };
-
 
 // 封裝搜尋功能，避免重複程式碼
 const performSearch = (service, query, searchLocation) => {
