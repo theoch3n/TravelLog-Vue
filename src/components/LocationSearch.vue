@@ -1,48 +1,48 @@
 <template>
-    <input class="form-control mt-2" placeholder="地點搜尋" id="search-input"/>
+    <input class="form-control mt-2" placeholder="地點搜尋" id="search-input" />
 </template>
 
 <script setup>
-    import { onMounted } from "vue";
-    const baseAddress = 'https://localhost:7092';
-    const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
+import { onMounted } from "vue";
+const baseAddress = 'https://localhost:7092';
+const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
 
-    // Load Google Maps API
-    const loadGoogleMapsAPI = () => {
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=initMap&region=TW&language=zh-TW`;
-        script.async = true;
-        script.defer = true;
+// Load Google Maps API
+const loadGoogleMapsAPI = () => {
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&loading=async&libraries=places&callback=initMap&region=TW&language=zh-TW`;
+    script.async = true;
+    script.defer = true;
 
-        script.onerror = () => {
-            console.error(
+    script.onerror = () => {
+        console.error(
             "Google Maps API 載入失敗，請檢查金鑰是否正確或網路是否正常。"
-            );
-    };
-
-        document.head.appendChild(script);
-
-        // Define global callback
-        window.initMap = initMap;
-    };
-    
-    // Initialize map
-    const initMap = () => {
-        
-        initAutocomplete();
-    };
-
-    // Initialize autocomplete
-    const initAutocomplete = () => {
-        const autocomplete = new google.maps.places.Autocomplete(
-            document.getElementById("search-input"),
-            { type: ["restaurant"] }
         );
-      setupMarkerListener(autocomplete);
     };
 
-    // Setup marker listener
-    const setupMarkerListener = (autocomplete) => {
+    document.head.appendChild(script);
+
+    // Define global callback
+    window.initMap = initMap;
+};
+
+// Initialize map
+const initMap = () => {
+
+    initAutocomplete();
+};
+
+// Initialize autocomplete
+const initAutocomplete = () => {
+    const autocomplete = new google.maps.places.Autocomplete(
+        document.getElementById("search-input"),
+        { type: ["restaurant"] }
+    );
+    setupMarkerListener(autocomplete);
+};
+
+// Setup marker listener
+const setupMarkerListener = (autocomplete) => {
     autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
 
@@ -68,14 +68,12 @@
         console.log(place.photos[0].getUrl());
         //map.value.setCenter(selectRestaurant.location);
     });
-    };
+};
 
-    onMounted(() => {
-        loadGoogleMapsAPI();
-    });
+onMounted(() => {
+    loadGoogleMapsAPI();
+});
 </script>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

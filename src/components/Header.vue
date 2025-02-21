@@ -6,6 +6,7 @@ import LoginModal from "@/components/LoginModal.vue";
 import { useUserStore } from "@/stores/userStore";
 
 // 切換主題的函式
+const isDark = ref("");
 function toggleDarkMode() {
   if (isDark.value) {
     theme.global.name.value = 'light'
