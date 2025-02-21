@@ -54,11 +54,6 @@ const routes = [
                 component: Itinerary,
             },
             {
-                path: "/bill", // 路由路徑 (根目錄)
-                name: "bill", // 路由名稱 (用於程式內部識別)
-                component: bill, // 顯示的頁面
-            },
-            {
                 path: "/contact",
                 name: "Contact",
                 component: Contact,

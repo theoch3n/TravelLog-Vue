@@ -1,17 +1,9 @@
 <template>
-    <!-- Button trigger modal -->
-    <div class="container d-flex justify-content-center">
-        <button type="button" class="btn btn-primary my-3 text-light" data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop">
-            你是一顆土豆
-        </button>
-    </div>
-
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal fade" id="modalBill" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header text-center">
-                    <h5 class="modal-title w-100 ms-5" id="staticBackdropLabel">
+                    <h5 class="modal-title w-100 ms-5" id="modalBillLabel">
                         {{ "行程名: " + ItineraryName + " 行程ID: " + ItineraryId }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -107,9 +99,8 @@
                     </div>
                     <!-- radio button -->
                     <div>
-                        <button type="button" class="btn btn-secondary text-light me-1"
-                            data-bs-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary text-light" @click="getData">儲存</button>
+                        <button type="button" class="btn btn-primary text-light me-2" @click="getData">儲存</button>
+                        <button type="button" class="btn btn-secondary text-light" @click="backToList">返回</button>
                     </div>
                 </div>
             </div>
@@ -131,6 +122,24 @@ const members = [
     "草莓",
     "西瓜",
 ];
+
+const backToList = () => {
+    // 隱藏 Details Modal
+    const detailsModalEl = document.getElementById('modalBill')
+    let detailsModal = bootstrap.Modal.getInstance(detailsModalEl)
+    if (!detailsModal) {
+        detailsModal = new bootstrap.Modal(detailsModalEl)
+    }
+    detailsModal.hide()
+
+    // 顯示 List Modal
+    const listModalEl = document.getElementById('modalBillList')
+    let listModal = bootstrap.Modal.getInstance(listModalEl)
+    if (!listModal) {
+        listModal = new bootstrap.Modal(listModalEl)
+    }
+    listModal.show()
+}
 
 onMounted(() => {
     getExchangeRates();

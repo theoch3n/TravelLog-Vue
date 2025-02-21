@@ -74,14 +74,6 @@ const pages = [
     to: "/products",
   },
   {
-    value: "bill",
-    text: "bill",
-    icon: "mdi-phone-incoming",
-    textClass: "text-yellow-darken-4",
-    to: "/bill",
-  },
-
-  {
     value: "Itinerary",
     text: "行程",
     icon: "mdi-phone-incoming",

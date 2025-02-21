@@ -1,9 +1,4 @@
 <template>
-    <!-- 按鈕觸發，目前沒用到 -->
-    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDetails">
-        詳細資料
-    </button> -->
-
     <div class="modal fade" id="modalDetails" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -50,8 +45,6 @@
                 <div class="modal-footer">
                     <button class="btn btn-primary" @click="backToList">回到列表</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
-                    <!-- <button class="btn btn-primary" data-bs-target="#modalBillList"
-                        data-bs-toggle="modal">回到列表</button> -->
                 </div>
             </div>
         </div>

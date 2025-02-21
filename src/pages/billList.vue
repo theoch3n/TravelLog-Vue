@@ -31,12 +31,13 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">新增項目</button>
+                    <button type="button" class="btn btn-primary" @click="createNewBill">新增項目</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>
         </div>
     </div>
+    <bill></bill>
     <BillDetails :billWithDetails="selectedItem"></BillDetails>
     <div class="container d-flex justify-content-center">
         <a class="btn btn-primary" data-bs-toggle="modal" href="#modalBillList">開啟列表</a>
@@ -46,9 +47,28 @@
 <script setup>
 import { ref, watch } from 'vue';
 import BillDetails from './billDetails.vue';
+import bill from './bill.vue';
 import axios from "axios";
 
 //測試區
+const createNewBill = () => {
+    // 隱藏 Bill List Modal
+    const listModalEl = document.getElementById('modalBillList')
+    let listModal = bootstrap.Modal.getInstance(listModalEl)
+    if (!listModal) {
+        listModal = new bootstrap.Modal(listModalEl)
+    }
+    listModal.hide()
+
+    // 顯示 Bill Modal
+    const billModalEl = document.getElementById('modalBill')
+    let billModal = bootstrap.Modal.getInstance(billModalEl)
+    if (!billModal) {
+        billModal = new bootstrap.Modal(billModalEl)
+    }
+    billModal.show()
+}
+
 const props = defineProps({
     getParaId: Number, // 透過 v-model 傳遞選取的行程 ID
 });
