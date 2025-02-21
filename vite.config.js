@@ -21,10 +21,13 @@ export default defineConfig({
             },
         },
         https: {
-            key: fs.readFileSync("./localhost-key.pem"),
+            // key: fs.readFileSync("./localhost-key.pem"),
             // key: fs.readFileSync("./localhost+2-key.pem"),
-            cert: fs.readFileSync("./localhost.pem"),
+            // cert: fs.readFileSync("./localhost.pem"),
             // cert: fs.readFileSync("./localhost+2.pem"),
+            //弘儒
+            key: fs.readFileSync("./localhost-key-HongRu.pem"),
+            cert: fs.readFileSync("./localhost-HongRu.pem"),
         },
         host: true,
         port: 5173,

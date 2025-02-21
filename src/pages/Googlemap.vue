@@ -119,13 +119,15 @@ onMounted(() => {
 });
 
 // 使用 Vue 的 onMounted 來初始化地圖
-onMounted(() => {
+window.onload = () =>{
   if (typeof google !== "undefined" && google.maps) {
     initMap();
+    console.log("Google Maps API 加載完成！");
+
   } else {
     console.error("Google Maps API 尚未加載完成！");
   }
-});
+}
 //////////////////////////計算日期/////////////////////////////////////
 
 // 監聽 Itinerarydata 變化，確保有值後才設定日期
@@ -214,7 +216,7 @@ const mixsearch = () => { };
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
   const script = document.createElement("script");
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=initMap&region=TW&language=zh-TW`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&loading=async&libraries=places&callback=initMap&region=TW&language=zh-TW`;
   script.async = true;
   script.defer = true;
 
