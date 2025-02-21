@@ -10,8 +10,8 @@
   </v-tabs> -->
 
   <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
-    <v-tab :value="1">我的旅遊</v-tab>
-    <v-tab :value="2">旅遊群組</v-tab>
+     <v-tab :value="1" @click="handleTabClick('personal')">我的旅遊</v-tab>
+     <v-tab :value="2" @click="handleTabClick('group')">旅遊群組</v-tab>
   </v-tabs>
 
   <v-tabs-window v-model="tab">
@@ -86,53 +86,38 @@
         </div>
       </div>
     </div>
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-        <v-container>
-          <v-row>
-            <v-col cols="12" md="6" v-for="card in CardData" :key="card.itineraryId"
-              @click="navigateToGoogleMap(card.itineraryId)">
-              <v-card class="fixed-size-card" max-width="344">
-                <v-img :src="card.itineraryImage" cover></v-img>
-                <v-card-title>{{ card.itineraryTitle }}</v-card-title>
-                <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " + card.itineraryEndDate.split("T")[0]
-                }}</v-card-subtitle>
-                <v-card-actions>
-                  <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                    @click.stop="showDialog(card.itineraryId)">
-                  </v-btn>
-                  <button class="btn btn-outline-primary" @click.stop="openBillList(card.itineraryId)">拆帳</button>
-                  <v-spacer></v-spacer>
-                  <v-dialog v-model="dialog" width="400">
-                    <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友"><v-text-field :rules="rules"
-                        hide-details="auto" label="請輸入帳號" v-model="GroupEmmail"></v-text-field>
-                      <template v-slot:actions>
-                        <v-btn class="ms-auto" text="加入" @click="invitefriends(card.itineraryId)"></v-btn>
-                      </template>
-                    </v-card>
-                  </v-dialog>
-                </v-card-actions>
+    <div class="container">
+      <v-container>
+        <v-row>
+          <v-col cols="3" v-for="card in CardData" :key="card.itineraryId"
+            @click="navigateToGoogleMap(card.itineraryId)">
+            <v-card class="fixed-size-card" max-width="344">
+              <v-img :src="card.itineraryImage" cover></v-img>
+              <v-card-title>{{ card.itineraryTitle }}</v-card-title>
+              <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " + card.itineraryEndDate.split("T")[0]
+              }}</v-card-subtitle>
+              <v-card-actions>
+                <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                  @click.stop="showDialog(card.itineraryId)">
+                </v-btn>
+                <button class="btn btn-outline-primary" @click.stop="openBillList(card.itineraryId)">拆帳</button>
+                <v-spacer></v-spacer>
+                <v-dialog v-model="dialog" width="400">
+                  <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友"><v-text-field :rules="rules"
+                      hide-details="auto" label="請輸入帳號" v-model="GroupEmmail"></v-text-field>
+                    <template v-slot:actions>
+                      <v-btn class="ms-auto" text="加入" @click="invitefriends(card.itineraryId)"></v-btn>
+                    </template>
+                  </v-card>
+                </v-dialog>
+              </v-card-actions>
 
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-        <!-- <div class="col" v-for="card in CardData" :key="card.itineraryId"
-          @click="navigateToGoogleMap(card.itineraryId)">
-          <div class="card h-100">
-            <img :src="card.itineraryImage" class="card-img-top" alt="..." />
-            <div class="card-body">
-              <h5 class="card-title">{{ card.itineraryTitle }}</h5>
-              <p class="card-text">
-                {{
-                  card.itineraryStartDate.split("T")[0] +
-                  " ~ " +
-                  card.itineraryEndDate.split("T")[0]
-                }}
-              </p>
-            </div>
-          </div>
-        </div> -->
-      </div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+      
+    </div>
   </div>
   <BillList :getParaId="selectedItineraryId"></BillList>
 </template>
@@ -260,7 +245,7 @@
       if (!profile.value.userId) {
         await fetchProfile();
       }
-      alert(profile.value.userId)
+      // alert(profile.value.userId)
       const insert = {
         itineraryId: 0,
         itineraryTitle: itinerarytitle.value,
@@ -272,10 +257,7 @@
         ItineraryCreateUser: profile.value.userId,
         itineraryCreateDate: null,
       };
-      const response = await axios.post(
-        `${baseAddress}/api/Itinerary/Itinerary`,
-        insert
-      );
+      const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`,insert);
 
       // console.log(itinerarytitle.value);
       // console.log(startDate.value);
@@ -372,19 +354,55 @@
       //map.value.setCenter(selectRestaurant.location);
     });
   };
+  
+  // Tab 切換
+  const handleTabClick = async (tabValue) => {
+
+    console.log(tabValue);
+    CardData.value = []; // 清除卡片資料
+    if (tabValue === "personal")
+    {
+      await itineraryData();
+    } 
+    else if (tabValue === "group")
+    { 
+      await itinerarygroupData();
+    }
+  };
 
   // 取得卡片資料
   const itineraryData = async () => {
     try {
-      console.log("ID:" + profile.value.userId);
+      
+      //console.log("ID:" + profile.value.userId);
 
-      const response = await axios.get(
-        `${baseAddress}/api/Itinerary/ByUser/${profile.value.userId}`
-      );
+      const response = await axios.get(`${baseAddress}/api/Itinerary/ByUser/${profile.value.userId}`);
       CardData.value = response.data;
-
+      console.log("itineraryData");
+      console.log(response.data);
       //console.log(JSON.stringify(response.data));
     } catch (error) {
+      alert(error.message + "\n檢查你的api有沒有開");
+    }
+  };
+
+  const itinerarygroupData = async () => {
+    try 
+    {
+      var request = {};
+
+      request.itineraryGroupUserEmail = profile.value.userEmail;
+
+      //console.log(request);
+
+      const response = await axios.post(`${baseAddress}/api/Itinerary/CheckItineraryGroup/`, request);
+      console.log("itinerarygroupData");
+      console.log(response.data);
+
+      CardData.value = response.data;
+    } 
+    catch (error) 
+    {
       alert(error.message + "\n檢查你的api有沒有開");
     }
   };
@@ -434,7 +452,7 @@
     }
     dialog.value = false;
   }
-
+  
 </script>
 
 
