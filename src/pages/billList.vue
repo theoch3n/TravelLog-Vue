@@ -1,25 +1,31 @@
 <template>
     <div class="modal fade" id="modalBillList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalBillListLabel">行程ID + 行程名稱</h5>
+                    <h5 class="modal-title" id="modalBillListLabel"> {{ itineraryId }} , {{ itineraryTitle }}
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr class="text-center">
-                                <th>ID</th>
-                                <th>項目名稱</th>
-                                <th>價格</th>
+                                <th>#</th>
+                                <th>標題</th>
+                                <th>代墊人</th>
+                                <th>金額</th>
+                                <th>創建日期</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-center" v-for="item in dataList" :key="item.id" @click="openDetails(item)">
-                                <td>{{ item.id }}</td>
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.price }}</td>
+                            <tr class="text-center" v-for="(bill, index) in bills" :key="bill.id"
+                                @click="openDetails(bill.id)">
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ bill.title }}</td>
+                                <td>{{ bill.paidBy }}</td>
+                                <td>{{ bill.totalAmount }}</td>
+                                <td>{{ bill.createdAt }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -31,14 +37,14 @@
             </div>
         </div>
     </div>
-    <BillDetails></BillDetails>
+    <BillDetails :billWithDetails="selectedItem"></BillDetails>
     <div class="container d-flex justify-content-center">
         <a class="btn btn-primary" data-bs-toggle="modal" href="#modalBillList">開啟列表</a>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import BillDetails from './billDetails.vue';
 import axios from "axios";
 
@@ -46,14 +52,26 @@ import axios from "axios";
 const props = defineProps({
     getParaId: Number, // 透過 v-model 傳遞選取的行程 ID
 });
-const dataFromDB = ref();
+
+const dataList = ref([]);
+const bills = ref([]);
+const details = ref([]);
+const itineraryId = ref("這邊放id");
+const itineraryTitle = ref("這邊放標題");
 const getBillsData = async () => {
     const id = props.getParaId
     try {
         const response = await axios.get(`https://localhost:7092/api/Bill/GetBillWithDetailsByItineraryId/${id}`);
         if (response.data) {
-            dataFromDB.value = response.data;
-            alert(JSON.stringify(dataFromDB.value));
+            dataList.value = response.data;
+            bills.value = [];
+            details.value = [];
+            for (const item of response.data) {
+                bills.value.push(item.bill);
+                details.value.push(item.bill.billDetails);
+            }
+            console.log(bills.value)
+            console.log(details.value)
         } else {
             alert("發生錯誤");
         }
@@ -78,23 +96,22 @@ const showModal = () => {
 watch(() => props.getParaId, (newValue) => {
     if (newValue && newValue != -1) {
         getBillsData();
-        //showModal();
+        showModal();
     }
 });
-//
-
-const dataList = ref([
-    { id: 1, name: '商品 A', price: 100 },
-    { id: 2, name: '商品 B', price: 200 },
-    { id: 3, name: '商品 C', price: 300 }
-]);
 
 // modal觸發測試
 
 const selectedItem = ref(null)
 
-const openDetails = (item) => {
-    selectedItem.value = item
+const openDetails = (BillId) => {
+    const selectedBill = bills.value.find(item => item.id === BillId);
+    if (!selectedBill) {
+        alert("找不到該帳單");
+        return;
+    }
+
+    selectedItem.value = selectedBill;
 
     // 隱藏 List Modal
     const listModalEl = document.getElementById('modalBillList')

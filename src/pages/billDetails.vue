@@ -5,36 +5,41 @@
     </button> -->
 
     <div class="modal fade" id="modalDetails" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="staticBackdropLabel">行程ID + 行程名稱</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <strong>品項：</strong> 1<br>
-                        <strong>總金額：</strong> 2<br>
-                        <strong>墊款人：</strong> 3<br>
-                        <strong>建立時間：</strong> 4
+                    <div class="mb-3" v-if="props.billWithDetails">
+                        <strong>品項：</strong>{{ props.billWithDetails.title }}<br>
+                        <strong>總金額：</strong>{{ props.billWithDetails.totalAmount }}<br>
+                        <strong>墊款人：</strong>{{ props.billWithDetails.paidBy }}<br>
+                        <strong>建立時間：</strong>{{ props.billWithDetails.createdAt }}
                     </div>
                     <div class="table-responsive rounded">
                         <table class="table table-bordered table-hover">
                             <thead class="table-light">
                                 <tr class="text-center">
                                     <th>#</th>
+                                    <th>ID</th>
+                                    <th>BillId</th>
                                     <th>姓名</th>
                                     <th>金額</th>
                                     <th>已支付</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="text-center" v-for="(detail, index) in billDetails" :key="detail.id">
+                                <tr class="text-center" v-for="(item, index) in props.billWithDetails?.billDetails"
+                                    :key="item.id">
                                     <td>{{ index + 1 }}</td>
-                                    <td>{{ detail.membername }}</td>
-                                    <td>{{ detail.amount }}</td>
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.billId }}</td>
+                                    <td>{{ item.memberName }}</td>
+                                    <td>{{ item.amount }}</td>
                                     <td>
-                                        <span v-if="detail.paid" class="text-success">✅</span>
+                                        <span v-if="item?.paid" class="text-success">✅</span>
                                         <span v-else class="text-danger">❌</span>
                                     </td>
                                 </tr>
@@ -53,11 +58,12 @@
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
-const billDetails = ref([
-    { id: "11", membername: "AA", amount: "111", paid: true },
-    { id: "22", membername: "BB", amount: "222", paid: false }
-]);
+const props = defineProps({
+    billWithDetails: Object
+    // bills: Array,
+    // details: Array,
+})
+
 const backToList = () => {
     // 隱藏 Details Modal
     const detailsModalEl = document.getElementById('modalDetails')
