@@ -1,14 +1,4 @@
 <template>
-
-  <!-- <v-tabs
-    bg-color="indigo-darken-2"
-    fixed-tabs
-  >
-    <v-tab text="我的旅遊"></v-tab>
-
-    <v-tab text="旅遊群組"></v-tab>
-  </v-tabs> -->
-
   <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
      <v-tab :value="1" @click="handleTabClick('personal')">我的旅遊</v-tab>
      <v-tab :value="2" @click="handleTabClick('group')">旅遊群組</v-tab>
@@ -16,9 +6,9 @@
 
   <v-tabs-window v-model="tab">
     <v-tabs-window-item :value="0">
-
     </v-tabs-window-item>
   </v-tabs-window>
+
   <div>
     <div class="container mt-5 mb-5">
       <div class="row">
@@ -131,25 +121,8 @@
   import BillList from "./billList.vue";
 
 
-
   const baseAddress = "https://localhost:7092";
-  const selectedItineraryId = ref(null);
-
-
-  //拆帳
-  const selectedId = ref(0);
-  const openBillList = (id) => {
-    if (selectedItineraryId.value === id) {
-      selectedItineraryId.value = -1; // 清空 ID 以確保 watch 會觸發
-      setTimeout(() => {
-        selectedItineraryId.value = id;
-      }, 10); // **使用 setTimeout 確保值改變**
-    } else {
-      selectedItineraryId.value = id;
-    }
-    console.log("ItineraryId: " + id);
-  };
-  //拆帳
+  
 
   // 控制 v-date-picker 顯示與隱藏
   const showDatePicker = ref(false);
@@ -166,6 +139,7 @@
   // 限制結束日期不能早於開始日期
   const minDate = ref(null);
 
+  //  使用者資訊
   const profile = ref({
     userId: '',
     userName: '',
@@ -173,6 +147,34 @@
     userPhone: ''
   })
 
+  //  GoogleMap API 金鑰
+  const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
+
+  //  選擇卡片ID
+  const selectedItineraryId = ref(null);
+
+  const CardName = ref("");
+  const CardImg = ref("");
+  const CardCoordinate = ref("");
+  const CardData = ref([]);
+
+  // 路由導向 傳遞行程ID
+  const router = useRouter();
+
+  // 顯示邀請好友
+  const dialog = ref(false);
+
+  // 邀請好友Email
+  const GroupEmmail = ref("");
+
+  //  初始化
+  onMounted(async () => {
+    await fetchProfile();
+    await itineraryData();
+    loadGoogleMapsAPI();
+  });
+
+  //  會員資訊
   async function fetchProfile() {
     try {
       const response = await axios.get(`${baseAddress}/api/Profile`);
@@ -234,53 +236,8 @@
     showDatePicker.value = false;
   };
 
-  onMounted(async () => {
-    await fetchProfile();
-    await itineraryData();
-    loadGoogleMapsAPI();
-  });
-
-  const insertdata = async () => {
-    try {
-      if (!profile.value.userId) {
-        await fetchProfile();
-      }
-      // alert(profile.value.userId)
-      const insert = {
-        itineraryId: 0,
-        itineraryTitle: itinerarytitle.value,
-        itineraryLocation: CardName.value,
-        itineraryCoordinate: CardCoordinate.value,
-        itineraryImage: CardImg.value,
-        itineraryStartDate: startDate.value,
-        ItineraryEndDate: endDate.value,
-        ItineraryCreateUser: profile.value.userId,
-        itineraryCreateDate: null,
-      };
-      const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`,insert);
-
-      // console.log(itinerarytitle.value);
-      // console.log(startDate.value);
-      // console.log(endDate.value);
-      console.log(JSON.stringify(response.data));
-      await itineraryData();
-
-      // 手動摺疊 Accordion
-      // const collapseElement = document.getElementById('collapseOne');
-      // const bsCollapse = new bootstrap.Collapse(collapseElement, {
-      //     toggle: false
-      // });
-      // bsCollapse.hide();
-    } catch (error) {
-      alert(error.message);
-      alert(error.message + "\n檢查你的api有沒有開");
-    }
-  };
-
-  const API_KEY = "AIzaSyA0mSwZn2Mgu42RjWRxivjrSC3s84nINa0";
-  //const map = ref(null);
-
-  // Load Google Maps API
+  /*  GoogleMap  */
+  //  Google Maps API
   const loadGoogleMapsAPI = () => {
     const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=initMap&region=TW&language=zh-TW`;
@@ -311,11 +268,6 @@
     );
     setupMarkerListener(autocomplete);
   };
-
-  const CardName = ref("");
-  const CardImg = ref("");
-  const CardCoordinate = ref("");
-  const CardData = ref([]);
 
   // Setup marker listener
   const setupMarkerListener = (autocomplete) => {
@@ -354,12 +306,49 @@
       //map.value.setCenter(selectRestaurant.location);
     });
   };
+  /*  GoogleMap  */
+
+   //  新增行程
+  const insertdata = async () => {
+    try {
+      if (!profile.value.userId) {
+        await fetchProfile();
+      }
+      // alert(profile.value.userId)
+      const insert = {
+        itineraryId: 0,
+        itineraryTitle: itinerarytitle.value,
+        itineraryLocation: CardName.value,
+        itineraryCoordinate: CardCoordinate.value,
+        itineraryImage: CardImg.value,
+        itineraryStartDate: startDate.value,
+        ItineraryEndDate: endDate.value,
+        ItineraryCreateUser: profile.value.userId,
+        itineraryCreateDate: null,
+      };
+      const response = await axios.post(`${baseAddress}/api/Itinerary/Itinerary`,insert);
+
+      console.log(JSON.stringify(response.data));
+      await itineraryData();
+
+      // 手動摺疊 Accordion
+      // const collapseElement = document.getElementById('collapseOne');
+      // const bsCollapse = new bootstrap.Collapse(collapseElement, {
+      //     toggle: false
+      // });
+      // bsCollapse.hide();
+    } catch (error) {
+      alert(error.message);
+      alert(error.message + "\n檢查你的api有沒有開");
+    }
+  };
   
   // Tab 切換
   const handleTabClick = async (tabValue) => {
 
     console.log(tabValue);
     CardData.value = []; // 清除卡片資料
+
     if (tabValue === "personal")
     {
       await itineraryData();
@@ -377,15 +366,19 @@
       //console.log("ID:" + profile.value.userId);
 
       const response = await axios.get(`${baseAddress}/api/Itinerary/ByUser/${profile.value.userId}`);
+
       CardData.value = response.data;
+
       console.log("itineraryData");
       console.log(response.data);
       //console.log(JSON.stringify(response.data));
+      
     } catch (error) {
       alert(error.message + "\n檢查你的api有沒有開");
     }
   };
 
+  // 取得群組行程資料
   const itinerarygroupData = async () => {
     try 
     {
@@ -407,19 +400,7 @@
     }
   };
 
-  // 路由導向 傳遞行程ID
-  const router = useRouter();
-
-  const navigateToGoogleMap = (itineraryId) => {
-    console.log(itineraryId);
-    router.push({
-      name: "Googlemap",
-      params: { id: itineraryId }, // 只有 id 放 params
-    });
-  };
-
-  const dialog = ref(false);
-
+  // 顯示邀請好友
   function showDialog(itineraryId) {
     dialog.value = true;
     selectedItineraryId.value = itineraryId; // 儲存當前卡片的 itineraryId
@@ -428,8 +409,7 @@
   // 不需要 export default {}，<script setup> 會自動導出
   defineExpose({ dialog, showDialog });
 
-  const GroupEmmail = ref("");
-
+  // 邀請好友
   const invitefriends = async () => {
     try {
       const insertgroup = {
@@ -452,7 +432,29 @@
     }
     dialog.value = false;
   }
-  
+
+  // 跳轉至 GoogleMap 傳遞 ID
+  const navigateToGoogleMap = (itineraryId) => {
+    console.log(itineraryId);
+    router.push({
+      name: "Googlemap",
+      params: { id: itineraryId }, // 只有 id 放 params
+    });
+  };
+
+  //拆帳
+  const openBillList = (id) => {
+    if (selectedItineraryId.value === id) {
+      selectedItineraryId.value = -1; // 清空 ID 以確保 watch 會觸發
+      setTimeout(() => {
+        selectedItineraryId.value = id;
+      }, 10); // **使用 setTimeout 確保值改變**
+    } else {
+      selectedItineraryId.value = id;
+    }
+    console.log("ItineraryId: " + id);
+  };
+  //拆帳
 </script>
 
 
