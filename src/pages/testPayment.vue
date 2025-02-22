@@ -47,19 +47,22 @@ async function initiatePayment() {
         totalAmount: selectedItem.value.price || 0,
         itemName: selectedItem.value.eventName,
         tradeDesc: `訂購行程：${selectedItem.value.eventName}`,
+        userId: 1
     };
-
-    console.log("傳送至後端的訂單資料:", orderDetails);
 
     try {
         const orderResult = await ECPayService.createOrder(orderDetails);
-
         console.log("訂單成功建立:", orderResult);
-
         ECPayService.submitToECPay(orderResult.orderParams);
     } catch (error) {
-        console.error("訂單建立失敗:", error);
-        alert("付款初始化失敗，請稍後再試");
+        console.error("訂單建立或提交失敗:", error);
+        if (error.response) {
+            alert(`付款初始化失敗：${error.response.data?.message || '伺服器錯誤'}`);
+        } else if (error.request) {
+            alert("付款初始化失敗：無法連接到伺服器，請檢查網絡連線");
+        } else {
+            alert(`付款初始化失敗：${error.message}`);
+        }
     }
 }
 
