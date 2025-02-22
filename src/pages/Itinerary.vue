@@ -94,19 +94,19 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <v-container>
                 <v-row>
-                    <v-col cols="12" md="6" v-for="card in CardData" :key="card.itineraryId"
-                        @click="navigateToGoogleMap(card.itineraryId)">
+                    <v-col cols="12" md="6" v-for="card in CardData" :key="card.itineraryId">
                         <v-card class="fixed-size-card" max-width="344">
-                            <v-img :src="card.itineraryImage" cover></v-img>
+                            <v-img class="pointer" :src="card.itineraryImage" cover
+                                @click="navigateToGoogleMap(card.itineraryId)"></v-img>
                             <v-card-title>{{ card.itineraryTitle }}</v-card-title>
                             <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " +
                                 card.itineraryEndDate.split("T")[0]
-                            }}</v-card-subtitle>
+                                }}</v-card-subtitle>
                             <v-card-actions>
                                 <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
                                     @click.stop="showDialog(card.itineraryId)">
                                 </v-btn>
-                                <button class="btn btn-outline-primary" @click.stop="openBillList(card)">拆帳</button>
+
                                 <v-spacer></v-spacer>
                                 <v-dialog v-model="dialog" width="400">
                                     <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友"><v-text-field
@@ -118,6 +118,7 @@
                                         </template>
                                     </v-card>
                                 </v-dialog>
+                                <button class="btn btn-outline-primary" @click="openBillList(card)">拆帳</button>
                             </v-card-actions>
 
                         </v-card>
@@ -142,7 +143,7 @@
           </div> -->
         </div>
     </div>
-    <BillList :getParaId="selectedItineraryId"></BillList>
+    <BillList :getParaId="selectedId"></BillList>
 </template>
 
 <script setup>
@@ -157,18 +158,19 @@ import BillList from "./billList.vue";
 
 const baseAddress = "https://localhost:7092";
 const selectedItineraryId = ref(null);
+const selectedId = ref(null);
 
 //拆帳
 // const selectedId = ref(0);
 const openBillList = (item) => {
     const id = item.itineraryId;
-    if (selectedItineraryId.value === id) {
-        selectedItineraryId.value = -1; // 清空 ID 以確保 watch 會觸發
+    if (selectedId.value === id) {
+        selectedId.value = -1; // 清空 ID 以確保 watch 會觸發
         setTimeout(() => {
-            selectedItineraryId.value = id;
+            selectedId.value = id;
         }, 10); // **使用 setTimeout 確保值改變**
     } else {
-        selectedItineraryId.value = id;
+        selectedId.value = id;
     }
     console.log("ItineraryId: " + JSON.stringify(item));
 };
