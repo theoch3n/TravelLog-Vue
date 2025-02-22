@@ -123,27 +123,20 @@ const members = [
     "西瓜",
 ];
 
-const backToList = () => {
-    // 隱藏 Details Modal
-    const detailsModalEl = document.getElementById('modalBill')
-    let detailsModal = bootstrap.Modal.getInstance(detailsModalEl)
-    if (!detailsModal) {
-        detailsModal = new bootstrap.Modal(detailsModalEl)
+const props = defineProps({
+    toggleModal: {
+        Type: Function,
+        required: true
     }
-    detailsModal.hide()
+})
 
-    // 顯示 List Modal
-    const listModalEl = document.getElementById('modalBillList')
-    let listModal = bootstrap.Modal.getInstance(listModalEl)
-    if (!listModal) {
-        listModal = new bootstrap.Modal(listModalEl)
-    }
-    listModal.show()
+const backToList = () => {
+    props.toggleModal('modalBill', 'hide')
+    props.toggleModal('modalBillList', 'show')
 }
 
 onMounted(() => {
     getExchangeRates();
-
     members.forEach(() => {
         insideData.push({
             exactPercentage: null,
@@ -155,7 +148,7 @@ onMounted(() => {
         });
     });
 });
-// mark
+
 const keyword = ref('');
 const filteredRates = computed(() => {
     if (!keyword.value) {
@@ -165,24 +158,17 @@ const filteredRates = computed(() => {
         Object.entries(rates.value).filter(([currency]) => currency.includes(keyword.value.toUpperCase()))
     );
 });
-// 
-//匯率api測試
+
 let ExchangeRates = ref();
 let rates = ref();
 const selectedCurrency = ref('');
 const getExchangeRates = async () => {
-    // 後端自己叫的期交所api，現在用另一個
-    // const response = await axios.get(`${baseAddress}/api/ExchangeRates`)
     const ExchangeRatesApiKey = "3bbb6fbca51af86d327efec8";
     const response = await axios.get(`https://v6.exchangerate-api.com/v6/${ExchangeRatesApiKey}/latest/TWD`);
     ExchangeRates.value = response.data;
     rates.value = ExchangeRates.value.conversion_rates;
-    // console.log("=================");
-    // console.log(rates.value)
 }
-//
 
-// 非同步 測試區域
 const baseAddress = "https://localhost:7092";
 const ItineraryId = ref(1);
 const ItineraryName = ref("測試用行程名稱");
@@ -228,7 +214,6 @@ const getData = async () => {
         alert("提交失敗!");
     }
 };
-// 非同步 測試區域
 
 const selectAllText = (event) => {
     event.target.select();
@@ -262,12 +247,6 @@ const updateValue = (index, type) => {
     checkRange(index, type);
 
     if (totalPrice.value && item[type] != null) {
-        // if (type === 'percentage') {
-        //     item.price = ((totalPrice.value * item.percentage) / 100);
-        // } else if (type === 'price') {
-        //     item.percentage = ((item.price / totalPrice.value) * 100);
-        // }
-        //----------------  
         if (type === 'percentage') {
             item.exactPrice = ((totalPrice.value * item.percentage) / 100);
             item.price = parseFloat(item.exactPrice.toFixed(2));
@@ -306,7 +285,6 @@ const handleTotalPriceInput = (event) => {
             event.preventDefault();
         }
     }
-
 }
 
 const handleTotalPrice = () => {
@@ -364,7 +342,6 @@ watch(
             if (!item.manual) {
                 item.exactPrice = totalPrice.value ? (totalPrice.value * item.exactPercentage) / 100 : 0;
                 item.price = parseFloat(item.exactPrice.toFixed(2));
-                // item.percentage = parseFloat(item.exactPercentage.toFixed(2));
             }
         });
         isUpdating = false;

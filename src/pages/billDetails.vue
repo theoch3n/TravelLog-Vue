@@ -51,28 +51,21 @@
     </div>
 </template>
 <script setup>
+
 const props = defineProps({
-    billWithDetails: Object
-    // bills: Array,
-    // details: Array,
+    billWithDetails: {
+        Type: Object,
+        required: true
+    },
+    toggleModal: {
+        Type: Function,
+        required: true
+    }
 })
 
 const backToList = () => {
-    // 隱藏 Details Modal
-    const detailsModalEl = document.getElementById('modalDetails')
-    let detailsModal = bootstrap.Modal.getInstance(detailsModalEl)
-    if (!detailsModal) {
-        detailsModal = new bootstrap.Modal(detailsModalEl)
-    }
-    detailsModal.hide()
-
-    // 顯示 List Modal
-    const listModalEl = document.getElementById('modalBillList')
-    let listModal = bootstrap.Modal.getInstance(listModalEl)
-    if (!listModal) {
-        listModal = new bootstrap.Modal(listModalEl)
-    }
-    listModal.show()
+    props.toggleModal('modalDetails', 'hide')
+    props.toggleModal('modalBillList', 'show')
 }
 
 </script>

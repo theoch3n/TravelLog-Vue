@@ -9,12 +9,12 @@
       <v-tab text="旅遊群組"></v-tab>
     </v-tabs> -->
 
-    <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
+    <v-tabs align-tabs="center" color="deep-purple-accent-4">
         <v-tab :value="1">我的旅遊</v-tab>
         <v-tab :value="2">旅遊群組</v-tab>
     </v-tabs>
 
-    <v-tabs-window v-model="tab">
+    <v-tabs-window>
         <v-tabs-window-item :value="0">
 
         </v-tabs-window-item>
@@ -101,9 +101,9 @@
                             <v-card-title>{{ card.itineraryTitle }}</v-card-title>
                             <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " +
                                 card.itineraryEndDate.split("T")[0]
-                                }}</v-card-subtitle>
+                            }}</v-card-subtitle>
                             <v-card-actions>
-                                <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+                                <v-btn :icon="'show' ? 'mdi-chevron-up' : 'mdi-chevron-down'"
                                     @click.stop="showDialog(card.itineraryId)">
                                 </v-btn>
 
@@ -143,36 +143,25 @@
           </div> -->
         </div>
     </div>
-    <BillList :getParaId="selectedId"></BillList>
+    <BillList v-model="selectedId"></BillList>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import axios from "axios";
 import { format } from "date-fns"; // 格式化日期
 // import LocationSearch from "../components/LocationSearch.vue";
 import { useRouter } from "vue-router";
 import BillList from "./billList.vue";
 
-
-
 const baseAddress = "https://localhost:7092";
 const selectedItineraryId = ref(null);
-const selectedId = ref(null);
 
 //拆帳
-// const selectedId = ref(0);
+const selectedId = ref(null);
 const openBillList = (item) => {
-    const id = item.itineraryId;
-    if (selectedId.value === id) {
-        selectedId.value = -1; // 清空 ID 以確保 watch 會觸發
-        setTimeout(() => {
-            selectedId.value = id;
-        }, 10); // **使用 setTimeout 確保值改變**
-    } else {
-        selectedId.value = id;
-    }
-    console.log("ItineraryId: " + JSON.stringify(item));
+    selectedId.value = null;
+    nextTick(() => { selectedId.value = item });
 };
 //拆帳
 
