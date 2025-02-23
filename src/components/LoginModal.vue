@@ -114,7 +114,6 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useUserStore } from "@/stores/userStore";
-import { defineExpose } from "vue";
 
 const router = useRouter();
 const userStore = useUserStore();

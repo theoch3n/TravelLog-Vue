@@ -54,16 +54,6 @@ const routes = [
                 component: Itinerary,
             },
             {
-                path: "/bill", // 路由路徑 (根目錄)
-                name: "bill", // 路由名稱 (用於程式內部識別)
-                component: bill, // 顯示的頁面
-            },
-            {
-                path: "/billList", // 路由路徑 (根目錄)
-                name: "billList", // 路由名稱 (用於程式內部識別)
-                component: billList, // 顯示的頁面
-            },
-            {
                 path: "/contact",
                 name: "Contact",
                 component: Contact,
@@ -92,6 +82,27 @@ const routes = [
                 path: "/profile",
                 name: "Profile",
                 component: Profile,
+            },
+            //防警告
+            // [Vue Router warn]: No match found for location with path "/cart"
+            {
+                path: "/cart",
+                name: "cart",
+                // component: cart,
+            },
+            // 防警告
+            // [Vue Router warn]: No match found for location with path "/paymentResult"
+            {
+                path: "/paymentResult",
+                name: "paymentResult",
+                // component: paymentResult,
+            },
+            // 防警告
+            // [Vue Router warn]: No match found for location with path "/store"
+            {
+                path: "/store",
+                name: "store",
+                // component: store,
             },
         ],
     },

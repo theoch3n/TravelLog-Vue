@@ -2,8 +2,7 @@
     <div class="container border py-3 my-3">
         <div class="row">
             <div class="col-lg-4" v-for="(item, index) in categoryArray" :key="index">
-
-                <div class="card my-2" :data-bs-toggle="'modal'" :data-bs-target="'#modal-' + index">
+                <div class="card my-2 pointer" :data-bs-toggle="'modal'" :data-bs-target="'#modal-' + index">
                     <div class="card-body">
                         <h2 class="card-text d-flex justify-content-center">{{ item.eventName }}</h2>
                         <img src="/imgs/noImage.png" class="card-img-top" alt="應該要顯示封面" :title="item.eventName">
@@ -56,12 +55,12 @@ const path = computed(() => route.path.replace("/", ""));
 const productPara = useProductPara();
 
 const payUrl = {
-    components:testPayment,
-    to:"/payment"
+    components: testPayment,
+    to: "/payment"
 }
 
 
-const selectItem = (item) =>{
+const selectItem = (item) => {
     console.log(productPara.selectItem);
     productPara.selectToPay(item);
 }

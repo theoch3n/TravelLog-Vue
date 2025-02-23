@@ -6,6 +6,7 @@ import LoginModal from "@/components/LoginModal.vue";
 import { useUserStore } from "@/stores/userStore";
 
 // 切換主題的函式
+const isDark = ref();
 function toggleDarkMode() {
   if (isDark.value) {
     theme.global.name.value = 'light'
@@ -71,27 +72,6 @@ const pages = [
     text: "Products",
     textClass: "text-purple-darken-4",
     to: "/products",
-  },
-  {
-    value: "bill",
-    text: "bill",
-    icon: "mdi-phone-incoming",
-    textClass: "text-yellow-darken-4",
-    to: "/bill",
-  },
-  {
-    value: "billList",
-    text: "billList",
-    icon: "mdi-phone-incoming",
-    textClass: "text-yellow-darken-4",
-    to: "/billList",
-  },
-  {
-    value: "Googlemap",
-    text: "Googlemap",
-    icon: "mdi-phone-incoming",
-    textClass: "text-yellow-darken-4",
-    to: "/Googlemap/:id",
   },
   {
     value: "Itinerary",

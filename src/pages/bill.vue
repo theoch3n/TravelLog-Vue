@@ -1,18 +1,11 @@
 <template>
-    <!-- Button trigger modal -->
-    <div class="container d-flex justify-content-center">
-        <button type="button" class="btn btn-primary my-3 text-light" data-bs-toggle="modal"
-            data-bs-target="#staticBackdrop">
-            你是一顆土豆
-        </button>
-    </div>
-
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal fade" id="modalBill" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header text-center">
-                    <h5 class="modal-title w-100 ms-5" id="staticBackdropLabel">
-                        {{ "行程名: " + ItineraryName + " 行程ID: " + ItineraryId }}
+                    <h5 class="modal-title w-100 ms-5" id="modalBillLabel">
+                        {{ "id = " + itinerary.itineraryId }}, {{ "title = " + itinerary.itineraryTitle }}
+
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -107,9 +100,9 @@
                     </div>
                     <!-- radio button -->
                     <div>
-                        <button type="button" class="btn btn-secondary text-light me-1"
-                            data-bs-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-primary text-light" @click="getData">儲存</button>
+                        <button type="button" class="btn btn-primary text-light me-2" @click="getData">儲存</button>
+                        <button type="button" class="btn btn-secondary text-light" @click="backToList">返回</button>
+                        <button type="button" class="btn btn-danger text-light" @click="test">測試</button>
                     </div>
                 </div>
             </div>
@@ -125,16 +118,40 @@ let isUpdating = false;
 const selectedOption = ref('avg');
 const insideData = reactive([]);
 const totalPrice = ref(0);
+//123123123
+const baseAddress = "https://localhost:7092";
+// const ItineraryId = ref(1);
+// const ItineraryId = props.itinerary;
+const ItineraryName = ref("測試用行程名稱");
+const Title = ref("測試品項");
+const PaidBy = ref("");
+//123123123
 const members = [
     "蘋果",
     "香蕉",
     "草莓",
     "西瓜",
 ];
+const test = () => {
+    console.log(groupInfo.value.members);
+}
+const props = defineProps({
+    toggleModal: {
+        Type: Function,
+        required: true
+    },
+    modelValue: Object
+})
+
+const itinerary = computed(() => props.modelValue?.itinerary || "")
+const groupInfo = computed(() => props.modelValue?.groupInfo.members || { members: [] });
+const backToList = () => {
+    props.toggleModal('modalBill', 'hide')
+    props.toggleModal('modalBillList', 'show')
+}
 
 onMounted(() => {
     getExchangeRates();
-
     members.forEach(() => {
         insideData.push({
             exactPercentage: null,
@@ -146,7 +163,7 @@ onMounted(() => {
         });
     });
 });
-// mark
+
 const keyword = ref('');
 const filteredRates = computed(() => {
     if (!keyword.value) {
@@ -156,34 +173,21 @@ const filteredRates = computed(() => {
         Object.entries(rates.value).filter(([currency]) => currency.includes(keyword.value.toUpperCase()))
     );
 });
-// 
-//匯率api測試
+
 let ExchangeRates = ref();
 let rates = ref();
 const selectedCurrency = ref('');
 const getExchangeRates = async () => {
-    // 後端自己叫的期交所api，現在用另一個
-    // const response = await axios.get(`${baseAddress}/api/ExchangeRates`)
     const ExchangeRatesApiKey = "3bbb6fbca51af86d327efec8";
     const response = await axios.get(`https://v6.exchangerate-api.com/v6/${ExchangeRatesApiKey}/latest/TWD`);
     ExchangeRates.value = response.data;
     rates.value = ExchangeRates.value.conversion_rates;
-    // console.log("=================");
-    // console.log(rates.value)
 }
-//
-
-// 非同步 測試區域
-const baseAddress = "https://localhost:7092";
-const ItineraryId = ref(1);
-const ItineraryName = ref("測試用行程名稱");
-const Title = ref("測試品項");
-const PaidBy = ref("");
 
 const generateBill = () => {
     return {
-        ItineraryId: ItineraryId.value,
-        ItineraryName: ItineraryName.value,
+        ItineraryId: itinerary.value.itineraryId,
+        ItineraryName: itinerary.value.itineraryTitle,
         Title: Title.value,
         TotalAmount: totalPrice.value,
         PaidBy: PaidBy.value,
@@ -193,7 +197,7 @@ const generateBill = () => {
 
 const generateBillDetails = () => {
     return insideData.map((item, index) => ({
-        BillId: 1,
+        BillId: 0,
         MemberName: members[index],
         Amount: item.price,
         Paid: item.paid
@@ -219,7 +223,6 @@ const getData = async () => {
         alert("提交失敗!");
     }
 };
-// 非同步 測試區域
 
 const selectAllText = (event) => {
     event.target.select();
@@ -253,12 +256,6 @@ const updateValue = (index, type) => {
     checkRange(index, type);
 
     if (totalPrice.value && item[type] != null) {
-        // if (type === 'percentage') {
-        //     item.price = ((totalPrice.value * item.percentage) / 100);
-        // } else if (type === 'price') {
-        //     item.percentage = ((item.price / totalPrice.value) * 100);
-        // }
-        //----------------  
         if (type === 'percentage') {
             item.exactPrice = ((totalPrice.value * item.percentage) / 100);
             item.price = parseFloat(item.exactPrice.toFixed(2));
@@ -297,7 +294,6 @@ const handleTotalPriceInput = (event) => {
             event.preventDefault();
         }
     }
-
 }
 
 const handleTotalPrice = () => {
@@ -355,7 +351,6 @@ watch(
             if (!item.manual) {
                 item.exactPrice = totalPrice.value ? (totalPrice.value * item.exactPercentage) / 100 : 0;
                 item.price = parseFloat(item.exactPrice.toFixed(2));
-                // item.percentage = parseFloat(item.exactPercentage.toFixed(2));
             }
         });
         isUpdating = false;

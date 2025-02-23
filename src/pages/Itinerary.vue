@@ -84,20 +84,19 @@
         <div class="container">
             <v-container>
                 <v-row>
-                    <v-col cols="3" v-for="card in CardData" :key="card.itineraryId"
-                        @click="navigateToGoogleMap(card.itineraryId)">
+                    <v-col cols="3" v-for="card in CardData" :key="card.itineraryId">
                         <v-card class="fixed-size-card" max-width="344">
-                            <v-img :src="card.itineraryImage" cover></v-img>
+                            <v-img class="pointer" :src="card.itineraryImage" cover
+                                @click="navigateToGoogleMap(card.itineraryId)"></v-img>
                             <v-card-title>{{ card.itineraryTitle }}</v-card-title>
                             <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " +
                                 card.itineraryEndDate.split("T")[0]
-                                }}</v-card-subtitle>
+                            }}</v-card-subtitle>
                             <v-card-actions>
                                 <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
                                     @click.stop="showDialog(card.itineraryId)">
                                 </v-btn>
-                                <button class="btn btn-outline-primary"
-                                    @click.stop="openBillList(card.itineraryId)">拆帳</button>
+                                <button class="btn btn-outline-primary" @click.stop="openBillList(card)">拆帳</button>
                                 <v-spacer></v-spacer>
                                 <v-dialog v-model="dialog" width="400">
                                     <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友"><v-text-field
@@ -118,20 +117,31 @@
 
         </div>
     </div>
-    <BillList :getParaId="selectedItineraryId"></BillList>
+    <BillList v-model="selectedId"></BillList>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import axios from "axios";
 import { format } from "date-fns"; // 格式化日期
 // import LocationSearch from "../components/LocationSearch.vue";
 import { useRouter } from "vue-router";
 import BillList from "./billList.vue";
 
-
 const baseAddress = "https://localhost:7092";
 
+//拆帳
+const selectedId = ref(null);
+const openBillList = (item) => {
+    selectedId.value = null;
+    nextTick(() => { selectedId.value = item });
+};
+//拆帳
+
+//
+const tab = ref(1);
+const show = ref("show");
+//
 
 // 控制 v-date-picker 顯示與隱藏
 const showDatePicker = ref(false);
@@ -249,7 +259,7 @@ const setDate = (date) => {
 //  Google Maps API
 const loadGoogleMapsAPI = () => {
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=initMap&region=TW&language=zh-TW`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&loading=async&libraries=places&callback=initMap&region=TW&language=zh-TW`;
     script.async = true;
     script.defer = true;
 
@@ -269,6 +279,7 @@ const loadGoogleMapsAPI = () => {
 const initMap = () => {
     initAutocomplete();
 };
+
 // Initialize autocomplete
 const initAutocomplete = () => {
     const autocomplete = new google.maps.places.Autocomplete(
@@ -282,6 +293,7 @@ const initAutocomplete = () => {
 const setupMarkerListener = (autocomplete) => {
     autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
+
 
         if (!place.geometry || !place.geometry.location) {
             console.error("搜尋結果無法取得地點資訊");
@@ -299,6 +311,10 @@ const setupMarkerListener = (autocomplete) => {
             img: place.photos?.[0]?.getUrl() || "",
             opening: place.current_opening_hours?.weekday_text || "無營業時間資訊",
         };
+        if (!place.geometry || !place.geometry.location) {
+            console.error("搜尋結果無法取得地點資訊");
+            return;
+        }
 
         CardName.value = place.name;
         CardImg.value = place.photos?.[0]?.getUrl() || "";
@@ -315,7 +331,6 @@ const setupMarkerListener = (autocomplete) => {
         //map.value.setCenter(selectRestaurant.location);
     });
 };
-/*  GoogleMap  */
 
 //  新增行程
 const insertdata = async () => {
@@ -347,7 +362,6 @@ const insertdata = async () => {
         // });
         // bsCollapse.hide();
     } catch (error) {
-        alert(error.message);
         alert(error.message + "\n檢查你的api有沒有開");
     }
 };
@@ -368,6 +382,7 @@ const handleTabClick = async (tabValue) => {
 
 // 取得卡片資料
 const itineraryData = async () => {
+
     try {
 
         //console.log("ID:" + profile.value.userId);
@@ -417,6 +432,7 @@ defineExpose({ dialog, showDialog });
 // 邀請好友
 const invitefriends = async () => {
     try {
+
         const insertgroup = {
             itineraryGroupId: 0,
             itineraryGroupItineraryId: selectedItineraryId.value,
@@ -432,7 +448,7 @@ const invitefriends = async () => {
         console.log(JSON.stringify(response.data));
 
     } catch (error) {
-        alert(error.message);
+
         alert(error.message + "\n檢查你的api有沒有開");
     }
     dialog.value = false;
@@ -447,21 +463,7 @@ const navigateToGoogleMap = (itineraryId) => {
     });
 };
 
-//拆帳
-const openBillList = (id) => {
-    if (selectedItineraryId.value === id) {
-        selectedItineraryId.value = -1; // 清空 ID 以確保 watch 會觸發
-        setTimeout(() => {
-            selectedItineraryId.value = id;
-        }, 10); // **使用 setTimeout 確保值改變**
-    } else {
-        selectedItineraryId.value = id;
-    }
-    console.log("ItineraryId: " + id);
-};
-//拆帳
 </script>
-
 
 <style scoped>
 .custom-modal {
@@ -482,6 +484,12 @@ const openBillList = (id) => {
     height: 60%;
     /* object-fit: cover;  */
 }
+
+.row {
+    margin-left: 0;
+    /* 移除預設的 margin */
+}
+
 
 .row {
     margin-left: 0;
