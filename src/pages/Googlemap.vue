@@ -4,12 +4,7 @@
     <div class="flex-container">
       <div class="controls-container col-4 rounded-3">
         <h4 class="title mt-4">{{ Itinerarydata.itineraryTitle }}</h4>
-        <img
-          :src="Itinerarydata.itineraryImage"
-          alt=""
-          class="titleimg"
-          :style="{ height: '30%', width: '100%' }"
-        />
+        <img :src="Itinerarydata.itineraryImage" alt="" class="titleimg" :style="{ height: '30%', width: '100%' }" />
         <div class="date">
           <label for="itineraryStartDate">{{
             Itinerarydata.itineraryStartDate
@@ -19,65 +14,31 @@
             Itinerarydata.itineraryEndDate
           }}</label>
         </div>
-        <button
-          class="btn btn-primary mt-4 draw_btn"
-          id="draw-route"
-          @click="drawRoute"
-        >
+        <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
           規劃路線
         </button>
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li
-            class="nav-item"
-            v-for="(date, index) in dateList"
-            :key="index"
-            role="presentation"
-          >
-            <button
-              class="nav-link btn btn-outline-secondary"
-              id="home-tab"
-              :class="{ active: selectedDate === date }"
-              data-bs-toggle="tab"
-              :data-bs-target="'#' + dateList[index]"
-              type="button"
-              role="tab"
-              aria-selected="true"
-              @click="handleDateClick(date)"
-            >
+          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
+            <button class="nav-link btn btn-outline-secondary" id="home-tab" :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]" type="button" role="tab" aria-selected="true"
+              @click="handleDateClick(date)">
               {{ date }}
             </button>
           </li>
         </ul>
-        <div
-          class="tab-content"
-          v-for="(date, index) in dateList"
-          :key="index"
-          id="myTabContent"
-        >
-          <div
-            class="tab-pane fade show"
-            :id="dateList[index]"
-            role="tabpanel"
-            aria-labelledby="home-tab"
-          >
+        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
+          <div class="tab-pane fade show" :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
             {{ dateList[index] }}
 
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard
-                  v-for="(place, index) in places"
-                  :key="place.id"
-                  :data="place"
-                  :deletePlaceHandler="deletePlace"
-                >
-                  <li
-                    v-if="index < places.length - 1"
-                    class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`"
-                  >
+                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
+                  :deletePlaceHandler="deletePlace">
+                  <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`">
                     計算中...
                   </li>
                 </PlaceCard>
@@ -94,12 +55,8 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input
-            v-model="textsearchInput"
-            class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別"
-            id="textsearch-input-overlay"
-          />
+          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別" id="textsearch-input-overlay" />
           <button class="btn btn-danger" id="searchButton">搜尋</button>
           <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
         </div>
@@ -249,10 +206,9 @@ const places2 = ref([
   },
 ]);
 
-////////////mixsearch///////////////
-const mixsearch = () => {};
 
-/////////////////////////////
+
+
 
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
@@ -310,7 +266,6 @@ const initAutocomplete1 = () => {
     document.getElementById("textsearch-input-overlay"),
     { type: ["restaurant"] }
   );
-
   setupMarkerListener(autocomplete);
   setupTextSearch(autocomplete);
 };
@@ -323,7 +278,10 @@ const addMarker = (place) => {
   });
 
   markers.value.push(marker);
+
+
   return marker;
+
 };
 
 // Setup info window
@@ -334,20 +292,74 @@ const setupInfoWindow = (marker, place) => {
     }
 
     infoWindow.value.setContent(`
-  <div style="font-family: Arial, sans-serif; padding: 10px; max-width: 300px;">
-    <h3 style="color: #007bff; margin-bottom: 5px;">${place.name}</h3>
-    <img src="${place.img}" style="height: 200px; width: 100%; object-fit: cover; border-radius: 8px;">
-    <div style="margin-top: 8px; font-size: 14px;">
-      <strong>地址：</strong>${place.address}<br>
-      <strong>電話：</strong>${place.phoneNumber}<br>
-      <strong>評分：</strong>${place.rating}<br>
-      <strong>營業時間：</strong><br>${place.opening}
+  <div style="
+    font-family: 'Arial', sans-serif; 
+    max-width: 350px; 
+    border-radius: 12px; 
+    background-color: #ffffff; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    overflow: hidden;
+  ">
+    <!-- 標題區塊 -->
+    <div style="
+      background-color: #007bff; 
+      color: white; 
+      padding: 15px; 
+      font-size: 20px; 
+      font-weight: bold;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    ">
+      ${place.name}
     </div>
-    <button class="btn btn-primary mt-2" id="add-to-itinerary" style="width: 100%; margin-top: 10px;">
-      加入行程
+
+    <!-- 內容區塊 -->
+    <div style="
+      padding: 20px; 
+      background-color: #f8f9fa; 
+      color: #333; 
+      font-size: 15px; 
+      line-height: 1.6;
+    ">
+      <img src="${place.img}" style="
+        height: 200px; 
+        width: 100%; 
+        object-fit: cover; 
+        border-radius: 10px; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      ">
+      
+      <div style="margin-top: 15px;">
+        <p>📍 <strong>地址：</strong> ${place.address}</p>
+        <p>📞 <strong>電話：</strong> ${place.phoneNumber}</p>
+        <p>⭐ <strong>評分：</strong> ${place.rating}</p>
+        <p>⏰ <strong>營業時間：</strong><br>${place.opening}</p>
+      </div>
+    </div>
+
+    <!-- 按鈕 -->
+    <button id="add-to-itinerary" style="
+      width: 100%; 
+      background-color: #007bff; 
+      color: white; 
+      border: none; 
+      padding: 14px; 
+      font-size: 18px; 
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-radius: 0 0 12px 12px;
+    "
+      onmouseover="this.style.backgroundColor='#0056b3'"
+      onmouseout="this.style.backgroundColor='#007bff'"
+    >
+      ➕ 加入行程
     </button>
   </div>
 `);
+
+
+
 
     // console.log(place);
     infoWindow.value.open(map.value, marker);
@@ -397,12 +409,13 @@ const addToItinerary = async (place) => {
 // Setup marker listener
 const setupMarkerListener = (autocomplete1) => {
   autocomplete1.addListener("place_changed", () => {
-    const place = autocomplete1.getPlace();
 
+    const place = autocomplete1.getPlace();
     if (!place.geometry || !place.geometry.location) {
       console.error("搜尋結果無法取得地點資訊");
       return;
     }
+
     const selectRestaurant = {
       location: place.geometry.location,
       placeId: place.place_id,
@@ -417,6 +430,7 @@ const setupMarkerListener = (autocomplete1) => {
     };
 
     placesList.value.push(selectRestaurant);
+
     const newMarker = addMarker(selectRestaurant);
     setupInfoWindow(newMarker, selectRestaurant);
     map.value.setCenter(selectRestaurant.location);
@@ -427,6 +441,7 @@ const setupMarkerListener = (autocomplete1) => {
 const clearMarkers = () => {
   markers.value.forEach((marker) => marker.setMap(null));
   markers.value = [];
+
 };
 
 //setupTextSearch
@@ -435,8 +450,11 @@ const setupTextSearch = (autocomplete) => {
 
   // 確保 autocomplete 存在
   if (autocomplete) {
+    clearMarkers();
+
     // 監聽 Autocomplete 事件（當選擇地點時觸發）
     autocomplete.addListener("place_changed", () => {
+
       const place = autocomplete.getPlace();
 
       // 確保 place 有效
