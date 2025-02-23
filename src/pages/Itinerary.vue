@@ -91,7 +91,7 @@
                             <v-card-title>{{ card.itineraryTitle }}</v-card-title>
                             <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " +
                                 card.itineraryEndDate.split("T")[0]
-                            }}</v-card-subtitle>
+                                }}</v-card-subtitle>
                             <v-card-actions>
                                 <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'"
                                     @click.stop="showDialog(card.itineraryId)">
@@ -138,9 +138,9 @@ const openBillList = (item) => {
 };
 //拆帳
 
-//
+//不宣告會跳警告
 const tab = ref(1);
-const show = ref("show");
+const show = ref('');
 //
 
 // 控制 v-date-picker 顯示與隱藏
