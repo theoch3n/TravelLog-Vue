@@ -4,7 +4,8 @@
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h5 class="modal-title w-100 ms-5" id="modalBillLabel">
-                        {{ "行程名: " + ItineraryName + " 行程ID: " + ItineraryId }}
+                        {{ "id = " + itinerary.itineraryId }}, {{ "title = " + itinerary.itineraryTitle }}
+
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -101,6 +102,7 @@
                     <div>
                         <button type="button" class="btn btn-primary text-light me-2" @click="getData">儲存</button>
                         <button type="button" class="btn btn-secondary text-light" @click="backToList">返回</button>
+                        <button type="button" class="btn btn-danger text-light" @click="test">測試</button>
                     </div>
                 </div>
             </div>
@@ -116,20 +118,33 @@ let isUpdating = false;
 const selectedOption = ref('avg');
 const insideData = reactive([]);
 const totalPrice = ref(0);
+//123123123
+const baseAddress = "https://localhost:7092";
+// const ItineraryId = ref(1);
+// const ItineraryId = props.itinerary;
+const ItineraryName = ref("測試用行程名稱");
+const Title = ref("測試品項");
+const PaidBy = ref("");
+//123123123
 const members = [
     "蘋果",
     "香蕉",
     "草莓",
     "西瓜",
 ];
-
+const test = () => {
+    console.log(groupInfo.value.members);
+}
 const props = defineProps({
     toggleModal: {
         Type: Function,
         required: true
-    }
+    },
+    modelValue: Object
 })
 
+const itinerary = computed(() => props.modelValue?.itinerary || "")
+const groupInfo = computed(() => props.modelValue?.groupInfo.members || { members: [] });
 const backToList = () => {
     props.toggleModal('modalBill', 'hide')
     props.toggleModal('modalBillList', 'show')
@@ -169,16 +184,10 @@ const getExchangeRates = async () => {
     rates.value = ExchangeRates.value.conversion_rates;
 }
 
-const baseAddress = "https://localhost:7092";
-const ItineraryId = ref(1);
-const ItineraryName = ref("測試用行程名稱");
-const Title = ref("測試品項");
-const PaidBy = ref("");
-
 const generateBill = () => {
     return {
-        ItineraryId: ItineraryId.value,
-        ItineraryName: ItineraryName.value,
+        ItineraryId: itinerary.value.itineraryId,
+        ItineraryName: itinerary.value.itineraryTitle,
         Title: Title.value,
         TotalAmount: totalPrice.value,
         PaidBy: PaidBy.value,
@@ -188,7 +197,7 @@ const generateBill = () => {
 
 const generateBillDetails = () => {
     return insideData.map((item, index) => ({
-        BillId: 1,
+        BillId: 0,
         MemberName: members[index],
         Amount: item.price,
         Paid: item.paid

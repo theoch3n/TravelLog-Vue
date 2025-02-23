@@ -3,15 +3,16 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">行程ID + 行程名稱</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">
+                        {{ "id = " + itinerary.itineraryId }}, {{ "title" + itinerary.itineraryTitle }} </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3" v-if="props.billWithDetails">
-                        <strong>品項：</strong>{{ props.billWithDetails.title }}<br>
-                        <strong>總金額：</strong>{{ props.billWithDetails.totalAmount }}<br>
-                        <strong>墊款人：</strong>{{ props.billWithDetails.paidBy }}<br>
-                        <strong>建立時間：</strong>{{ props.billWithDetails.createdAt }}
+                    <div class="mb-3" v-if="bill">
+                        <strong>品項：</strong>{{ bill.title }}<br>
+                        <strong>總金額：</strong>{{ bill.totalAmount }}<br>
+                        <strong>墊款人：</strong>{{ bill.paidBy }}<br>
+                        <strong>建立時間：</strong>{{ bill.createdAt }}
                     </div>
                     <div class="table-responsive rounded">
                         <table class="table table-bordered table-hover">
@@ -26,8 +27,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="text-center" v-for="(item, index) in props.billWithDetails?.billDetails"
-                                    :key="item.id">
+                                <tr class="text-center" v-for="(item, index) in bill?.billDetails" :key="item.id">
                                     <td>{{ index + 1 }}</td>
                                     <td>{{ item.id }}</td>
                                     <td>{{ item.billId }}</td>
@@ -51,6 +51,7 @@
     </div>
 </template>
 <script setup>
+import { computed } from 'vue';
 
 const props = defineProps({
     billWithDetails: {
@@ -60,8 +61,12 @@ const props = defineProps({
     toggleModal: {
         Type: Function,
         required: true
-    }
+    },
+    modelValue: Object
 })
+const bill = computed(() => props.billWithDetails)
+const itinerary = computed(() => props.modelValue?.itinerary || "");
+const groupInfo = computed(() => props.groupInfo);
 
 const backToList = () => {
     props.toggleModal('modalDetails', 'hide')

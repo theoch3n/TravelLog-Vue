@@ -60,11 +60,12 @@ const vuetify = createVuetify({
 // 設定 axios 預設 API URL
 import axios from "axios";
 axios.defaults.baseURL = "https://localhost:7092"; // API 伺服器 URL
-
 // bootstrap缺一不可
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as bootstrap from "bootstrap";
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+import "bootstrap-icons/font/bootstrap-icons.css";
 // 將 bootstrap 掛載到 window 上
 window.bootstrap = bootstrap;
 

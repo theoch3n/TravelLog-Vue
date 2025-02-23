@@ -38,8 +38,8 @@
             </div>
         </div>
     </div>
-    <bill :toggleModal="toggleModal"></bill>
-    <BillDetails :billWithDetails="selectedItem" :toggleModal="toggleModal"></BillDetails>
+    <bill v-model="itineraryInfo" :toggleModal="toggleModal"></bill>
+    <BillDetails v-model="itineraryInfo" :billWithDetails="selectedItem" :toggleModal="toggleModal"></BillDetails>
 </template>
 
 <script setup>
@@ -49,15 +49,26 @@ import bill from './bill.vue';
 import axios from "axios";
 
 const props = defineProps({
-    modelValue: Object, // 透過 v-model 傳遞選取的行程 ID
+    modelValue: Object, // 透過 v-model 傳遞選取的行程
 });
 
 const dataList = ref([]);
 const bills = ref([]);
 const details = ref([]);
+
+let itineraryInfo = ref();
 let itineraryId = ref();
 let itineraryTitle = ref();
-
+watch(() => props.modelValue, (newValue) => {
+    if (newValue) {
+        itineraryInfo.value = {
+            itinerary: newValue,
+            groupInfo: { members: ["蘋果", "香蕉", "草莓", "西瓜"] }
+        };
+        getBillsData();
+        toggleModal('modalBillList', 'show');
+    }
+});
 const getBillsData = async () => {
     itineraryId = props.modelValue.itineraryId
     itineraryTitle = props.modelValue.itineraryTitle
@@ -79,13 +90,6 @@ const getBillsData = async () => {
         alert("提交失敗!");
     }
 };
-
-watch(() => props.modelValue, (newValue) => {
-    if (newValue) {
-        getBillsData();
-        toggleModal('modalBillList', 'show');
-    }
-});
 
 const selectedItem = ref(null)
 const openDetails = (BillId) => {
