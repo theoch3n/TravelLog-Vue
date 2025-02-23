@@ -2,8 +2,8 @@
     <div class="modal fade" id="modalBillList" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalBillListLabel"> {{ "ID = " + itineraryId }} , {{ "Title = " +
+                <div class="modal-header text-center">
+                    <h5 class="modal-title w-100" id="modalBillListLabel"> {{ "ID = " + itineraryId }} , {{ "Title = " +
                         itineraryTitle }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -38,7 +38,7 @@
             </div>
         </div>
     </div>
-    <bill v-model="itineraryInfo" :toggleModal="toggleModal"></bill>
+    <bill v-model="itineraryInfo" :toggleModal="toggleModal" @refreshData="getBillsData"></bill>
     <BillDetails v-model="itineraryInfo" :billWithDetails="selectedItem" :toggleModal="toggleModal"></BillDetails>
 </template>
 
@@ -52,13 +52,14 @@ const props = defineProps({
     modelValue: Object, // 透過 v-model 傳遞選取的行程
 });
 
+const selectedItem = ref(null)
 const dataList = ref([]);
 const bills = ref([]);
 const details = ref([]);
-
 let itineraryInfo = ref();
 let itineraryId = ref();
 let itineraryTitle = ref();
+
 watch(() => props.modelValue, (newValue) => {
     if (newValue) {
         itineraryInfo.value = {
@@ -69,6 +70,7 @@ watch(() => props.modelValue, (newValue) => {
         toggleModal('modalBillList', 'show');
     }
 });
+
 const getBillsData = async () => {
     itineraryId = props.modelValue.itineraryId
     itineraryTitle = props.modelValue.itineraryTitle
@@ -91,7 +93,6 @@ const getBillsData = async () => {
     }
 };
 
-const selectedItem = ref(null)
 const openDetails = (BillId) => {
     const selectedBill = bills.value.find(item => item.id === BillId);
     if (!selectedBill) {
