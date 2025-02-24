@@ -8,11 +8,11 @@
         <div class="date">
           <label for="itineraryStartDate">{{
             Itinerarydata.itineraryStartDate
-          }}</label>
+            }}</label>
           <label for=""> ~ </label>
           <label for="itineraryEndDate">{{
             Itinerarydata.itineraryEndDate
-          }}</label>
+            }}</label>
         </div>
         <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
           規劃路線
@@ -119,7 +119,7 @@ onMounted(() => {
 });
 
 // 使用 Vue 的 onMounted 來初始化地圖
-window.onload = () =>{
+window.onload = () => {
   if (typeof google !== "undefined" && google.maps) {
     initMap();
     console.log("Google Maps API 加載完成！");
@@ -127,7 +127,7 @@ window.onload = () =>{
   } else {
     console.error("Google Maps API 尚未加載完成！");
   }
-}
+};
 //////////////////////////計算日期/////////////////////////////////////
 
 // 監聽 Itinerarydata 變化，確保有值後才設定日期
@@ -208,15 +208,10 @@ const places2 = ref([
   },
 ]);
 
-////////////mixsearch///////////////
-const mixsearch = () => { };
-
-/////////////////////////////
-
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
   const script = document.createElement("script");
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&loading=async&libraries=places&callback=initMap&region=TW&language=zh-TW`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&loading=async&loading=async&libraries=places&callback=initMap&region=TW&language=zh-TW`;
   script.async = true;
   script.defer = true;
 
@@ -250,7 +245,6 @@ const initMap = () => {
 
   // initAutocomplete();
   initAutocomplete1();
-
 };
 
 // Initialize autocomplete
@@ -270,15 +264,9 @@ const initAutocomplete1 = () => {
     document.getElementById("textsearch-input-overlay"),
     { type: ["restaurant"] }
   );
-
   setupMarkerListener(autocomplete);
   setupTextSearch(autocomplete);
 };
-
-
-
-
-
 
 // Add marker
 const addMarker = (place) => {
@@ -288,6 +276,7 @@ const addMarker = (place) => {
   });
 
   markers.value.push(marker);
+
   return marker;
 };
 
@@ -299,17 +288,68 @@ const setupInfoWindow = (marker, place) => {
     }
 
     infoWindow.value.setContent(`
-  <div style="font-family: Arial, sans-serif; padding: 10px; max-width: 300px;">
-    <h3 style="color: #007bff; margin-bottom: 5px;">${place.name}</h3>
-    <img src="${place.img}" style="height: 200px; width: 100%; object-fit: cover; border-radius: 8px;">
-    <div style="margin-top: 8px; font-size: 14px;">
-      <strong>地址：</strong>${place.address}<br>
-      <strong>電話：</strong>${place.phoneNumber}<br>
-      <strong>評分：</strong>${place.rating}<br>
-      <strong>營業時間：</strong><br>${place.opening}
+  <div style="
+    font-family: 'Arial', sans-serif; 
+    max-width: 350px; 
+    border-radius: 12px; 
+    background-color: #ffffff; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    overflow: hidden;
+  ">
+    <!-- 標題區塊 -->
+    <div style="
+      background-color: #007bff; 
+      color: white; 
+      padding: 15px; 
+      font-size: 20px; 
+      font-weight: bold;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    ">
+      ${place.name}
     </div>
-    <button class="btn btn-primary mt-2" id="add-to-itinerary" style="width: 100%; margin-top: 10px;">
-      加入行程
+
+    <!-- 內容區塊 -->
+    <div style="
+      padding: 20px; 
+      background-color: #f8f9fa; 
+      color: #333; 
+      font-size: 15px; 
+      line-height: 1.6;
+    ">
+      <img src="${place.img}" style="
+        height: 200px; 
+        width: 100%; 
+        object-fit: cover; 
+        border-radius: 10px; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      ">
+      
+      <div style="margin-top: 15px;">
+        <p>📍 <strong>地址：</strong> ${place.address}</p>
+        <p>📞 <strong>電話：</strong> ${place.phoneNumber}</p>
+        <p>⭐ <strong>評分：</strong> ${place.rating}</p>
+        <p>⏰ <strong>營業時間：</strong><br>${place.opening}</p>
+      </div>
+    </div>
+
+    <!-- 按鈕 -->
+    <button id="add-to-itinerary" style="
+      width: 100%; 
+      background-color: #007bff; 
+      color: white; 
+      border: none; 
+      padding: 14px; 
+      font-size: 18px; 
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-radius: 0 0 12px 12px;
+    "
+      onmouseover="this.style.backgroundColor='#0056b3'"
+      onmouseout="this.style.backgroundColor='#007bff'"
+    >
+      ➕ 加入行程
     </button>
   </div>
 `);
@@ -363,11 +403,11 @@ const addToItinerary = async (place) => {
 const setupMarkerListener = (autocomplete1) => {
   autocomplete1.addListener("place_changed", () => {
     const place = autocomplete1.getPlace();
-
     if (!place.geometry || !place.geometry.location) {
       console.error("搜尋結果無法取得地點資訊");
       return;
     }
+
     const selectRestaurant = {
       location: place.geometry.location,
       placeId: place.place_id,
@@ -382,6 +422,7 @@ const setupMarkerListener = (autocomplete1) => {
     };
 
     placesList.value.push(selectRestaurant);
+
     const newMarker = addMarker(selectRestaurant);
     setupInfoWindow(newMarker, selectRestaurant);
     map.value.setCenter(selectRestaurant.location);
@@ -400,6 +441,8 @@ const setupTextSearch = (autocomplete) => {
 
   // 確保 autocomplete 存在
   if (autocomplete) {
+    clearMarkers();
+
     // 監聽 Autocomplete 事件（當選擇地點時觸發）
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
@@ -438,8 +481,7 @@ const setupTextSearch = (autocomplete) => {
   });
 };
 
-
-// 封裝搜尋功能，避免重複程式碼
+// 範圍搜尋標記點位
 const performSearch = (service, query, searchLocation) => {
   service.textSearch(
     {
@@ -450,7 +492,7 @@ const performSearch = (service, query, searchLocation) => {
     },
     (results, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
-        initMap(); //重新載入地圖 刪除點
+        clearMarkers(); // 只清除標記，不重新載入地圖
 
         results.forEach((result) => {
           const placeData = {
@@ -466,10 +508,12 @@ const performSearch = (service, query, searchLocation) => {
             opening:
               result.current_opening_hours?.weekday_text || "無營業時間資訊",
           };
+
           const newMarker = addMarker(placeData);
           setupInfoWindow(newMarker, placeData);
         });
 
+        // **不要呼叫 initMap()，直接將地圖中心設為搜尋位置**
         map.value.setCenter(searchLocation);
       } else {
         alert("搜尋失敗：" + status);
@@ -504,7 +548,7 @@ const drawRoute = () => {
   if (!directionsService.value) {
     directionsService.value = new google.maps.DirectionsService();
   }
-
+  initMap();
   directionsRenderers.value.forEach((renderer) => renderer.setMap(null));
   directionsRenderers.value = [];
 
