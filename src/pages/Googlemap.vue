@@ -20,9 +20,9 @@
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
-            <button class="nav-link btn btn-outline-secondary" id="home-tab" :class="{ active: selectedDate === date }"
-              data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]" type="button" role="tab" aria-selected="true"
-              @click="handleDateClick(date)">
+            <button class="nav-link btn btn-outline-secondary border border-primary border-3" id="home-tab"
+              :class="{ active: selectedDate === date }" data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]"
+              type="button" role="tab" aria-selected="true" @click="handleDateClick(date)">
               {{ date }}
             </button>
           </li>
@@ -703,6 +703,8 @@ const fetchItineraryById = async () => {
 .draw_btn {
   display: block;
   margin-left: auto;
+  border-radius: 50px;
+
 }
 
 .title {
