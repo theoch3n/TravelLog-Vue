@@ -134,6 +134,12 @@ const pages = [
     textClass: "text-yellow-darken-4",
     to: "/paymentResult",
   },
+  {
+    value: "MyOrder",
+    text: "我的訂單",
+    textClass: "text-yellow-darken-4",
+    to: "/myorder",
+  },
 ];
 
 // 監聽路由變化，確保導航按鈕與路由同步

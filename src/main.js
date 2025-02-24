@@ -50,13 +50,6 @@ const vuetify = createVuetify({
     },
 });
 
-// 建立 Vue 應用，掛載 router、Vuetify 與 Pinia
-// const app = createApp(App);
-// app.use(router);
-// app.use(vuetify);
-// app.use(pinia);
-// app.mount("#app");
-
 // 設定 axios 預設 API URL
 import axios from "axios";
 axios.defaults.baseURL = "https://localhost:7092"; // API 伺服器 URL
