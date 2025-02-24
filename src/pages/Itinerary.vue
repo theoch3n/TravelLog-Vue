@@ -135,16 +135,11 @@ const tab = ref(1);
 const show = ref('');
 //
 
-// 控制 v-date-picker 顯示與隱藏
-const showDatePicker = ref(false);
+
 // 控制 v-date-picker 顯示與隱藏
 const showDatePicker = ref(false);
 
-const itinerarytitle = ref("");
-const itinerarylocation = ref("");
-const startDate = ref(""); // 顯示格式 YYYY-MM-DD
-const endDate = ref("");
-const selectedDate = ref(null); // v-date-picker 使用 Date 物件
+
 const itinerarytitle = ref("");
 const itinerarylocation = ref("");
 const startDate = ref(""); // 顯示格式 YYYY-MM-DD
@@ -153,11 +148,8 @@ const selectedDate = ref(null); // v-date-picker 使用 Date 物件
 
 // 追蹤當前選擇的是哪個輸入框
 const activeInput = ref(null);
-// 追蹤當前選擇的是哪個輸入框
-const activeInput = ref(null);
 
-// 限制結束日期不能早於開始日期
-const minDate = ref(null);
+
 // 限制結束日期不能早於開始日期
 const minDate = ref(null);
 
@@ -429,8 +421,7 @@ function showDialog(itineraryId) {
   selectedItineraryId.value = itineraryId; // 儲存當前卡片的 itineraryId
 }
 
-// 不需要 export default {}，<script setup> 會自動導出
-defineExpose({ dialog, showDialog });
+
 // 不需要 export default {}，<script setup> 會自動導出
 defineExpose({ dialog, showDialog });
 
