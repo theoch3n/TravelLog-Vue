@@ -58,8 +58,8 @@
                                     <th class="align-bottom">
                                         <div class="form-check">
                                             <input class="form-check-input m-0 me-2" style="transform: scale(1.5)"
-                                                :disabled="p.name === PaidBy" type="checkbox" id="flexCheckDefault"
-                                                v-model="insideData[index].paid">
+                                                type="checkbox" id="flexCheckDefault" v-model="p.paid"
+                                                :disabled="members[index] === PaidBy || p.price == 0">
                                         </div>
                                     </th>
                                 </tr>
@@ -83,7 +83,8 @@
                     <div class="form-group">
                         <select class="form-select text-center" v-model="PaidBy">
                             <option value="" disabled>選擇墊款人</option>
-                            <option v-for="(option, optIndex) in members" :key="optIndex" :value="option">
+                            <option v-for="(option, optIndex) in members" :key="optIndex" :value="option"
+                                :disabled="totalPrice == 0">
                                 {{ option }}
                             </option>
                         </select>
@@ -120,6 +121,7 @@ onMounted(() => {
 });
 
 let isUpdating = false;
+let savePaidByData;
 let ExchangeRates = ref();
 let rates = ref();
 
@@ -290,21 +292,37 @@ const handleTotalPrice = () => {
         item.price = item.exactPrice.toFixed(2);
     });
 }
+//確保墊款人paid始終為true
+watch(PaidBy, (newVal, oldVal) => {
+
+    if (oldVal) {
+        insideData.forEach((p, index) => {
+            if (members.value[index] === oldVal) {
+                p.paid = savePaidByData;
+            }
+        });
+    }
+
+    if (newVal) {
+        insideData.forEach((p, index) => {
+            if (members.value[index] === newVal) {
+                savePaidByData = p.paid;
+                p.paid = true;
+            }
+        });
+    }
+});
 
 watch(() => props.modelValue?.groupInfo?.members, (newMembers) => {
-    if (!newMembers || newMembers.length === 0) return; // 確保新數據存在
-
-    insideData.length = 0; // 清空舊數據
-    newMembers.forEach(() => {
-        insideData.push({
-            exactPercentage: null,
-            exactPrice: null,
-            percentage: null,
-            price: null,
-            manual: false,
-            Paid: false,
-        });
-    });
+    if (!newMembers?.length) return;
+    insideData.splice(0, insideData.length, ...newMembers.map(() => ({
+        exactPercentage: null,
+        exactPrice: null,
+        percentage: null,
+        price: null,
+        manual: false,
+        paid: false,
+    })));
 }, { deep: true, immediate: true });
 
 watch(
@@ -318,8 +336,12 @@ watch(
                 item.price = 0;
             }
         });
+
         if (newTotalPrice <= 0 || newTotalPrice === '') {
             totalPrice.value = 0;
+            PaidBy.value = '';
+            selectedOption.value = 'avg';
+            selectionChange();
         }
     },
     { deep: true }
@@ -351,7 +373,12 @@ watch(
             });
         }
 
-        insideData.forEach(item => {
+        insideData.forEach((item, index) => {
+
+            if (item.price == 0 && PaidBy.value != members.value[index]) {
+                item.paid = false;
+            }
+
             if (!item.manual) {
                 item.exactPrice = totalPrice.value ? (totalPrice.value * item.exactPercentage) / 100 : 0;
                 item.price = parseFloat(item.exactPrice.toFixed(2));
