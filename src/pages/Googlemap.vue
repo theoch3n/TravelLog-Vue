@@ -8,11 +8,11 @@
         <div class="date">
           <label for="itineraryStartDate">{{
             Itinerarydata.itineraryStartDate
-            }}</label>
+          }}</label>
           <label for=""> ~ </label>
           <label for="itineraryEndDate">{{
             Itinerarydata.itineraryEndDate
-            }}</label>
+          }}</label>
         </div>
         <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
           規劃路線

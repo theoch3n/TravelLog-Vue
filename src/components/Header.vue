@@ -6,7 +6,7 @@ import LoginModal from "@/components/LoginModal.vue";
 import { useUserStore } from "@/stores/userStore";
 
 // 切換主題的函式
-const isDark = ref();
+const isDark = ref("");
 function toggleDarkMode() {
   if (isDark.value) {
     theme.global.name.value = 'light'
@@ -112,6 +112,12 @@ const pages = [
     text: "付款結果",
     textClass: "text-yellow-darken-4",
     to: "/paymentResult",
+  },
+  {
+    value: "MyOrder",
+    text: "我的訂單",
+    textClass: "text-yellow-darken-4",
+    to: "/myorder",
   },
 ];
 

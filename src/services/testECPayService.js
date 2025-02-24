@@ -14,22 +14,36 @@ class testECPayService {
                     totalAmount: orderDetails.totalAmount,
                     itemName: orderDetails.itemName,
                     tradeDesc: orderDetails.tradeDesc || "旅遊訂單",
+                    userId: orderDetails.userId,
+                },
+                {
+                    headers: {
+                        Accept: "*/*",
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: false,
                 }
             );
 
             console.log("後端回應:", response.data);
             return response.data;
         } catch (error) {
-            console.error(
-                "Order creation error",
-                error.response?.data || error
+            console.error("Order creation error", {
+                status: error.response?.status,
+                data: error.response?.data,
+                message: error.message,
+                config: error.config,
+            });
+            throw new Error(
+                `付款初始化失敗：${
+                    error.response?.data?.message || error.message || "未知錯誤"
+                }`
             );
-            throw error;
         }
     }
 
     submitToECPay(orderParams) {
-        // 創建一個動態表單並提交
+        console.log("提交到 ECPay 的參數:", orderParams);
         const form = document.createElement("form");
         form.method = "post";
         form.action =

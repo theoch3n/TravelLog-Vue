@@ -21,6 +21,7 @@ import OrderDetail from "../pages/OrderDetail.vue";
 import PaymentResult from "../pages/PaymentResult.vue";
 import ItineraryTemp from "../pages/ItineraryTemp.vue";
 import Profile from "@/components/Profile.vue";
+import MyOrder from "@/pages/MyOrder.vue";
 
 // 定義路由配置
 const routes = [
@@ -103,6 +104,11 @@ const routes = [
                 path: "/store",
                 name: "store",
                 // component: store,
+            },
+            {
+                path: "/myorder",
+                name: "MyOrder",
+                component: MyOrder,
             },
         ],
     },
