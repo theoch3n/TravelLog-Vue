@@ -341,9 +341,9 @@ function handleProfileClick() {
             <a class="tool-button text-black" href="javascript:;" data-bs-toggle="modal"
               data-bs-target="#exampleModal"><i class="bi bi-person-fill fs-3"></i></a>
           </div>
-          <div class="logo" style="width: 80px">
+          <div class="logo " style="width: 80px">
             <a href="/">
-              <img class="img-fluid" src="@/assets/logo.png" alt="TravelLog" />
+              <img class="img-fluid " src="@/assets/logo-removebg-preview.png" alt="TravelLog" />
             </a>
           </div>
           <div class="d-flex gap-2">
