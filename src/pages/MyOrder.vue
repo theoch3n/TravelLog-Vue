@@ -34,6 +34,7 @@ const fetchOrders = async () => {
             }
         );
         orders.value = response.data;
+        console.log("orders", orders.value);
         console.log("訂單獲取成功:", orders.value);
     } catch (error) {
         console.error("取得訂單失敗:", error);
@@ -83,11 +84,11 @@ onMounted(async () => {
                         訂單編號: {{ order.merchantTradeNo }}
                     </v-card-title>
                     <v-card-subtitle>
-                        訂單日期: {{ order.TradeDate }}
+                        訂單日期: {{ order.tradeDate }}
                     </v-card-subtitle>
                     <v-card-text>
-                        <p><strong>總金額:</strong> {{ order.OrderTotalAmount }} 元</p>
-                        <p><strong>付款狀態:</strong> {{ order.PaymentStatus }}</p>
+                        <p><strong>總金額:</strong> {{ order.orderTotalAmount }} 元</p>
+                        <p><strong>付款狀態:</strong> {{ order.paymentStatus }}</p>
                     </v-card-text>
                     <v-card-actions>
                         <v-btn color="primary" @click="order.expand = !order.expand">
@@ -98,11 +99,11 @@ onMounted(async () => {
                         <div v-if="order.expand" class="pa-3">
                             <p>
                                 <v-icon color="green">mdi-credit-card</v-icon>
-                                <strong>付款時間：</strong> {{ order.PaymentInfo?.PaymentTime || '尚未付款' }}
+                                <strong>付款時間：</strong> {{ order.paymentInfo?.PaymentTime || '尚未付款' }}
                             </p>
                             <p>
                                 <v-icon color="blue">mdi-barcode</v-icon>
-                                <strong>綠界交易編號：</strong> {{ order.PaymentInfo?.EcpayTransactionId || '無' }}
+                                <strong>綠界交易編號：</strong> {{ order.paymentInfo?.EcpayTransactionId || '無' }}
                             </p>
                         </div>
                     </v-expand-transition>
