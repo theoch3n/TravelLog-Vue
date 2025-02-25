@@ -249,7 +249,7 @@ async function validateForm() {
         register.value.errors.email ||
         register.value.errors.password ||
         register.value.errors.confirmPassword ||
-        register.value.errors.phone
+        register.value.errors.phone  
     ) {
         console.warn("驗證失敗，不提交註冊請求");
         return;
@@ -267,6 +267,14 @@ async function registerUser() {
         });
         console.log("註冊成功：", response.data);
         alert("註冊成功！歡迎加入！");
+
+        // 重設表單輸入內容
+        register.value.formData.accountName = "";
+        register.value.formData.email = "";
+        register.value.formData.phone = "";
+        register.value.formData.password = "";
+        register.value.confirmPassword = "";
+        currentView.value = "login";
         hide();
         router.push("/");
     } catch (error) {
@@ -282,6 +290,7 @@ async function registerUser() {
         }
     }
 }
+
 
 // 控制 dialog 顯示與關閉
 function show() {

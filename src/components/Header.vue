@@ -1,26 +1,46 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useDisplay } from "vuetify";
+import { useDisplay, useTheme } from "vuetify";
 import LoginModal from "@/components/LoginModal.vue";
 import { useUserStore } from "@/stores/userStore";
+import * as DarkReader from 'darkreader';
 
-// 切換主題的函式
-const isDark = ref("");
+// // 取得主題物件
+// const theme = useTheme()
+// // 宣告一個 isDark 的 ref 來追蹤目前是否為暗色模式
+// const isDark = ref(theme.global.name.value === 'dark')
+// // 定義切換主題的函式
+// function toggleDarkMode() {
+//   isDark.value = !isDark.value
+//   // 使用 theme 對象更新 Vuetify 的主题設定
+//   theme.global.name.value = isDark.value ? 'dark' : 'light'
+// }
+
+const isDark = ref(false);
 function toggleDarkMode() {
+  isDark.value = !isDark.value;
   if (isDark.value) {
-    theme.global.name.value = 'light'
+    // 設定 Dark Reader 使用 window.fetch 處理跨來源請求
+    DarkReader.setFetchMethod(window.fetch);
+    DarkReader.enable({
+      brightness: 100,
+      contrast: 90,
+      sepia: 10,
+    });
   } else {
-    theme.global.name.value = 'dark'
+    DarkReader.disable();
   }
-  isDark.value = !isDark.value
 }
+
+
 // 控制登入對話框 & 行動選單
 const loginDialog = ref(false);
 const mobileMenu = ref(false);
 
 // 使用 Vuetify 提供的裝置偵測
 const { mdAndUp, mobile } = useDisplay();
+
 
 // 取得當前路由
 const route = useRoute();
