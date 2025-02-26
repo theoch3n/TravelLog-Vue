@@ -4,7 +4,12 @@
     <div class="flex-container">
       <div class="controls-container col-4 rounded-3">
         <h4 class="title mt-4">{{ Itinerarydata.itineraryTitle }}</h4>
-        <img :src="Itinerarydata.itineraryImage" alt="" class="titleimg" :style="{ height: '30%', width: '100%' }" />
+        <img
+          :src="Itinerarydata.itineraryImage"
+          alt=""
+          class="titleimg"
+          :style="{ height: '30%', width: '100%' }"
+        />
         <div class="date">
           <label for="itineraryStartDate">{{
             Itinerarydata.itineraryStartDate
@@ -14,31 +19,65 @@
             Itinerarydata.itineraryEndDate
           }}</label>
         </div>
-        <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
+        <button
+          class="btn btn-primary mt-4 draw_btn"
+          id="draw-route"
+          @click="drawRoute"
+        >
           規劃路線
         </button>
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
-            <button class="nav-link btn btn-outline-secondary border border-primary border-3" id="home-tab"
-              :class="{ active: selectedDate === date }" data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]"
-              type="button" role="tab" aria-selected="true" @click="handleDateClick(date)">
+          <li
+            class="nav-item"
+            v-for="(date, index) in dateList"
+            :key="index"
+            role="presentation"
+          >
+            <button
+              class="nav-link btn btn-outline-secondary border border-primary border-3"
+              id="home-tab"
+              :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab"
+              :data-bs-target="'#' + dateList[index]"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              @click="handleDateClick(date)"
+            >
               {{ date }}
             </button>
           </li>
         </ul>
-        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
-          <div class="tab-pane fade show" :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
+        <div
+          class="tab-content"
+          v-for="(date, index) in dateList"
+          :key="index"
+          id="myTabContent"
+        >
+          <div
+            class="tab-pane fade show"
+            :id="dateList[index]"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
             {{ dateList[index] }}
 
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
-                  :deletePlaceHandler="deletePlace">
-                  <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`">
+                <PlaceCard
+                  v-for="(place, index) in places"
+                  :key="place.id"
+                  :data="place"
+                  :deletePlaceHandler="deletePlace"
+                >
+                  <li
+                    v-if="index < places.length - 1"
+                    class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`"
+                  >
                     計算中...
                   </li>
                 </PlaceCard>
@@ -55,8 +94,12 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別" id="textsearch-input-overlay" />
+          <input
+            v-model="textsearchInput"
+            class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別"
+            id="textsearch-input-overlay"
+          />
           <button class="btn btn-danger" id="searchButton">搜尋</button>
           <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
         </div>
@@ -99,6 +142,7 @@ const Itinerarydata = ref({
   itineraryStartDate: "",
   itineraryEndDate: "",
   itineraryImage: "",
+  itineraryLocation: "",
 });
 // 初始化為當前時間，避免 undefined 問題
 const date_St = ref(dayjs());
@@ -123,7 +167,6 @@ window.onload = () => {
   if (typeof google !== "undefined" && google.maps) {
     initMap();
     console.log("Google Maps API 加載完成！");
-
   } else {
     console.error("Google Maps API 尚未加載完成！");
   }
@@ -239,7 +282,15 @@ const initMap = () => {
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     };
-    map.value.setCenter(currentPosition);
+    // 假設 itineraryLocation 是 "22.6234049,120.2951227" 格式的字串
+    const itineraryLocation = Itinerarydata.value.itineraryLocation.split(","); //從行程抓取經緯度
+
+    // 轉換為 { lat, lng } 物件
+    const itineraryLocationObj = {
+      lat: parseFloat(itineraryLocation[0]), // 解析為浮點數
+      lng: parseFloat(itineraryLocation[1]), // 解析為浮點數
+    };
+    map.value.setCenter(itineraryLocationObj);
     map.value.setZoom(16);
   });
 
@@ -658,10 +709,11 @@ const fetchItineraryById = async () => {
       itineraryStartDate: itinerary.itineraryStartDate.split("T")[0], // 去掉時間部分
       itineraryEndDate: itinerary.itineraryEndDate.split("T")[0], // 去掉時間部分
       itineraryImage: itinerary.itineraryImage,
+      itineraryLocation: itinerary.itineraryCoordinate,
     };
     console.log("取得的資料1:", String(Itinerarydata.value.itineraryStartDate));
 
-    console.log("取得的資料2:", "2025-02-16");
+    console.log("取得的資料2:", Itinerarydata.value.itineraryLocation);
   } catch (error) {
     console.error("獲取資料時發生錯誤：", error);
   }
@@ -704,7 +756,6 @@ const fetchItineraryById = async () => {
   display: block;
   margin-left: auto;
   border-radius: 50px;
-
 }
 
 .title {
