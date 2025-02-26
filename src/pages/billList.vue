@@ -3,9 +3,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header text-center">
-                    <h5 class="modal-title w-100" id="modalBillListLabel"> {{ "ID = " + itineraryId }} , {{ "Title = " +
-                        itineraryTitle }}
-                    </h5>
+                    <h5 class="modal-title w-100" id="modalBillListLabel"> {{ itineraryTitle }} </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -32,13 +30,13 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @click="createNewBill">新增項目</button>
+                    <button type="button" class="btn btn-primary" @click="createNewBill()">新增項目</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>
         </div>
     </div>
-    <bill v-model="itineraryInfo" :toggleModal="toggleModal" @refreshData="getBillsData"></bill>
+    <bill v-model="itineraryInfo" :toggleModal="toggleModal" @refreshData="getBillsData()"></bill>
     <BillDetails v-model="itineraryInfo" :billWithDetails="selectedItem" :toggleModal="toggleModal"></BillDetails>
 </template>
 
