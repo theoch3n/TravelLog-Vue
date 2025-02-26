@@ -7,7 +7,8 @@
                 <v-card-title class="d-flex align-center">
                     <div>
                         <span v-if="currentView === 'login'" class="text-h6">帳號登入</span>
-                        <span v-else class="text-h6">帳號註冊</span>
+                        <span v-else-if="currentView === 'register'" class="text-h6">帳號註冊</span>
+                        <span v-else-if="currentView === 'forgotPassword'" class="text-h6">忘記密碼</span>
                     </div>
                     <v-spacer></v-spacer>
                     <v-btn icon @click="hide">
@@ -36,11 +37,11 @@
                                 :error-messages="login.errors.password ? [login.errors.password] : []"></v-text-field>
                             <!-- 記住帳號 -->
                             <v-checkbox label="記住此帳號" v-model="login.rememberMe"></v-checkbox>
-                            <!-- 忘記密碼 -->
+                            <!-- 忘記密碼連結 -->
                             <div class="mb-4">
-                                <router-link to="/reset-password" class="text--primary">
+                                <a @click="switchToForgotPassword" class="text--primary" style="cursor:pointer;">
                                     忘記密碼?
-                                </router-link>
+                                </a>
                             </div>
                             <!-- 登入按鈕 -->
                             <div class="text-center">
@@ -57,7 +58,7 @@
                     </div>
 
                     <!-- 註冊視窗 -->
-                    <div v-else>
+                    <div v-else-if="currentView === 'register'">
                         <v-form @submit.prevent="validateForm">
                             <!-- 帳號名稱：增加 3~20 個字驗證 -->
                             <v-text-field label="帳號名稱" v-model="register.formData.accountName" required
@@ -97,20 +98,30 @@
                             </div>
                         </v-form>
                     </div>
-                </v-card-text>
 
-                <!-- 可選：如果需要 footer 區域，可在此加入 -->
-                <!-- <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn text @click="hide">關閉</v-btn>
-          </v-card-actions> -->
+                    <!-- 忘記密碼視窗 -->
+                    <div v-else-if="currentView === 'forgotPassword'">
+                        <v-form @submit.prevent="forgotPasswordHandler">
+                            <v-text-field label="請輸入您的 Email" v-model="forgotPasswordEmail" type="email"
+                                required  @blur="validateEmail"
+                                :error-messages="register.errors.email ? [register.errors.email] : []"></v-text-field>
+                            <div class="text-center">
+                                <v-btn color="primary" type="submit">送出</v-btn>
+                            </div>
+                        </v-form>
+                        <p v-if="forgotPasswordMessage">{{ forgotPasswordMessage }}</p>
+                        <div class="mt-3 text-center">
+                            <v-btn text color="primary" @click="switchToLogin">返回登入</v-btn>
+                        </div>
+                    </div>
+                </v-card-text>
             </v-card>
         </v-dialog>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useUserStore } from "@/stores/userStore";
@@ -121,9 +132,10 @@ const userStore = useUserStore();
 // 用來控制 v-dialog 顯示與否
 const dialog = ref(false);
 
-// 登入、註冊資料與驗證邏輯
+// 切換視窗的變數，目前值可為 "login", "register", "forgotPassword"
 const currentView = ref("login");
 
+// 登入資料與驗證邏輯
 const login = ref({
     email: "Test@gmail.com",
     password: "T123456",
@@ -132,6 +144,7 @@ const login = ref({
     errors: {}
 });
 
+// 註冊資料與驗證邏輯
 const register = ref({
     formData: {
         accountName: "",
@@ -145,12 +158,19 @@ const register = ref({
     errors: {}
 });
 
-// 切換登入與註冊
+// 忘記密碼相關
+const forgotPasswordEmail = ref("");
+const forgotPasswordMessage = ref("");
+
+// 切換視窗方法
 function switchToRegister() {
     currentView.value = "register";
 }
 function switchToLogin() {
     currentView.value = "login";
+}
+function switchToForgotPassword() {
+    currentView.value = "forgotPassword";
 }
 
 // 密碼顯示切換
@@ -166,7 +186,6 @@ function toggleRegisterPasswordConfirm() {
 
 // 登入表單提交
 async function loginHandler() {
-    // 清除先前的錯誤提示
     login.value.errors.general = "";
     const loginData = {
         email: login.value.email,
@@ -182,8 +201,18 @@ async function loginHandler() {
         router.push("/");
     } catch (error) {
         console.error("登入錯誤：", error);
-        // 登入失敗時顯示提示訊息
         login.value.errors.general = "帳號或密碼有誤";
+    }
+}
+
+// 忘記密碼表單提交
+async function forgotPasswordHandler() {
+    try {
+        const response = await axios.post("https://localhost:7092/api/ForgotPassword", { email: forgotPasswordEmail.value });
+        forgotPasswordMessage.value = response.data.message || "如果該 Email 已註冊，我們將發送重置連結。";
+    } catch (error) {
+        console.error("忘記密碼錯誤：", error);
+        forgotPasswordMessage.value = "發生錯誤，請稍後再試。";
     }
 }
 
@@ -196,7 +225,7 @@ function validateConfirmPassword() {
     }
 }
 
-// 帳號名稱驗證：必須為3-20個字元
+// 帳號名稱驗證：必須為 3-20 個字元
 function validateAccountName() {
     const name = register.value.formData.accountName;
     if (name.length < 3 || name.length > 20) {
@@ -237,19 +266,17 @@ async function validatePassword() {
 
 // 總驗證並發送註冊請求
 async function validateForm() {
-    // 呼叫所有驗證函式
     validateAccountName();
     validateEmail();
     await validatePassword();
     validateConfirmPassword();
     validatePhone();
-    // 若有任一驗證錯誤，不提交請求
     if (
         register.value.errors.accountName ||
         register.value.errors.email ||
         register.value.errors.password ||
         register.value.errors.confirmPassword ||
-        register.value.errors.phone  
+        register.value.errors.phone
     ) {
         console.warn("驗證失敗，不提交註冊請求");
         return;
@@ -267,30 +294,23 @@ async function registerUser() {
         });
         console.log("註冊成功：", response.data);
         alert("註冊成功！歡迎加入！");
-
-        // 重設表單輸入內容
         register.value.formData.accountName = "";
         register.value.formData.email = "";
         register.value.formData.phone = "";
         register.value.formData.password = "";
-        register.value.confirmPassword = "";
+        register.value.formData.confirmPassword = "";
         currentView.value = "login";
         hide();
         router.push("/");
     } catch (error) {
         console.error("註冊錯誤：", error);
-        if (
-            error.response &&
-            error.response.data &&
-            error.response.data.message
-        ) {
+        if (error.response && error.response.data && error.response.data.message) {
             alert("註冊失敗：" + error.response.data.message);
         } else {
             alert("註冊時發生錯誤!可能是API沒開");
         }
     }
 }
-
 
 // 控制 dialog 顯示與關閉
 function show() {
@@ -308,7 +328,6 @@ defineExpose({
 </script>
 
 <style scoped>
-/* 根據需要調整樣式 */
 .text-center {
     text-align: center;
 }
