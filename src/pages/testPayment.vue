@@ -9,6 +9,9 @@ const isDialogVisible = ref(false);
 const productPara = useProductPara();
 const selectedItem = computed(() => productPara.selectItem || {});
 const peopleCount = ref(1);
+import { useUserStore } from '../stores/userStore';
+
+const userStore = useUserStore();
 
 // 確保 body 樣式恢復正常
 onMounted(() => {
@@ -47,7 +50,8 @@ async function initiatePayment() {
         totalAmount: selectedItem.value.price || 0,
         itemName: selectedItem.value.eventName,
         tradeDesc: `訂購行程：${selectedItem.value.eventName}`,
-        userId: 1
+        userId: userStore.profile?.userId,
+        productId: selectedItem.value.id,
     };
 
     try {
