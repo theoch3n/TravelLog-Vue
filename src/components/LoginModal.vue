@@ -101,30 +101,41 @@
 
                     <!-- 忘記密碼視窗 -->
                     <div v-else-if="currentView === 'forgotPassword'">
+                        <!-- 忘記密碼表單 -->
                         <v-form @submit.prevent="forgotPasswordHandler">
-                            <v-text-field label="請輸入您的 Email" v-model="forgotPasswordEmail" type="email"
-                                required  @blur="validateEmail"
-                                :error-messages="register.errors.email ? [register.errors.email] : []"></v-text-field>
+                            <!-- Email 輸入框 -->
+                            <v-text-field label="請輸入您的 Email" v-model="forgotPasswordEmail" type="email" required
+                                @blur="validateForgotPasswordEmail"
+                                :error-messages="forgotPasswordErrors.email ? [forgotPasswordErrors.email] : []">
+                            </v-text-field>
+
+                            <!-- 送出按鈕 -->
                             <div class="text-center">
                                 <v-btn color="primary" type="submit">送出</v-btn>
                             </div>
                         </v-form>
+
+                        <!-- 顯示錯誤或成功訊息 -->
                         <p v-if="forgotPasswordMessage">{{ forgotPasswordMessage }}</p>
+
+                        <!-- 返回登入頁面按鈕 -->
                         <div class="mt-3 text-center">
                             <v-btn text color="primary" @click="switchToLogin">返回登入</v-btn>
                         </div>
                     </div>
+
                 </v-card-text>
             </v-card>
         </v-dialog>
     </div>
 </template>
 
+
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import axios from "axios";
-import { useUserStore } from "@/stores/userStore";
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { useUserStore } from '@/stores/userStore';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -161,6 +172,9 @@ const register = ref({
 // 忘記密碼相關
 const forgotPasswordEmail = ref("");
 const forgotPasswordMessage = ref("");
+const forgotPasswordErrors = reactive({
+    email: ""
+});
 
 // 切換視窗方法
 function switchToRegister() {
@@ -206,13 +220,32 @@ async function loginHandler() {
 }
 
 // 忘記密碼表單提交
+let lastForgotPasswordRequest = 0;
+
 async function forgotPasswordHandler() {
+    if (!validateForgotPasswordEmail()) return;
+
     try {
-        const response = await axios.post("https://localhost:7092/api/ForgotPassword", { email: forgotPasswordEmail.value });
+        const response = await axios.post("https://localhost:7092/api/ForgotPassword", {
+            email: forgotPasswordEmail.value.trim()
+        });
+
         forgotPasswordMessage.value = response.data.message || "如果該 Email 已註冊，我們將發送重置連結。";
+        forgotPasswordErrors.email = ""; // 清除錯誤
     } catch (error) {
         console.error("忘記密碼錯誤：", error);
-        forgotPasswordMessage.value = "發生錯誤，請稍後再試。";
+
+        if (error.response) {
+            if (error.response.status === 400) {
+                forgotPasswordErrors.email = "請輸入有效的 Email 地址";
+            } else if (error.response.status === 404) {
+                forgotPasswordMessage.value = "該 Email 尚未註冊。";
+            } else {
+                forgotPasswordMessage.value = "發生錯誤，請稍後再試。";
+            }
+        } else {
+            forgotPasswordMessage.value = "無法連線至伺服器，請檢查您的網路。";
+        }
     }
 }
 
@@ -225,7 +258,7 @@ function validateConfirmPassword() {
     }
 }
 
-// 帳號名稱驗證：必須為 3-20 個字元
+// 帳號名稱驗證：必須為 3~20 個字元
 function validateAccountName() {
     const name = register.value.formData.accountName;
     if (name.length < 3 || name.length > 20) {
@@ -243,6 +276,22 @@ function validateEmail() {
         register.value.errors.email = "Email 格式不正確";
     } else {
         register.value.errors.email = "";
+    }
+}
+
+function validateForgotPasswordEmail() {
+    const email = forgotPasswordEmail.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+        forgotPasswordErrors.email = "Email 欄位不能為空";
+        return false;
+    } else if (!emailRegex.test(email)) {
+        forgotPasswordErrors.email = "Email 格式不正確";
+        return false;
+    } else {
+        forgotPasswordErrors.email = "";
+        return true;
     }
 }
 
@@ -326,9 +375,3 @@ defineExpose({
     hide,
 });
 </script>
-
-<style scoped>
-.text-center {
-    text-align: center;
-}
-</style>
