@@ -1,22 +1,24 @@
 <template>
     <!-- 引入子組件 -->
     <LoginModal ref="loginModalRef" />
-    <div class="sidebar" @mouseenter="show = true" @mouseleave="show = false">
+
+    <header class="sidebar" @mouseenter="show = true" @mouseleave="show = false">
         <div class="sidebar-inner" :class="{ 'sidebar-show': show }">
-            <div class="sidebar-logo">
-                <img src="../assets/logo-removebg-preview.png" alt="Logo">
-            </div>
             <ul class="sidebar-menu">
                 <li>
-                    <button @click="toggleDarkMode" class="tool-button text-black">
-                        <template v-if="isDark">
-                            <i class="bi bi-sun-fill" style="font-size: 24px;"></i>
-                        </template>
-                        <template v-else>
-                            <i class="bi bi-cloud-moon-fill" style="font-size: 24px;"></i>
-                        </template>
+                    <button @click="toggleDarkMode" class="tool-button text-black"
+                        style="display: flex; align-items: center; background: none; border: none; padding: 0;">
+                        <i class="mdi" style="font-size: 24px; margin-right: 8px;">
+                            <template v-if="isDark">
+                                <i class="bi bi-sun-fill" style="font-size: 24px;"></i>
+                            </template>
+                            <template v-else>
+                                <i class="bi bi-cloud-moon-fill" style="font-size: 24px;"></i>
+                            </template>
+                        </i>
                     </button>
                 </li>
+
                 <li>
                     <i class="mdi mdi-account" style="font-size: 24px;"></i>
                     <button @click="handleProfileClick">
@@ -43,11 +45,12 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </header>
+
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import LoginModal from "@/components/LoginModal.vue"; // 引入 LoginModal 組件
 
@@ -56,11 +59,22 @@ export default {
         LoginModal, // 註冊子組件
     },
     setup() {
+        // 控制登入對話框 & 行動選單
+        const loginDialog = ref(false);
+        const mobileMenu = ref(false);
         const show = ref(false);
         const isDark = ref(false);
         const loginModalRef = ref(null); // 使用 ref 引用 LoginModal
         const router = useRouter(); // 引入 Vue Router
+        // 從 pages 陣列中找出會員登入項目
+        const accountPage = computed(() =>
+            pages.find((page) => page.value === "Account")
+        );
 
+        const filteredPages = computed(() =>
+            // 過濾條件：排除 value 為 "Account" 和 "Profile" 的項目
+            pages.filter((page) => page.value !== "Account" && page.value !== "Profile")
+        );
         // 切換深色模式
         const toggleDarkMode = () => {
             isDark.value = !isDark.value;
@@ -75,13 +89,86 @@ export default {
                 DarkReader.disable();
             }
         };
-
+        // 定義選單
+        const pages = [
+            {
+                value: "payment",
+                text: "Payment",
+                textClass: "text-brown-darken-1",
+                to: "/payment",
+            },
+            {
+                value: "about",
+                text: "關於我們",
+                textClass: "text-blue",
+                to: "/about",
+            },
+            {
+                value: "contact",
+                text: "客服中心",
+                textClass: "text-yellow-darken-4",
+                to: "/contact",
+            },
+            {
+                value: "products",
+                text: "Products",
+                textClass: "text-purple-darken-4",
+                to: "/products",
+            },
+            {
+                value: "Itinerary",
+                text: "行程",
+                icon: "mdi-phone-incoming",
+                textClass: "text-yellow-darken-4",
+                to: "/Itinerary",
+            },
+            {
+                value: "OrderDetail",
+                text: "訂單詳情",
+                textClass: "text-yellow-darken-4",
+                to: "/orderDetail",
+            },
+            // {
+            //   value: "Itinerary",
+            //   text: "行程",
+            //   icon: "mdi-phone-incoming",
+            //   textClass: "text-yellow-darken-4",
+            //   to: "/Googlemap",
+            // },
+            {
+                value: "Account",
+                text: "會員登入",
+                icon: "mdi-account",
+                textClass: "text-black",
+                to: "/account",
+            },
+            {
+                value: "Profile",
+                text: "會員資料",
+                icon: "mdi-account",
+                textClass: "text-black",
+                to: "/profile",
+            },
+            {
+                value: "PaymentResult",
+                text: "付款結果",
+                textClass: "text-yellow-darken-4",
+                to: "/paymentResult",
+            },
+            {
+                value: "MyOrder",
+                text: "我的訂單",
+                textClass: "text-yellow-darken-4",
+                to: "/myorder",
+            },
+        ];
         // 控制登入模態框顯示
         const openLoginModal = () => {
             if (loginModalRef.value) {
                 loginModalRef.value.show();
             }
         };
+
 
         // 點擊會員中心按鈕，根據用戶登入狀態進行處理
         const handleProfileClick = () => {
@@ -119,9 +206,16 @@ export default {
         };
     },
 };
+
 </script>
 
 <style scoped>
+header.sidebar {
+    display: flex;
+    min-height: 100vh;
+
+}
+
 .sidebar {
     position: fixed;
     top: 0;
@@ -132,10 +226,13 @@ export default {
     background-color: #f0f4f8;
     transition: width 0.3s ease;
     overflow: hidden;
+    display: flex;
+    min-height: 100vh;
 }
 
 .sidebar:hover {
     width: 200px;
+
 }
 
 .sidebar-inner {
