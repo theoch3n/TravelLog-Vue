@@ -1,6 +1,7 @@
 <script setup>
 import CarouselsCycle from "@/components/CarouselsCycle.vue";
 import icon from "@/components/Icon.vue";
+
 </script>
 <template>
 
