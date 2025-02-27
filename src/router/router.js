@@ -22,6 +22,7 @@ import PaymentResult from "../pages/PaymentResult.vue";
 import ItineraryTemp from "../pages/ItineraryTemp.vue";
 import Profile from "@/components/Profile.vue";
 import MyOrder from "@/pages/MyOrder.vue";
+import ResetPassword from '@/pages/ResetPassword.vue'
 
 // 定義路由配置
 const routes = [
@@ -110,6 +111,11 @@ const routes = [
                 name: "MyOrder",
                 component: MyOrder,
             },
+            {
+                path: '/reset-password',
+                name: 'ResetPassword',
+                component: ResetPassword
+              },
         ],
     },
     {

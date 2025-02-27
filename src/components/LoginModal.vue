@@ -226,7 +226,7 @@ async function forgotPasswordHandler() {
     if (!validateForgotPasswordEmail()) return;
 
     try {
-        const response = await axios.post("https://localhost:7092/api/ForgotPassword", {
+        const response = await axios.post("https://localhost:7092/api/Account/ForgotPassword", {
             email: forgotPasswordEmail.value.trim()
         });
 
