@@ -1,35 +1,74 @@
 <template>
     <div class="container border py-3 my-3">
         <div class="row">
-            <div class="col-lg-4" v-for="(item, index) in categoryArray" :key="index">
-                <div class="card my-2 pointer" :data-bs-toggle="'modal'" :data-bs-target="'#modal-' + index">
+            <div class="col-lg-3" v-for="(item, index) in itinerary" :key="index">
+                <div class="card my-2 pointer rounded-3" :data-bs-toggle="'modal'" :data-bs-target="'#modal-' + index"
+                    @click="selectedCard(item)">
                     <div class="card-body">
-                        <h2 class="card-text d-flex justify-content-center">{{ item.eventName }}</h2>
-                        <img src="/imgs/noImage.png" class="card-img-top" alt="應該要顯示封面" :title="item.eventName">
-                        <p class="card-text d-flex justify-content-center fs-3">
+                        <img :src="item.itineraryImage ? item.itineraryImage : '/imgs/noImage.png'"
+                            class="card-img-top rounded-3" alt="google api沒抓到圖" :title="item.itineraryTitle">
+                        <h5 class="card-text d-flex justify-content-center">{{ item.itineraryTitle }}</h5>
+                        <!-- <p class="card-text d-flex justify-content-center fs-3">
                             <rating :rating="item.ratings" />
-                        </p>
+                        </p> -->
                     </div>
                 </div>
 
                 <div class="modal fade" :id="'modal-' + index" tabindex="-1" :aria-labelledby="'modalLabel-' + index"
                     aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
+                    <div class="modal-dialog modal-xl modal-xl">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" :id="'modalLabel-' + index">{{ item.eventName }}</h5>
+                                <h5 class="modal-title" :id="'modalLabel-' + index">{{ item.itineraryTitle }}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
+                                <!-- tab -->
+                                <div>
+                                    <ul class="nav nav-pills justify-content-center mb-3">
+                                        <li v-for="(date, index) in dateList" :key="index" class="nav-item">
+                                            <button class="nav-link" :class="{ active: activeTab === index }"
+                                                @click="setActiveTab(date, index)">
+                                                {{ date }}
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content d-flex border">
+                                        <div v-for="index in dateList.length" :key="index" class="tab-pane fade"
+                                            :class="{ 'show active': activeTab === index - 1 }">
+                                            <!-- {{ places }} -->
+                                            <!--  -->
+                                            <div class="container">
+                                                <div v-if="places.length > 0">
+                                                    <PlaceCard v-for="(place, index) in places" :key="place.id"
+                                                        :data="place" :deletePlaceHandler="deletePlace">
+                                                        <!-- <li v-if="index < places.length - 1"
+                                                            class="list-group-item text-center text-muted route-info"
+                                                            :id="`route-info-${index}`">
+                                                            計算中...
+                                                        </li> -->
+                                                    </PlaceCard>
+                                                </div>
+                                                <div v-else>
+                                                    <p>目前沒有行程資料</p>
+                                                </div>
+                                            </div>
+                                            <!--  -->
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- tab -->
                                 <p>{{ item.eventDescription }}</p>
-                                <div class="d-flex justify-content-between">
+                                <!-- <div class="d-flex justify-content-between">
                                     <p>聯絡電話: {{ item.contactInfo }}</p>
                                     <p>售價: {{ item.price }}</p>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" @click="show(item)">加到購物車</button>
+                                <button class="btn btn-danger" @click="fetchPlacesByDate()">測試按鈕</button>
+                                <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
                                 <v-btn class="btn btn-primary" @click="selectItem(item)" :to="payUrl.to">立即結帳</v-btn>
                             </div>
                         </div>
@@ -46,29 +85,142 @@ import Rating from './Rating.vue';
 import { useProductPara } from '../stores/productPara';
 import { components } from 'vuetify/dist/vuetify-labs.js';
 import testPayment from '../pages/testPayment.vue';
-
 import { useRoute } from 'vue-router';
-import { computed } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import dayjs from "dayjs";
+import PlaceCard from "../components/PlaceCard.vue";
+
+//原始資料
+const props = defineProps({
+    categoryArray: Array
+});
+
+const deletePlace = async (placeId) => {
+    try {
+        const response = await fetch(`${baseAddress}/api/Places/${placeId}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+            throw new Error("刪除失敗");
+        }
+        // await fetchPlaces();
+        await fetchPlacesByDate();
+    } catch (error) {
+        console.error("刪除請求錯誤:", error);
+    }
+};
+//分頁
+const activeTab = ref();
+
+//東西在底下
+//date
+const date_St = ref(dayjs());
+const date_Ed = ref(dayjs());
+const dateDiff = computed(() => date_Ed.value.diff(date_St.value, "day"));
+const dateList = computed(() => {
+    return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
+        date_St.value.add(i, "day").format("YYYY-MM-DD")
+    );
+});
+
+//tabs
+const setActiveTab = (date, index) => {
+    selectedDate.value = date;
+    activeTab.value = index;
+}
+onMounted(() => {
+    if (dateList.value.length > 0) {
+        activeTab.value = 0;
+        selectedDate.value = null;
+    }
+});
+const places = ref([]);
+const selectedDate = ref();
+watch(selectedDate, (newVal) => {
+    if (newVal) {
+        fetchPlacesByDate();
+    }
+});
+const fetchPlacesByDate = async () => {
+    try {
+        const response = await fetch(
+            `${baseAddress}/api/Places?date=2025-02-22`
+            // "https://localhost:7092/api/Places/by-date/2025-02-22"
+        );
+        if (!response.ok) throw new Error("無法取得資料");
+
+        const allData = await response.json();
+        console.log("============");
+        console.log(allData);
+        places.value = allData.filter((place) => {
+            const placeDate = place.date.split("T")[0]; // 去掉時間部分
+            const selectedDateStr = selectedDate.value.split("T")[0]; // 去掉時間部分
+            return placeDate === selectedDateStr;
+        });
+        console.log("取得的資料:", JSON.stringify(places.value));
+    } catch (error) {
+        console.error("獲取資料時發生錯誤：", error);
+    }
+};
+
+const selectedId = ref(null);
+const baseAddress = "https://localhost:7092";
+const itinerary = computed(() => props.categoryArray)
+
+
+
+
+const selectedCard = (item) => {
+    activeTab.value = 0;
+    selectedId.value = null;
+    selectedDate.value = item.itineraryStartDate.split("T")[0];
+    nextTick(() => selectedId.value = item.itineraryId)
+}
+
+watch(
+    () => selectedId.value,
+    (newData) => {
+        if (newData) {
+            const selectedItem = itinerary.value.find(item => item.itineraryId === newData);
+            date_St.value = dayjs(selectedItem.itineraryStartDate);
+            date_Ed.value = dayjs(selectedItem.itineraryEndDate);
+            // console.log(
+            //     "更新後的日期:",
+            //     date_St.value.format("YYYY-MM-DD"),
+            //     date_Ed.value.format("YYYY-MM-DD"),
+            // );
+            // fetchPlacesByDate()
+        }
+    },
+    { deep: true, immediate: true }
+);
+
+
+//東西在上面
+
+//泰智
 const route = useRoute();
 const path = computed(() => route.path.replace("/", ""));
-
 const productPara = useProductPara();
-
 const payUrl = {
     components: testPayment,
     to: "/payment"
 }
-
 
 const selectItem = (item) => {
     console.log(productPara.selectItem);
     productPara.selectToPay(item);
 }
 
-const show = (item) => {
-    alert(JSON.stringify(item.eventName));
-}
-defineProps({
-    categoryArray: Array
-});
 </script>
+
+<style scoped>
+.card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 16/9;
+}
+</style>

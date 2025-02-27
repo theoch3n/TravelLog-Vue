@@ -86,8 +86,6 @@
                             </option>
                         </select>
                     </div>
-
-                    <!-- radio button -->
                     <div class="btn-group">
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="avg"
                             autocomplete="off" v-model="selectedOption" @change="selectionChange()">
@@ -97,7 +95,6 @@
                             autocomplete="off" v-model="selectedOption" @change="selectionChange()">
                         <label class="btn btn-outline-primary" for="btnradio3">自訂</label>
                     </div>
-                    <!-- radio button -->
                     <div>
                         <button type="button" class="btn btn-primary text-light me-2" @click="saveData()">儲存</button>
                         <button type="button" class="btn btn-secondary text-light" @click="backToList()">返回</button>
@@ -314,7 +311,7 @@ const handleTotalPrice = () => {
         item.price = item.exactPrice.toFixed(2);
     });
 }
-//確保付款人paid始終為true
+
 watch(PaidBy, (newVal, oldVal) => {
 
     if (oldVal) {

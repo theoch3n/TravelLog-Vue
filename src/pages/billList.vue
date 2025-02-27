@@ -47,7 +47,7 @@ import bill from './bill.vue';
 import axios from "axios";
 
 const props = defineProps({
-    modelValue: Object, // 透過 v-model 傳遞選取的行程
+    modelValue: Object,
 });
 
 const selectedItem = ref(null)

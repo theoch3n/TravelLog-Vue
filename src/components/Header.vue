@@ -87,11 +87,17 @@ const pages = [
     textClass: "text-yellow-darken-4",
     to: "/contact",
   },
+  // {
+  //   value: "products",
+  //   text: "Products",
+  //   textClass: "text-purple-darken-4",
+  //   to: "/products",
+  // },
   {
-    value: "products",
-    text: "Products",
+    value: "TravelPackage",
+    text: "TravelPackage",
     textClass: "text-purple-darken-4",
-    to: "/products",
+    to: "/TravelPackage",
   },
   {
     value: "Itinerary",
