@@ -52,7 +52,7 @@
 <script>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import LoginModal from "@/components/LoginModal.vue"; // 引入 LoginModal 組件
+import LoginModal from "../components/LoginModal.vue"; // 引入 LoginModal 組件
 
 export default {
     components: {

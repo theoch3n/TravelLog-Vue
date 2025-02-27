@@ -27,9 +27,9 @@ const icons = reactive([
             <v-row>
                 <v-col cols="12" lg="4" class="footer-text mb-3">
                     <h3 class="mb-1 pt-2">聯絡我們</h3>
-                    <p>電話 / 09XXXXXXXX</p>
-                    <p>Email / XXX@gmail.com</p>
-                    <p>聯絡地址 / XX市XX區XX街XX號XX樓</p>
+                    <p>電話 / 09877287720</p>
+                    <p>Email / sunsanrothree@gmail.com</p>
+                    <p>聯絡地址 / 上善市若水區菩提街無樹號解鈴樓</p>
                 </v-col>
 
                 <v-col cols="12" lg="4" class="mb-3">
@@ -40,6 +40,7 @@ const icons = reactive([
                 <v-col cols="12" lg="4" class="footer-text mb-3 mt-2">
                     <p>© 2024-2025 TravelLog. All Rights Reserved.</p>
                     <p>旅遊產品由 TravelLog 負責提供。</p>
+                    <p>右丞說的</p>
                     <p>旅行業註冊編號：交觀甲第XXXXXX號。</p>
                 </v-col>
             </v-row>
