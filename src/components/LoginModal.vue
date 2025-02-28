@@ -1,5 +1,5 @@
 <template>
-    <div>
+
         <!-- Vuetify 對話框 -->
         <v-dialog v-model="dialog" persistent max-width="600px">
             <v-card>
@@ -100,34 +100,47 @@
                     </div>
 
                     <!-- 忘記密碼視窗 -->
-                    <div v-else-if="currentView === 'forgotPassword'">
-                        <!-- 忘記密碼表單 -->
-                        <v-form @submit.prevent="forgotPasswordHandler">
-                            <!-- Email 輸入框 -->
-                            <v-text-field label="請輸入您的 Email" v-model="forgotPasswordEmail" type="email" required
-                                @blur="validateForgotPasswordEmail"
-                                :error-messages="forgotPasswordErrors.email ? [forgotPasswordErrors.email] : []">
-                            </v-text-field>
-
-                            <!-- 送出按鈕 -->
-                            <div class="text-center">
-                                <v-btn color="primary" type="submit">送出</v-btn>
-                            </div>
-                        </v-form>
-
-                        <!-- 顯示錯誤或成功訊息 -->
-                        <p v-if="forgotPasswordMessage">{{ forgotPasswordMessage }}</p>
-
-                        <!-- 返回登入頁面按鈕 -->
-                        <div class="mt-3 text-center">
-                            <v-btn text color="primary" @click="switchToLogin">返回登入</v-btn>
-                        </div>
-                    </div>
-
-                </v-card-text>
-            </v-card>
-        </v-dialog>
-    </div>
+        <div v-else-if="currentView === 'forgotPassword'">
+          <v-form ref="forgotForm">
+            <!-- Email 輸入框 -->
+            <v-text-field
+              label="請輸入您的 Email"
+              v-model="forgotPasswordEmail"
+              type="email"
+              required
+              @blur="validateForgotPasswordEmail"
+              :error-messages="forgotPasswordErrors.email ? [forgotPasswordErrors.email] : []"
+            ></v-text-field>
+            <!-- 驗證碼輸入框 -->
+            <v-text-field
+              label="請輸入驗證碼"
+              v-model="verificationCode"
+              type="text"
+              required
+              @blur="validateVerificationCode"
+              :error-messages="forgotPasswordErrors.verificationCode ? [forgotPasswordErrors.verificationCode] : []"
+            ></v-text-field>
+            <!-- 發送驗證碼按鈕 -->
+            <v-btn color="secondary" class="mr-2" @click="sendVerificationCode">
+              發送驗證碼
+            </v-btn>
+            <!-- 提交驗證碼按鈕 -->
+            <v-btn color="primary" @click="submitVerificationCode">
+              提交驗證碼
+            </v-btn>
+          </v-form>
+          <v-alert v-if="forgotPasswordMessage" type="info" dense outlined class="mt-4">
+            {{ forgotPasswordMessage }}
+          </v-alert>
+          <div class="mt-3 text-center">
+            <v-btn text color="primary" @click="switchToLogin">返回登入</v-btn>
+          </div>
+        </div>
+        
+        <!-- 其他視窗內容 -->
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 
@@ -169,12 +182,14 @@ const register = ref({
     errors: {}
 });
 
-// 忘記密碼相關
-const forgotPasswordEmail = ref("");
-const forgotPasswordMessage = ref("");
+// 忘記密碼相關變數
+const forgotPasswordEmail = ref("")
+const verificationCode = ref("")  // 新增驗證碼變數
+const forgotPasswordMessage = ref("")
 const forgotPasswordErrors = reactive({
-    email: ""
-});
+    email: "",
+    verificationCode: ""
+})
 
 // 切換視窗方法
 function switchToRegister() {
@@ -222,29 +237,32 @@ async function loginHandler() {
 // 忘記密碼表單提交
 let lastForgotPasswordRequest = 0;
 
+// 忘記密碼表單提交
 async function forgotPasswordHandler() {
-    if (!validateForgotPasswordEmail()) return;
+    if (!validateForgotPasswordEmail() || !validateVerificationCode()) return
 
     try {
         const response = await axios.post("https://localhost:7092/api/Account/ForgotPassword", {
-            email: forgotPasswordEmail.value.trim()
-        });
+            email: forgotPasswordEmail.value.trim(),
+            verificationCode: verificationCode.value.trim()
+        })
 
-        forgotPasswordMessage.value = response.data.message || "如果該 Email 已註冊，我們將發送重置連結。";
-        forgotPasswordErrors.email = ""; // 清除錯誤
+        forgotPasswordMessage.value = response.data.message || "如果該 Email 已註冊，我們將發送驗證碼。"
+        // 清除錯誤訊息
+        forgotPasswordErrors.email = ""
+        forgotPasswordErrors.verificationCode = ""
     } catch (error) {
-        console.error("忘記密碼錯誤：", error);
-
+        console.error("忘記密碼錯誤：", error)
         if (error.response) {
             if (error.response.status === 400) {
-                forgotPasswordErrors.email = "請輸入有效的 Email 地址";
+                forgotPasswordErrors.email = "請輸入有效的 Email 地址"
             } else if (error.response.status === 404) {
-                forgotPasswordMessage.value = "該 Email 尚未註冊。";
+                forgotPasswordMessage.value = "該 Email 尚未註冊。"
             } else {
-                forgotPasswordMessage.value = "發生錯誤，請稍後再試。";
+                forgotPasswordMessage.value = "發生錯誤，請稍後再試。"
             }
         } else {
-            forgotPasswordMessage.value = "無法連線至伺服器，請檢查您的網路。";
+            forgotPasswordMessage.value = "無法連線至伺服器，請檢查您的網路。"
         }
     }
 }
@@ -279,21 +297,75 @@ function validateEmail() {
     }
 }
 
+// 驗證 Email
 function validateForgotPasswordEmail() {
-    const email = forgotPasswordEmail.value.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+    const email = forgotPasswordEmail.value.trim()
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!email) {
-        forgotPasswordErrors.email = "Email 欄位不能為空";
-        return false;
+        forgotPasswordErrors.email = "Email 欄位不能為空"
+        return false
     } else if (!emailRegex.test(email)) {
-        forgotPasswordErrors.email = "Email 格式不正確";
-        return false;
+        forgotPasswordErrors.email = "Email 格式不正確"
+        return false
     } else {
-        forgotPasswordErrors.email = "";
-        return true;
+        forgotPasswordErrors.email = ""
+        return true
     }
 }
+// 驗證驗證碼：此處僅檢查是否有輸入，若有需要，也可以加入數字格式、長度檢查等
+function validateVerificationCode() {
+    const code = verificationCode.value.trim()
+    if (!code) {
+        forgotPasswordErrors.verificationCode = "驗證碼不能為空"
+        return false
+    } else if (code.length !== 6) {
+        forgotPasswordErrors.verificationCode = "驗證碼必須是六位數"
+        return false
+    } else {
+        forgotPasswordErrors.verificationCode = ""
+        return true
+    }
+}
+
+// 發送驗證碼按鈕的處理函式
+async function sendVerificationCode() {
+  if (!validateForgotPasswordEmail()) return
+  try {
+    const response = await axios.post("https://localhost:7092/api/ForgotPassword", {
+      email: forgotPasswordEmail.value.trim()
+    })
+    // 假設後端已發送驗證碼到 Email
+    forgotPasswordMessage.value = response.data.message || "驗證碼已發送，請檢查您的信箱。"
+  } catch (error) {
+    console.error("發送驗證碼錯誤：", error)
+    forgotPasswordMessage.value = "發送驗證碼失敗，請稍後再試。"
+  }
+}
+
+// 提交驗證碼按鈕的處理函式
+async function submitVerificationCode() {
+  if (!validateForgotPasswordEmail() || !validateVerificationCode()) return
+
+  try {
+    // 呼叫後端驗證 API，假設 API 路徑為 /api/Account/ValidateCode
+    const response = await axios.post("https://localhost:7092/api/ForgotPassword/ValidateCode", {
+      email: forgotPasswordEmail.value.trim(),
+      verificationCode: verificationCode.value.trim()
+    })
+    forgotPasswordMessage.value = response.data.message || "驗證成功，請繼續進行密碼重置。"
+    // 如果驗證成功，則跳轉到重設密碼頁面，並將 token（驗證碼）傳遞過去
+    hide();
+    router.push({ name: 'ResetPassword', query: { token: verificationCode.value.trim(), email: forgotPasswordEmail.value.trim() } })
+  } catch (error) {
+    console.error("驗證碼驗證失敗：", error)
+    if (error.response && error.response.data && error.response.data.message) {
+      forgotPasswordMessage.value = error.response.data.message
+    } else {
+      forgotPasswordMessage.value = "驗證碼驗證失敗，請確認驗證碼是否正確。"
+    }
+  }
+}
+
 
 // 驗證電話格式
 function validatePhone() {
@@ -343,7 +415,7 @@ async function registerUser() {
         });
         console.log("註冊成功：", response.data);
         alert("註冊成功！歡迎加入！");
-        register.value.formData.accountName = "";
+        register.value.formData.accountName = "";s
         register.value.formData.email = "";
         register.value.formData.phone = "";
         register.value.formData.password = "";
