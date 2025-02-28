@@ -12,14 +12,6 @@ import icon from "@/components/Icon.vue";
       </div>
     </div>
   </div>
-
-  <!-- <div>
-    <div class="home-container">
-
-
-      預販售的商品...
-    </div>
-  </div> -->
 </template>
 <style scoped>
 .wrap {

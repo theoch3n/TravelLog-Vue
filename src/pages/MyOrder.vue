@@ -13,7 +13,7 @@ const apiAddress = "https://localhost:7092/api";
 // 獲取訂單
 const fetchOrders = async () => {
     if (!userId.value) {
-        console.warn("userId 不存在，無法獲取訂單");
+        console.warn("MyOrder.vue fetchOrders: userId 不存在，無法獲取訂單");
         return;
     }
 
@@ -21,11 +21,11 @@ const fetchOrders = async () => {
     try {
         const token = localStorage.getItem("token");
         if (!token) {
-            console.warn("Token 不存在，無法獲取訂單");
+            console.warn("MyOrder.vue fetchOrders: Token 不存在，無法獲取訂單");
             return;
         }
 
-        console.log("正在請求訂單，使用 userId:", userId.value);
+        console.log("MyOrder.vue fetchOrders: 正在請求訂單，使用 userId:", userId.value);
 
         const response = await axios.get(
             `${apiAddress}/Ecpay/GetOrdersByUser/${userId.value}`,
@@ -34,10 +34,10 @@ const fetchOrders = async () => {
             }
         );
         orders.value = response.data;
-        console.log("orders", orders.value);
-        console.log("訂單獲取成功:", orders.value);
+        console.log("MyOrder.vue fetchOrders: orders", orders.value);
+        console.log("MyOrder.vue fetchOrders: 訂單獲取成功:", orders.value);
     } catch (error) {
-        console.error("取得訂單失敗:", error);
+        console.error("MyOrder.vue fetchOrders: 取得訂單失敗:", error);
     } finally {
         loading.value = false;
     }
@@ -65,12 +65,12 @@ watchEffect(() => {
 onMounted(async () => {
     try {
         await userStore.fetchProfile();
-        console.log("Profile 加載完成:", userStore.profile);
+        console.log("MyOrder.vue onMounted: Profile 加載完成:", userStore.profile);
         if (userStore.profile) {
             fetchOrders();
         }
     } catch (error) {
-        console.error("無法獲取 Profile:", error);
+        console.error("MyOrder.vue onMounted: 無法獲取 Profile:", error);
     }
 });
 </script>
