@@ -66,7 +66,7 @@ const phoneRules = [
 
 // 表單驗證狀態與參考
 const valid = ref(false)
-const form = ref(null)
+const form = ref<any>(null)
 
 // 個人資料資料結構
 const profile = ref({

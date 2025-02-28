@@ -1,146 +1,136 @@
 <template>
 
-        <!-- Vuetify 對話框 -->
-        <v-dialog v-model="dialog" persistent max-width="600px">
-            <v-card>
-                <!-- Modal Header -->
-                <v-card-title class="d-flex align-center">
-                    <div>
-                        <span v-if="currentView === 'login'" class="text-h6">帳號登入</span>
-                        <span v-else-if="currentView === 'register'" class="text-h6">帳號註冊</span>
-                        <span v-else-if="currentView === 'forgotPassword'" class="text-h6">忘記密碼</span>
+    <!-- Vuetify 對話框 -->
+    <v-dialog v-model="dialog" persistent max-width="600px">
+        <v-card>
+            <!-- Modal Header -->
+            <v-card-title class="d-flex align-center">
+                <div>
+                    <span v-if="currentView === 'login'" class="text-h6">帳號登入</span>
+                    <span v-else-if="currentView === 'register'" class="text-h6">帳號註冊</span>
+                    <span v-else-if="currentView === 'forgotPassword'" class="text-h6">忘記密碼</span>
+                </div>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="hide">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-card-title>
+
+            <!-- Modal Body -->
+            <v-card-text>
+                <!-- 登入視窗 -->
+                <div v-if="currentView === 'login'">
+                    <!-- 顯示錯誤提示 -->
+                    <v-alert v-if="login.errors.general" type="error" dense text class="mb-2">
+                        {{ login.errors.general }}
+                    </v-alert>
+
+                    <v-form @submit.prevent="loginHandler">
+                        <!-- Email 輸入框 -->
+                        <v-text-field label="Email" v-model="login.email" type="email" required
+                            :error-messages="login.errors.email ? [login.errors.email] : []"></v-text-field>
+                        <!-- 密碼輸入框 -->
+                        <v-text-field label="密碼" v-model="login.password"
+                            :type="login.showPassword ? 'text' : 'password'" required
+                            :append-icon="login.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                            @click:append="toggleLoginPassword"
+                            :error-messages="login.errors.password ? [login.errors.password] : []"></v-text-field>
+                        <!-- 記住帳號 -->
+                        <v-checkbox label="記住此帳號" v-model="login.rememberMe"></v-checkbox>
+                        <!-- 忘記密碼連結 -->
+                        <div class="mb-4">
+                            <a @click="switchToForgotPassword" class="text--primary" style="cursor:pointer;">
+                                忘記密碼?
+                            </a>
+                        </div>
+                        <!-- 登入按鈕 -->
+                        <div class="text-center">
+                            <v-btn color="primary" type="submit">登入</v-btn>
+                        </div>
+                    </v-form>
+                    <!-- 切換到註冊 -->
+                    <div class="mt-3 text-center">
+                        <p>
+                            還沒有帳號嗎？
+                            <v-btn text color="primary" @click="switchToRegister">註冊</v-btn>
+                        </p>
                     </div>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click="hide">
-                        <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                </v-card-title>
+                </div>
 
-                <!-- Modal Body -->
-                <v-card-text>
-                    <!-- 登入視窗 -->
-                    <div v-if="currentView === 'login'">
-                        <!-- 顯示錯誤提示 -->
-                        <v-alert v-if="login.errors.general" type="error" dense text class="mb-2">
-                            {{ login.errors.general }}
-                        </v-alert>
-
-                        <v-form @submit.prevent="loginHandler">
-                            <!-- Email 輸入框 -->
-                            <v-text-field label="Email" v-model="login.email" type="email" required
-                                :error-messages="login.errors.email ? [login.errors.email] : []"></v-text-field>
-                            <!-- 密碼輸入框 -->
-                            <v-text-field label="密碼" v-model="login.password"
-                                :type="login.showPassword ? 'text' : 'password'" required
-                                :append-icon="login.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                @click:append="toggleLoginPassword"
-                                :error-messages="login.errors.password ? [login.errors.password] : []"></v-text-field>
-                            <!-- 記住帳號 -->
-                            <v-checkbox label="記住此帳號" v-model="login.rememberMe"></v-checkbox>
-                            <!-- 忘記密碼連結 -->
-                            <div class="mb-4">
-                                <a @click="switchToForgotPassword" class="text--primary" style="cursor:pointer;">
-                                    忘記密碼?
-                                </a>
-                            </div>
-                            <!-- 登入按鈕 -->
-                            <div class="text-center">
-                                <v-btn color="primary" type="submit">登入</v-btn>
-                            </div>
-                        </v-form>
-                        <!-- 切換到註冊 -->
-                        <div class="mt-3 text-center">
+                <!-- 註冊視窗 -->
+                <div v-else-if="currentView === 'register'">
+                    <v-form @submit.prevent="validateForm">
+                        <!-- 帳號名稱：增加 3~20 個字驗證 -->
+                        <v-text-field label="帳號名稱" v-model="register.formData.accountName" required
+                            @blur="validateAccountName"
+                            :error-messages="register.errors.accountName ? [register.errors.accountName] : []"></v-text-field>
+                        <!-- Email：增加 Email 格式驗證 -->
+                        <v-text-field label="Email" v-model="register.formData.email" type="email" required
+                            @blur="validateEmail"
+                            :error-messages="register.errors.email ? [register.errors.email] : []"></v-text-field>
+                        <!-- 電話號碼 -->
+                        <v-text-field label="電話號碼" v-model="register.formData.phone" type="tel" required
+                            @blur="validatePhone"
+                            :error-messages="register.errors.phone ? [register.errors.phone] : []"></v-text-field>
+                        <!-- 密碼 -->
+                        <v-text-field label="密碼 (6-20 字元，需包含大寫英文字母)" v-model="register.formData.password"
+                            :type="register.showPassword ? 'text' : 'password'" required @blur="validatePassword"
+                            :append-icon="register.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                            @click:append="toggleRegisterPassword"
+                            :error-messages="register.errors.password ? [register.errors.password] : []"></v-text-field>
+                        <!-- 確認密碼 -->
+                        <v-text-field label="確認密碼" v-model="register.formData.confirmPassword"
+                            :type="register.showPasswordConfirm ? 'text' : 'password'" required
+                            @blur="validateConfirmPassword"
+                            :append-icon="register.showPasswordConfirm ? 'mdi-eye' : 'mdi-eye-off'"
+                            @click:append="toggleRegisterPasswordConfirm"
+                            :error-messages="register.errors.confirmPassword ? [register.errors.confirmPassword] : []"></v-text-field>
+                        <!-- 切換到登入 -->
+                        <div class="mb-3 text-right">
                             <p>
-                                還沒有帳號嗎？
-                                <v-btn text color="primary" @click="switchToRegister">註冊</v-btn>
+                                已經有帳號了?
+                                <v-btn text color="primary" @click="switchToLogin">登入</v-btn>
                             </p>
                         </div>
-                    </div>
+                        <!-- 註冊按鈕 -->
+                        <div class="text-center">
+                            <v-btn color="primary" block type="submit">註冊</v-btn>
+                        </div>
+                    </v-form>
+                </div>
 
-                    <!-- 註冊視窗 -->
-                    <div v-else-if="currentView === 'register'">
-                        <v-form @submit.prevent="validateForm">
-                            <!-- 帳號名稱：增加 3~20 個字驗證 -->
-                            <v-text-field label="帳號名稱" v-model="register.formData.accountName" required
-                                @blur="validateAccountName"
-                                :error-messages="register.errors.accountName ? [register.errors.accountName] : []"></v-text-field>
-                            <!-- Email：增加 Email 格式驗證 -->
-                            <v-text-field label="Email" v-model="register.formData.email" type="email" required
-                                @blur="validateEmail"
-                                :error-messages="register.errors.email ? [register.errors.email] : []"></v-text-field>
-                            <!-- 電話號碼 -->
-                            <v-text-field label="電話號碼" v-model="register.formData.phone" type="tel" required
-                                @blur="validatePhone"
-                                :error-messages="register.errors.phone ? [register.errors.phone] : []"></v-text-field>
-                            <!-- 密碼 -->
-                            <v-text-field label="密碼 (6-20 字元，需包含大寫英文字母)" v-model="register.formData.password"
-                                :type="register.showPassword ? 'text' : 'password'" required @blur="validatePassword"
-                                :append-icon="register.showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                @click:append="toggleRegisterPassword"
-                                :error-messages="register.errors.password ? [register.errors.password] : []"></v-text-field>
-                            <!-- 確認密碼 -->
-                            <v-text-field label="確認密碼" v-model="register.formData.confirmPassword"
-                                :type="register.showPasswordConfirm ? 'text' : 'password'" required
-                                @blur="validateConfirmPassword"
-                                :append-icon="register.showPasswordConfirm ? 'mdi-eye' : 'mdi-eye-off'"
-                                @click:append="toggleRegisterPasswordConfirm"
-                                :error-messages="register.errors.confirmPassword ? [register.errors.confirmPassword] : []"></v-text-field>
-                            <!-- 切換到登入 -->
-                            <div class="mb-3 text-right">
-                                <p>
-                                    已經有帳號了?
-                                    <v-btn text color="primary" @click="switchToLogin">登入</v-btn>
-                                </p>
-                            </div>
-                            <!-- 註冊按鈕 -->
-                            <div class="text-center">
-                                <v-btn color="primary" block type="submit">註冊</v-btn>
-                            </div>
-                        </v-form>
+                <!-- 忘記密碼視窗 -->
+                <div v-else-if="currentView === 'forgotPassword'">
+                    <v-form ref="forgotForm">
+                        <!-- Email 輸入框 -->
+                        <v-text-field label="請輸入您的 Email" v-model="forgotPasswordEmail" type="email" required
+                            @blur="validateForgotPasswordEmail"
+                            :error-messages="forgotPasswordErrors.email ? [forgotPasswordErrors.email] : []"></v-text-field>
+                        <!-- 驗證碼輸入框 -->
+                        <v-text-field label="請輸入驗證碼" v-model="verificationCode" type="text" required
+                            @blur="validateVerificationCode"
+                            :error-messages="forgotPasswordErrors.verificationCode ? [forgotPasswordErrors.verificationCode] : []"></v-text-field>
+                        <!-- 發送驗證碼按鈕 -->
+                        <v-btn color="secondary" class="mr-2" @click="sendVerificationCode">
+                            發送驗證碼
+                        </v-btn>
+                        <!-- 提交驗證碼按鈕 -->
+                        <v-btn color="primary" @click="submitVerificationCode">
+                            提交驗證碼
+                        </v-btn>
+                    </v-form>
+                    <v-alert v-if="forgotPasswordMessage" type="info" dense outlined class="mt-4">
+                        {{ forgotPasswordMessage }}
+                    </v-alert>
+                    <div class="mt-3 text-center">
+                        <v-btn text color="primary" @click="switchToLogin">返回登入</v-btn>
                     </div>
+                </div>
 
-                    <!-- 忘記密碼視窗 -->
-        <div v-else-if="currentView === 'forgotPassword'">
-          <v-form ref="forgotForm">
-            <!-- Email 輸入框 -->
-            <v-text-field
-              label="請輸入您的 Email"
-              v-model="forgotPasswordEmail"
-              type="email"
-              required
-              @blur="validateForgotPasswordEmail"
-              :error-messages="forgotPasswordErrors.email ? [forgotPasswordErrors.email] : []"
-            ></v-text-field>
-            <!-- 驗證碼輸入框 -->
-            <v-text-field
-              label="請輸入驗證碼"
-              v-model="verificationCode"
-              type="text"
-              required
-              @blur="validateVerificationCode"
-              :error-messages="forgotPasswordErrors.verificationCode ? [forgotPasswordErrors.verificationCode] : []"
-            ></v-text-field>
-            <!-- 發送驗證碼按鈕 -->
-            <v-btn color="secondary" class="mr-2" @click="sendVerificationCode">
-              發送驗證碼
-            </v-btn>
-            <!-- 提交驗證碼按鈕 -->
-            <v-btn color="primary" @click="submitVerificationCode">
-              提交驗證碼
-            </v-btn>
-          </v-form>
-          <v-alert v-if="forgotPasswordMessage" type="info" dense outlined class="mt-4">
-            {{ forgotPasswordMessage }}
-          </v-alert>
-          <div class="mt-3 text-center">
-            <v-btn text color="primary" @click="switchToLogin">返回登入</v-btn>
-          </div>
-        </div>
-        
-        <!-- 其他視窗內容 -->
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+                <!-- 其他視窗內容 -->
+            </v-card-text>
+        </v-card>
+    </v-dialog>
 </template>
 
 
@@ -329,41 +319,49 @@ function validateVerificationCode() {
 
 // 發送驗證碼按鈕的處理函式
 async function sendVerificationCode() {
-  if (!validateForgotPasswordEmail()) return
-  try {
-    const response = await axios.post("https://localhost:7092/api/ForgotPassword", {
-      email: forgotPasswordEmail.value.trim()
-    })
-    // 假設後端已發送驗證碼到 Email
-    forgotPasswordMessage.value = response.data.message || "驗證碼已發送，請檢查您的信箱。"
-  } catch (error) {
-    console.error("發送驗證碼錯誤：", error)
-    forgotPasswordMessage.value = "發送驗證碼失敗，請稍後再試。"
-  }
+    if (!validateForgotPasswordEmail()) return
+    try {
+        const response = await axios.post("https://localhost:7092/api/ForgotPassword", {
+            email: forgotPasswordEmail.value.trim()
+        })
+        // 假設後端已發送驗證碼到 Email
+        forgotPasswordMessage.value = response.data.message || "驗證碼已發送，請檢查您的信箱。"
+    } catch (error) {
+        console.error("發送驗證碼錯誤：", error)
+        forgotPasswordMessage.value = "發送驗證碼失敗，請稍後再試。"
+    }
 }
 
 // 提交驗證碼按鈕的處理函式
 async function submitVerificationCode() {
-  if (!validateForgotPasswordEmail() || !validateVerificationCode()) return
+    if (!validateForgotPasswordEmail() || !validateVerificationCode()) return
 
-  try {
-    // 呼叫後端驗證 API，假設 API 路徑為 /api/Account/ValidateCode
-    const response = await axios.post("https://localhost:7092/api/ForgotPassword/ValidateCode", {
-      email: forgotPasswordEmail.value.trim(),
-      verificationCode: verificationCode.value.trim()
-    })
-    forgotPasswordMessage.value = response.data.message || "驗證成功，請繼續進行密碼重置。"
-    // 如果驗證成功，則跳轉到重設密碼頁面，並將 token（驗證碼）傳遞過去
-    hide();
-    router.push({ name: 'ResetPassword', query: { token: verificationCode.value.trim(), email: forgotPasswordEmail.value.trim() } })
-  } catch (error) {
-    console.error("驗證碼驗證失敗：", error)
-    if (error.response && error.response.data && error.response.data.message) {
-      forgotPasswordMessage.value = error.response.data.message
-    } else {
-      forgotPasswordMessage.value = "驗證碼驗證失敗，請確認驗證碼是否正確。"
+    try {
+        // 先保存輸入的值
+        const emailInput = forgotPasswordEmail.value.trim();
+        const codeInput = verificationCode.value.trim();
+
+        const response = await axios.post("https://localhost:7092/api/ForgotPassword/ValidateCode", {
+            email: emailInput,
+            verificationCode: codeInput
+        });
+        forgotPasswordMessage.value = response.data.message || "驗證成功，請繼續進行密碼重置。";
+
+        // 清除輸入框內容
+        forgotPasswordEmail.value = "";
+        verificationCode.value = "";
+
+        hide();
+        router.push({ name: 'ResetPassword', query: { token: codeInput, email: emailInput } });
+    } catch (error) {
+        console.error("驗證碼驗證失敗：", error);
+        if (error.response && error.response.data && error.response.data.message) {
+            forgotPasswordMessage.value = error.response.data.message;
+        } else {
+            forgotPasswordMessage.value = "驗證碼驗證失敗，請確認驗證碼是否正確。";
+        }
     }
-  }
+
 }
 
 
@@ -415,7 +413,7 @@ async function registerUser() {
         });
         console.log("註冊成功：", response.data);
         alert("註冊成功！歡迎加入！");
-        register.value.formData.accountName = "";s
+        register.value.formData.accountName = ""; s
         register.value.formData.email = "";
         register.value.formData.phone = "";
         register.value.formData.password = "";
@@ -435,8 +433,10 @@ async function registerUser() {
 
 // 控制 dialog 顯示與關閉
 function show() {
+    currentView.value = "login"; // 確保打開時顯示登入介面
     dialog.value = true;
 }
+
 function hide() {
     dialog.value = false;
 }
