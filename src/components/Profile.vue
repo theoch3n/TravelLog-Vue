@@ -27,6 +27,11 @@
           </v-card-text>
         </v-card>
 
+ <!-- 如果使用者尚未驗證 Email，顯示補救措施 -->
+        <v-alert v-if="!profile.IsEmailVerified" type="warning" dense outlined class="mt-3">
+          您的 Email 尚未驗證，請點擊下方按鈕重新發送驗證信。
+          <v-btn color="secondary" class="mt-2" @click="resendVerificationEmail">重新寄送驗證信</v-btn>
+        </v-alert>
         <!-- 錯誤提示 -->
         <v-alert v-if="error" type="error" class="mt-3">
           {{ error }}
@@ -73,7 +78,8 @@ const profile = ref({
   userId: '',
   userName: '',
   userEmail: '',
-  userPhone: ''
+  userPhone: '',
+  IsEmailVerified: false // 後端回傳的 Email 驗證狀態
 })
 const loading = ref(true)
 const error = ref('')
@@ -111,6 +117,19 @@ async function updateProfile() {
   } catch (err) {
     console.error("更新資料錯誤：", err)
     alert("更新資料失敗！")
+  }
+}
+
+// 補救措施：重新寄送 Email 驗證信
+async function resendVerificationEmail() {
+  try {
+    const response = await axios.post("https://localhost:7092/api/Account/ResendVerificationEmail", {
+      email: profile.value.userEmail
+    });
+    alert(response.data.message || "驗證信已寄出！");
+  } catch (err: any) {
+    console.error("重新寄送驗證信失敗：", err);
+    alert(err.response?.data?.message || "發生錯誤，請稍後再試。");
   }
 }
 

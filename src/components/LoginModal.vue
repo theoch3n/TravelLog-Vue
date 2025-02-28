@@ -9,6 +9,7 @@
                     <span v-if="currentView === 'login'" class="text-h6">帳號登入</span>
                     <span v-else-if="currentView === 'register'" class="text-h6">帳號註冊</span>
                     <span v-else-if="currentView === 'forgotPassword'" class="text-h6">忘記密碼</span>
+                    <span v-else-if="currentView === 'verifyEmail'" class="text-h6">Email 驗證</span>
                 </div>
                 <v-spacer></v-spacer>
                 <v-btn icon @click="hide">
@@ -126,7 +127,11 @@
                         <v-btn text color="primary" @click="switchToLogin">返回登入</v-btn>
                     </div>
                 </div>
-
+                <!-- Email 驗證視窗 -->
+                <div v-else-if="currentView === 'verifyEmail'">
+                    <!-- 引入 VerifyEmail 子組件，將 token 傳入 -->
+                    <VerifyEmail :token="emailVerificationToken" @verified="onVerified" />
+                </div>
                 <!-- 其他視窗內容 -->
             </v-card-text>
         </v-card>
@@ -135,10 +140,12 @@
 
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useUserStore } from '@/stores/userStore';
+import VerifyEmail from '@/components/VerifyEmail.vue'
+
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -176,6 +183,8 @@ const register = ref({
 const forgotPasswordEmail = ref("")
 const verificationCode = ref("")  // 新增驗證碼變數
 const forgotPasswordMessage = ref("")
+// 用來保存從 URL 或其他來源獲取的 email 驗證 token
+const emailVerificationToken = ref("")
 const forgotPasswordErrors = reactive({
     email: "",
     verificationCode: ""
@@ -257,6 +266,25 @@ async function forgotPasswordHandler() {
     }
 }
 
+// 假設當用戶發送忘記密碼時，後端會寄出驗證碼，然後用戶在驗證流程中點選連結時，URL query 包含 token
+// 例如：在 onMounted 中檢查 URL query 中是否有驗證 token
+onMounted(() => {
+    // 假設驗證 token 來自 URL query，如果存在則切換到 verifyEmail 視圖
+    const token = router.currentRoute.value.query.token
+    if (token) {
+        emailVerificationToken.value = token
+        currentView.value = "verifyEmail"
+    }
+})
+
+// 當 VerifyEmail 子組件發出 verified 事件後，可以處理後續流程
+function onVerified(msg) {
+    // 可以顯示提示訊息
+    // 例如，切換到登入視圖或其他操作
+    currentView.value = "login"
+    // 清除 URL query（如果需要）
+    router.push({ query: {} })
+}
 // 驗證確認密碼是否一致
 function validateConfirmPassword() {
     if (register.value.formData.confirmPassword !== register.value.formData.password) {
@@ -413,7 +441,7 @@ async function registerUser() {
         });
         console.log("註冊成功：", response.data);
         alert("註冊成功！歡迎加入！");
-        register.value.formData.accountName = ""; s
+        register.value.formData.accountName = "";
         register.value.formData.email = "";
         register.value.formData.phone = "";
         register.value.formData.password = "";
