@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h5 class="modal-title w-100 ms-5" id="modalBillLabel"> {{ itinerary.itineraryTitle }} </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" @click="clearForm()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex my-3">
@@ -144,6 +144,7 @@ const members = computed(() => props.modelValue?.groupInfo?.members || []);
 const backToList = () => {
     props.toggleModal('modalBill', 'hide')
     props.toggleModal('modalBillList', 'show')
+    clearForm();
 }
 
 const filteredRates = computed(() => {

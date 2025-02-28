@@ -16,8 +16,8 @@ const categoryArray = ref([]);
 
 const getData = async (keyword = '') => {
     try {
-        const request = { eventName: keyword, eventDescription: keyword };
-        const response = await axios.get(`${baseAddress}/api/TravelPackage`);
+        const request = { itineraryTitle: keyword };
+        const response = await axios.post(`${baseAddress}/api/TravelPackage/GetTravelPackageByKeyword`, request);
         //alert(JSON.stringify(response.data));
         categoryArray.value = response.data;
     } catch (error) {

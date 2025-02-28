@@ -1,64 +1,81 @@
 <template>
     <div class="container border py-3 my-3">
         <div class="row">
-            <div class="col-lg-3" v-for="(item, index) in itinerary" :key="index">
-                <div class="card my-2 pointer rounded-3" :data-bs-toggle="'modal'" :data-bs-target="'#modal-' + index"
-                    @click="selectedCard(item)">
+            <div class="col-lg-3" v-if="itinerary.length > 0" v-for="(item, index) in itinerary" :key="index">
+                <div class="card my-2 pointer rounded-3 hover-effect" :data-bs-toggle="'modal'"
+                    :data-bs-target="'#modal-' + index" @click="selectedCard(item)">
                     <div class="card-body">
                         <img :src="item.itineraryImage ? item.itineraryImage : '/imgs/noImage.png'"
                             class="card-img-top rounded-3" alt="google api沒抓到圖" :title="item.itineraryTitle">
                         <h5 class="card-text d-flex justify-content-center">{{ item.itineraryTitle }}</h5>
-                        <!-- <p class="card-text d-flex justify-content-center fs-3">
-                            <rating :rating="item.ratings" />
-                        </p> -->
+                        <p class="card-text d-flex justify-content-center fs-3">
+                            <!-- <rating :rating="itinerary.rating" /> -->
+                        </p>
                     </div>
                 </div>
 
                 <div class="modal fade" :id="'modal-' + index" tabindex="-1" :aria-labelledby="'modalLabel-' + index"
                     aria-hidden="true">
-                    <div class="modal-dialog modal-xl modal-xl">
+                    <div class="modal-dialog modal-dialog-scrollable modal-xl">
                         <div class="modal-content">
-                            <div class="modal-header">
+                            <div class="modal-header ">
                                 <h5 class="modal-title" :id="'modalLabel-' + index">{{ item.itineraryTitle }}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <!-- tab -->
-                                <div>
-                                    <ul class="nav nav-pills justify-content-center mb-3">
-                                        <li v-for="(date, index) in dateList" :key="index" class="nav-item">
-                                            <button class="nav-link" :class="{ active: activeTab === index }"
-                                                @click="setActiveTab(date, index)">
-                                                {{ date }}
-                                            </button>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content d-flex border">
-                                        <div v-for="index in dateList.length" :key="index" class="tab-pane fade"
-                                            :class="{ 'show active': activeTab === index - 1 }">
-                                            <!-- {{ places }} -->
-                                            <!--  -->
-                                            <div class="container">
+                                <div class="container">
+                                    <!-- 按鈕 -->
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <ul class="nav nav-pills flex-nowrap overflow-auto"
+                                                style="white-space: nowrap;">
+
+                                                <li class="nav-item">
+                                                    <button class="nav-link" :class="{ active: activeTab === 0 }"
+                                                        @click="setActiveTab(null, 0)">
+                                                        首頁
+                                                    </button>
+                                                </li>
+
+                                                <li v-for="(date, index) in dateList" :key="index + 1" class="nav-item">
+                                                    <button class="nav-link"
+                                                        :class="{ active: activeTab === index + 1 }"
+                                                        @click="setActiveTab(date, index + 1)">
+                                                        {{ date }}
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- 內容 -->
+                                    <div class="row">
+                                        <div class="col-lg-5 bg-primary p-3 overflow-auto" style="max-height: 500px;">
+                                            <div v-if="activeTab === 0" class="tab-pane fade show active">
+                                                <p>這是首頁的內容</p>
+                                            </div>
+                                            <div v-else>
                                                 <div v-if="places.length > 0">
-                                                    <PlaceCard v-for="(place, index) in places" :key="place.id"
-                                                        :data="place" :deletePlaceHandler="deletePlace">
-                                                        <!-- <li v-if="index < places.length - 1"
-                                                            class="list-group-item text-center text-muted route-info"
-                                                            :id="`route-info-${index}`">
-                                                            計算中...
-                                                        </li> -->
-                                                    </PlaceCard>
+                                                    <PlaceCard class="pointer hover-effect"
+                                                        v-for="(place, index) in places" :key="place.id" :data="place"
+                                                        :hide="false" @click="test(place)" />
                                                 </div>
                                                 <div v-else>
                                                     <p>目前沒有行程資料</p>
                                                 </div>
                                             </div>
-                                            <!--  -->
                                         </div>
-
+                                        <!-- 右側詳細資訊區域 -->
+                                        <div class="col-lg-7 bg-danger p-3">
+                                            <div class="details break-word">
+                                                <p>詳細資料顯示區</p>
+                                                {{ testItem }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
                                 <!-- tab -->
                                 <p>{{ item.eventDescription }}</p>
                                 <!-- <div class="d-flex justify-content-between">
@@ -74,7 +91,12 @@
                         </div>
                     </div>
                 </div>
-
+            </div>
+            <div v-else>
+                <!-- 查無資料 -->
+                <img class="w-25"
+                    src="https://thumbor.4gamers.com.tw/Kr3aF4Mk53zGXn90q7nadNA-SZM=/adaptive-fit-in/1200x1200/filters:no_upscale():extract_cover():format(jpeg):quality(85)/https%3A%2F%2Fugc-media.4gamers.com.tw%2Fpuku-prod-zh%2Fanonymous-story%2F1a0eb606-3124-4f64-a157-6ab44faaced0.jpg"
+                    title="找不到資料才會看到">
             </div>
         </div>
     </div>
@@ -115,7 +137,7 @@ const deletePlace = async (placeId) => {
 const activeTab = ref();
 
 //東西在底下
-//date
+
 const date_St = ref(dayjs());
 const date_Ed = ref(dayjs());
 const dateDiff = computed(() => date_Ed.value.diff(date_St.value, "day"));
@@ -125,8 +147,18 @@ const dateList = computed(() => {
     );
 });
 
+//測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試
+const test = (item) => {
+    testItem.value = item
+    console.log(JSON.stringify(item))
+}
+const testItem = ref("test");
+//測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試
+//date
+
 //tabs
 const setActiveTab = (date, index) => {
+    testItem.value = "";
     selectedDate.value = date;
     activeTab.value = index;
 }
@@ -222,5 +254,20 @@ const selectItem = (item) => {
     height: auto;
     object-fit: cover;
     aspect-ratio: 16/9;
+}
+
+.hover-effect {
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+.hover-effect:hover {
+    background-color: #a0a0a0;
+}
+
+.break-word {
+    word-wrap: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 </style>
