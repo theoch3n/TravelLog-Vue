@@ -40,7 +40,7 @@ const icons = reactive([
                 <v-col cols="12" lg="4" class="footer-text mb-3 mt-2">
                     <p>© 2024-2025 TravelLog. All Rights Reserved.</p>
                     <p>旅遊產品由 TravelLog 負責提供。</p>
-                    <p>右丞說的</p>
+                    <p>右丞說的。           因為去健身房，腦子持續成長中UP!</p>
                     <p>旅行業註冊編號：交觀甲第XXXXXX號。</p>
                 </v-col>
             </v-row>
