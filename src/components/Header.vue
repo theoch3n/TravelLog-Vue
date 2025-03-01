@@ -269,7 +269,7 @@ function handleProfileClick() {
         <div class="d-flex justify-content-center align-items-center py-3">
           <div class="headerLogo">
             <a href="/">
-              <img class="img-fluid" src="@/assets/logo.png" alt="TravelLog" />
+              <img class="img-fluid" src="@/assets/logo-removebg-preview.png" alt="TravelLog" />
             </a>
           </div>
         </div>

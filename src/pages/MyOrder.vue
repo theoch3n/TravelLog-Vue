@@ -13,7 +13,7 @@ const apiAddress = "https://localhost:7092/api";
 // 獲取訂單
 const fetchOrders = async () => {
     if (!userId.value) {
-        console.warn("userId 不存在，無法獲取訂單");
+        console.warn("MyOrder.vue fetchOrders: userId 不存在，無法獲取訂單");
         return;
     }
 
@@ -21,11 +21,11 @@ const fetchOrders = async () => {
     try {
         const token = localStorage.getItem("token");
         if (!token) {
-            console.warn("Token 不存在，無法獲取訂單");
+            console.warn("MyOrder.vue fetchOrders: Token 不存在，無法獲取訂單");
             return;
         }
 
-        console.log("正在請求訂單，使用 userId:", userId.value);
+        console.log("MyOrder.vue fetchOrders: 正在請求訂單，使用 userId:", userId.value);
 
         const response = await axios.get(
             `${apiAddress}/Ecpay/GetOrdersByUser/${userId.value}`,
@@ -34,13 +34,23 @@ const fetchOrders = async () => {
             }
         );
         orders.value = response.data;
-        console.log("訂單獲取成功:", orders.value);
+        console.log("MyOrder.vue fetchOrders: orders", orders.value);
+        console.log("MyOrder.vue fetchOrders: 訂單獲取成功:", orders.value);
     } catch (error) {
-        console.error("取得訂單失敗:", error);
+        console.error("MyOrder.vue fetchOrders: 取得訂單失敗:", error);
     } finally {
         loading.value = false;
     }
 };
+
+// 依訂單日期排序訂單
+const sortOrdersByDate = computed(() => {
+    return [...orders.value].sort((a, b) => {
+        const dateA = new Date(a.tradeDate);
+        const dateB = new Date(b.tradeDate);
+        return dateB - dateA;
+    });
+});
 
 // 監聽 userId 變更
 watchEffect(() => {
@@ -55,12 +65,12 @@ watchEffect(() => {
 onMounted(async () => {
     try {
         await userStore.fetchProfile();
-        console.log("Profile 加載完成:", userStore.profile);
+        console.log("MyOrder.vue onMounted: Profile 加載完成:", userStore.profile);
         if (userStore.profile) {
             fetchOrders();
         }
     } catch (error) {
-        console.error("無法獲取 Profile:", error);
+        console.error("MyOrder.vue onMounted: 無法獲取 Profile:", error);
     }
 });
 </script>
@@ -77,32 +87,33 @@ onMounted(async () => {
 
         <!-- 訂單卡片列表 -->
         <v-row v-else-if="orders.length">
-            <v-col v-for="order in orders" :key="order.OrderId" cols="12" md="6" lg="4">
+            <v-col v-for="order in sortOrdersByDate" :key="order.OrderId" cols="12">
                 <v-card class="pa-3" outlined>
                     <v-card-title>
-                        訂單編號: {{ order.merchantTradeNo }}
+                        {{ order.product?.eventName || '未知活動' }}
                     </v-card-title>
                     <v-card-subtitle>
-                        訂單日期: {{ order.TradeDate }}
+                        訂單日期: {{ order.tradeDate }}
                     </v-card-subtitle>
                     <v-card-text>
-                        <p><strong>總金額:</strong> {{ order.OrderTotalAmount }} 元</p>
-                        <p><strong>付款狀態:</strong> {{ order.PaymentStatus }}</p>
+                        <p><strong>訂單編號:</strong> {{ order.merchantTradeNo }}</p>
+                        <p><strong>總金額:</strong> {{ order.orderTotalAmount }} 元</p>
+                        <p><strong>付款狀態:</strong> {{ order.paymentStatus }}</p>
                     </v-card-text>
                     <v-card-actions>
                         <v-btn color="primary" @click="order.expand = !order.expand">
-                            {{ order.expand ? '收起' : '查看詳情' }}
+                            {{ order.expand ? '收起' : '查看更多' }}
                         </v-btn>
                     </v-card-actions>
                     <v-expand-transition>
                         <div v-if="order.expand" class="pa-3">
                             <p>
                                 <v-icon color="green">mdi-credit-card</v-icon>
-                                <strong>付款時間：</strong> {{ order.PaymentInfo?.PaymentTime || '尚未付款' }}
+                                <strong>付款時間：</strong> {{ order.paymentInfo?.paymentTime || '尚未付款' }}
                             </p>
                             <p>
                                 <v-icon color="blue">mdi-barcode</v-icon>
-                                <strong>綠界交易編號：</strong> {{ order.PaymentInfo?.EcpayTransactionId || '無' }}
+                                <strong>綠界交易編號：</strong> {{ order.paymentInfo?.ecpayTransactionId || '無' }}
                             </p>
                         </div>
                     </v-expand-transition>

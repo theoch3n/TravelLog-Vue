@@ -19,7 +19,8 @@ const banners = ref([
 
 <template>
     <div class="carousel-container">
-        <v-carousel :show-arrows="false" height="600" cycle hide-delimiter-background class="full-width-carousel">
+        <v-carousel hide-delimiters :show-arrows="false" height="600" cycle hide-delimiter-background
+            class="full-width-carousel">
             <v-carousel-item v-for="(banner, i) in banners" :key="i">
                 <v-img :src="banner.src" :alt="banner.alt" cover height="100%" class="banner-image" />
             </v-carousel-item>

@@ -15,6 +15,7 @@ class testECPayService {
                     itemName: orderDetails.itemName,
                     tradeDesc: orderDetails.tradeDesc || "旅遊訂單",
                     userId: orderDetails.userId,
+                    productId: orderDetails.productId,
                 },
                 {
                     headers: {
