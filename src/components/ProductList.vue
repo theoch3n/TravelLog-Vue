@@ -28,8 +28,8 @@
                                 <div class="container">
                                     <!-- 按鈕 -->
                                     <div class="row mb-3">
-                                        <div class="col">
-                                            <ul class="nav nav-pills flex-nowrap overflow-auto"
+                                        <div class="col border rounded">
+                                            <ul class="nav nav-pills flex-nowrap overflow-auto "
                                                 style="white-space: nowrap;">
 
                                                 <li class="nav-item">
@@ -50,41 +50,64 @@
                                         </div>
                                     </div>
                                     <!-- 內容 -->
-                                    <div class="row">
-                                        <div class="col-lg-5 bg-primary p-3 overflow-auto" style="max-height: 500px;">
-                                            <div v-if="activeTab === 0" class="tab-pane fade show active">
-                                                <p>這是首頁的內容</p>
+                                    <div v-if="activeTab === 0" class="tab-pane fade show active border rounded">
+                                        <p>這是首頁的內容</p>
+                                    </div>
+                                    <div v-else class="row border rounded">
+                                        <div class="col-lg-5 p-3 overflow-auto" style="max-height: 500px;">
+                                            <!-- <div > -->
+                                            <div v-if="places.length > 0">
+                                                <PlaceCard class="pointer hover-effect" v-for="(place, index) in places"
+                                                    :key="place.id" :data="place" :hide="false"
+                                                    @click="displayContentByDate(place)" />
                                             </div>
                                             <div v-else>
-                                                <div v-if="places.length > 0">
-                                                    <PlaceCard class="pointer hover-effect"
-                                                        v-for="(place, index) in places" :key="place.id" :data="place"
-                                                        :hide="false" @click="test(place)" />
-                                                </div>
-                                                <div v-else>
-                                                    <p>目前沒有行程資料</p>
-                                                </div>
+                                                <p>目前沒有行程資料</p>
                                             </div>
+                                            <!-- </div> -->
                                         </div>
                                         <!-- 右側詳細資訊區域 -->
-                                        <div class="col-lg-7 bg-danger p-3">
+                                        <div class="col-lg-7 p-3">
                                             <div class="details break-word">
-                                                <p>詳細資料顯示區</p>
-                                                {{ testItem }}
+                                                <!-- <p>詳細資料顯示區</p> -->
+                                                <div v-if="imgs">
+                                                    <div :id="'carousel-' + index" class="carousel slide"
+                                                        data-bs-ride="carousel">
+                                                        <div class="carousel-inner">
+                                                            <div v-for="(img, i) in imgs" :key="i" class="carousel-item"
+                                                                :class="{ active: i === 0 }">
+                                                                <img :src="img" class="d-block w-100" alt="圖片">
+                                                            </div>
+                                                        </div>
+                                                        <button class="carousel-control-prev" type="button"
+                                                            :data-bs-target="'#carousel-' + index" data-bs-slide="prev">
+                                                            <span class="carousel-control-prev-icon"
+                                                                aria-hidden="true"></span>
+                                                            <span class="visually-hidden">Previous</span>
+                                                        </button>
+                                                        <button class="carousel-control-next" type="button"
+                                                            :data-bs-target="'#carousel-' + index" data-bs-slide="next">
+                                                            <span class="carousel-control-next-icon"
+                                                                aria-hidden="true"></span>
+                                                            <span class="visually-hidden">Next</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <p>{{ detailsData.detail }}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- tab -->
-                                <p>{{ item.eventDescription }}</p>
                                 <!-- <div class="d-flex justify-content-between">
                                     <p>聯絡電話: {{ item.contactInfo }}</p>
                                     <p>售價: {{ item.price }}</p>
                                 </div> -->
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-danger" @click="fetchPlacesByDate()">測試按鈕</button>
+                                <button class="btn btn-danger" @click="test()">測試按鈕</button>
                                 <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
                                 <v-btn class="btn btn-primary" @click="selectItem(item)" :to="payUrl.to">立即結帳</v-btn>
                             </div>
@@ -111,28 +134,13 @@ import { useRoute } from 'vue-router';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import dayjs from "dayjs";
 import PlaceCard from "../components/PlaceCard.vue";
+import axios, { Axios } from 'axios';
 
 //原始資料
 const props = defineProps({
     categoryArray: Array
 });
 
-const deletePlace = async (placeId) => {
-    try {
-        const response = await fetch(`${baseAddress}/api/Places/${placeId}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-        });
-
-        if (!response.ok) {
-            throw new Error("刪除失敗");
-        }
-        // await fetchPlaces();
-        await fetchPlacesByDate();
-    } catch (error) {
-        console.error("刪除請求錯誤:", error);
-    }
-};
 //分頁
 const activeTab = ref();
 
@@ -147,20 +155,43 @@ const dateList = computed(() => {
     );
 });
 
-//測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試
-const test = (item) => {
-    testItem.value = item
-    console.log(JSON.stringify(item))
+const displayContentByDate = (item) => {
+    detailsData.value = item
+    getDetails(item.id);
+    // console.log(JSON.stringify(item))
 }
-const testItem = ref("test");
-//測試測試測試測試測試測試測試測試測試測試測試測試測試測試測試
+const test = () => {
+    alert("123");
+}
+const detailsData = ref("");
+const getDetails = async (id) => {
+    const response = await axios.get(`${baseAddress}/api/PlaceDetails/${id}`)
+    if (response.data) {
+        // alert(JSON.stringify(response.data))
+    } else {
+        alert("初四了阿伯!沒抓到資料!")
+    }
+    detailsData.value = response.data;
+    imgs.value = [];
+    nextTick(() =>
+        imgs.value = [
+            //隨便抓的，之後抓api
+            "https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1589720631052.jpg",
+            "https://megapx-assets.dcard.tw/images/3bf423a4-3729-4189-aa04-e207fd65d24b/full.jpeg",
+            "https://megapx-assets.dcard.tw/images/a7baca03-0434-4a49-ae83-9ba5bb229e1d/640.jpeg"
+        ]
+    )
+}
+const imgs = ref([])
 //date
 
 //tabs
 const setActiveTab = (date, index) => {
-    testItem.value = "";
+    detailsData.value = "";
     selectedDate.value = date;
     activeTab.value = index;
+    imgs.value = [];
+    //這裡寫預設
 }
 onMounted(() => {
     if (dateList.value.length > 0) {
@@ -179,7 +210,6 @@ const fetchPlacesByDate = async () => {
     try {
         const response = await fetch(
             `${baseAddress}/api/Places?date=2025-02-22`
-            // "https://localhost:7092/api/Places/by-date/2025-02-22"
         );
         if (!response.ok) throw new Error("無法取得資料");
 
@@ -269,5 +299,14 @@ const selectItem = (item) => {
     word-wrap: break-word;
     white-space: normal;
     overflow-wrap: break-word;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    /* 您可以根據需要調整這個值 */
+    object-fit: contain;
+    /* 確保圖片完整顯示 */
 }
 </style>
