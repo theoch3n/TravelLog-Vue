@@ -10,7 +10,7 @@
   </v-tabs-window>
 
   <div>
-    <div class="container mt-5 mb-5">
+    <div class="container">
       <div class="row">
         <div class="col-3">
           <div class="accordion" id="accordionExample">
@@ -76,38 +76,36 @@
         </div>
       </div>
     </div>
-    <div class="container">
-      <v-container>
-        <v-row>
-          <v-col cols="3" v-for="card in CardData" :key="card.itineraryId">
-            <v-card class="fixed-size-card" max-width="344">
-              <v-img class="pointer" :src="card.itineraryImage" cover
-                @click="navigateToGoogleMap(card.itineraryId)"></v-img>
-              <v-card-title>{{ card.itineraryTitle }}</v-card-title>
-              <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " +
-                card.itineraryEndDate.split("T")[0]
-              }}</v-card-subtitle>
-              <v-card-actions>
-                <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click.stop="showDialog(card.itineraryId)">
-                </v-btn>
-                <button class="btn btn-outline-primary" @click.stop="openBillList(card)">拆帳</button>
-                <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" width="400">
-                  <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友"><v-text-field :rules="rules"
-                      hide-details="auto" label="請輸入帳號" v-model="GroupEmmail"></v-text-field>
-                    <template v-slot:actions>
-                      <v-btn class="ms-auto" text="加入" @click="invitefriends(card.itineraryId)"></v-btn>
-                    </template>
-                  </v-card>
-                </v-dialog>
-              </v-card-actions>
+    
+    <v-container>
+      <v-row>
+        <v-col cols="3" v-for="card in CardData" :key="card.itineraryId">
+          <v-card class="fixed-size-card" max-width="344">
+            <v-img class="pointer" :src="card.itineraryImage" cover
+              @click="navigateToGoogleMap(card.itineraryId)"></v-img>
+            <v-card-title>{{ card.itineraryTitle }}</v-card-title>
+            <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " +
+              card.itineraryEndDate.split("T")[0]
+            }}</v-card-subtitle>
+            <v-card-actions>
+              <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click.stop="showDialog(card.itineraryId)">
+              </v-btn>
+              <button class="btn btn-outline-primary" @click.stop="openBillList(card)">拆帳</button>
+              <v-spacer></v-spacer>
+              <v-dialog v-model="dialog" width="400">
+                <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友"><v-text-field :rules="rules"
+                    hide-details="auto" label="請輸入帳號" v-model="GroupEmmail"></v-text-field>
+                  <template v-slot:actions>
+                    <v-btn class="ms-auto" text="加入" @click="invitefriends(card.itineraryId)"></v-btn>
+                  </template>
+                </v-card>
+              </v-dialog>
+            </v-card-actions>
 
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-
-    </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
   <BillList v-model="selectedId"></BillList>
 </template>
@@ -467,7 +465,7 @@ const navigateToGoogleMap = (itineraryId) => {
 }
 
 .fixed-size-card {
-  width: 300px;
+  /* width: 300px; */
   /* 設定卡片寬度 */
   height: 400px;
   /* 設定卡片高度 */
