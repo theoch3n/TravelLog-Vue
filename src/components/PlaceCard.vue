@@ -6,7 +6,7 @@
       </div>
       <div class="col-8">
         <div class="card-content">
-          <i class="bi bi-x PlaceCard-closebtn" @click="Delete(data.id)"></i>
+          <i v-if="hide" class="bi bi-x PlaceCard-closebtn" @click="Delete(data.id)"></i>
           <h4 class="placecard-title">{{ data.name }}</h4>
           <p>評分：{{ data.rating }}</p>
           <div class="rating">
@@ -14,7 +14,7 @@
             <span v-for="index in 5" :key="index" :class="{ filled: index <= data.rating }">
               {{ index <= data.rating ? "★" : "☆" }} </span>
           </div>
-          <p>到達時間: {{ data.time }}</p>
+          <p v-if="hide">到達時間: {{ data.time }}</p>
           <!--插槽 從父元件-->
           <slot></slot>
         </div>
@@ -34,8 +34,11 @@ const props = defineProps({
   },
   deletePlaceHandler: {
     type: Function,
-    required: true,
-  },
+    required: false,
+  }, hide: {
+    type: Boolean,
+    required: false
+  }
 });
 const Delete = (id) => {
   // 調用從父元件傳遞過來的刪除方法

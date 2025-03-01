@@ -3,15 +3,14 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header text-center">
-                    <h5 class="modal-title w-100" id="staticBackdropLabel">
-                        {{ "id = " + itinerary.itineraryId }}, {{ "title" + itinerary.itineraryTitle }} </h5>
+                    <h5 class="modal-title w-100" id="staticBackdropLabel"> {{ itinerary.itineraryTitle }} </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3" v-if="datas">
                         <strong>品項：</strong>{{ datas.title }}<br>
                         <strong>總金額：</strong>{{ datas.totalAmount }}<br>
-                        <strong>墊款人：</strong>{{ datas.paidBy }}<br>
+                        <strong>付款人：</strong>{{ datas.paidBy }}<br>
                         <strong>建立時間：</strong>{{ datas.createdAt }}
                     </div>
                     <div class="table-responsive rounded">
@@ -43,7 +42,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" @click="backToList">回到列表</button>
+                    <button class="btn btn-primary" @click="backToList()">回到列表</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                 </div>
             </div>

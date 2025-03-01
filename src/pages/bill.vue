@@ -3,11 +3,8 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header text-center">
-                    <h5 class="modal-title w-100 ms-5" id="modalBillLabel">
-                        {{ "id = " + itinerary.itineraryId }}, {{ "title = " + itinerary.itineraryTitle }}
-
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title w-100 ms-5" id="modalBillLabel"> {{ itinerary.itineraryTitle }} </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" @click="clearForm()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex my-3">
@@ -18,7 +15,7 @@
                         <div class="form-group w-100 text-center">
                             <label class="form-label">價格</label>
                             <input type="number" class="form-control w-100 text-center" v-model.number="totalPrice"
-                                @click="selectAllText" @input="handleTotalPrice"
+                                @click="selectAllText" @input="handleTotalPrice()"
                                 @keydown="handleTotalPriceInput($event)">
                         </div>
                     </div>
@@ -82,28 +79,25 @@
 
                     <div class="form-group">
                         <select class="form-select text-center" v-model="PaidBy">
-                            <option value="" disabled>選擇墊款人</option>
+                            <option value="" disabled>選擇付款人</option>
                             <option v-for="(option, optIndex) in members" :key="optIndex" :value="option"
                                 :disabled="totalPrice == 0">
                                 {{ option }}
                             </option>
                         </select>
                     </div>
-
-                    <!-- radio button -->
                     <div class="btn-group">
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="avg"
-                            autocomplete="off" v-model="selectedOption" @change="selectionChange">
+                            autocomplete="off" v-model="selectedOption" @change="selectionChange()">
                         <label class="btn btn-outline-primary" for="btnradio1">平分</label>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="custom"
-                            autocomplete="off" v-model="selectedOption" @change="selectionChange">
+                            autocomplete="off" v-model="selectedOption" @change="selectionChange()">
                         <label class="btn btn-outline-primary" for="btnradio3">自訂</label>
                     </div>
-                    <!-- radio button -->
                     <div>
-                        <button type="button" class="btn btn-primary text-light me-2" @click="saveData">儲存</button>
-                        <button type="button" class="btn btn-secondary text-light" @click="backToList">返回</button>
+                        <button type="button" class="btn btn-primary text-light me-2" @click="saveData()">儲存</button>
+                        <button type="button" class="btn btn-secondary text-light" @click="backToList()">返回</button>
                     </div>
                 </div>
             </div>
@@ -129,7 +123,7 @@ const selectedOption = ref('avg');
 const insideData = reactive([]);
 const totalPrice = ref(0);
 const baseAddress = "https://localhost:7092";
-const Title = ref("測試品項");
+const Title = ref("");
 const PaidBy = ref("");
 const keyword = ref('');
 const selectedCurrency = ref('');
@@ -150,6 +144,7 @@ const members = computed(() => props.modelValue?.groupInfo?.members || []);
 const backToList = () => {
     props.toggleModal('modalBill', 'hide')
     props.toggleModal('modalBillList', 'show')
+    clearForm();
 }
 
 const filteredRates = computed(() => {
@@ -188,31 +183,56 @@ const generateBillDetails = () => {
     }));
 };
 
-const saveData = async () => {
-    const billDto = {
-        bill: generateBill(),
-        details: generateBillDetails()
+const validateForm = () => {
+    const errors = {
+        totalPrice: totalPrice.value <= 0 ? "總價格應大於0" : "",
+        PaidBy: PaidBy.value === "" ? "付款人不能為空" : "",
+        Title: Title.value === "" ? "標題不能為空" : "",
     };
-    console.log(billDto);
 
-    try {
-        const response = await axios.post(`${baseAddress}/api/Bill/AddBillWithDetails`, billDto);
-        if (response.data.success) {
-            emit('refreshData');
-            alert("資料創建成功!");
-            backToList();
-        } else {
-            alert("資料創建失敗!");
+    const hasErrors = Object.values(errors).some(error => error !== "");
+    return hasErrors ? errors : true;
+}
+
+const saveData = async () => {
+    const validation = validateForm();
+    if (validation === true) {
+        const billDto = {
+            bill: generateBill(),
+            details: generateBillDetails()
+        };
+        console.log(billDto);
+        try {
+            const response = await axios.post(`${baseAddress}/api/Bill/AddBillWithDetails`, billDto);
+            if (response.data.success) {
+                emit('refreshData');
+                alert("資料創建成功!");
+                clearForm();
+                backToList();
+            } else {
+                alert("資料創建失敗!");
+            }
+        } catch (error) {
+            console.log("Error: ", error);
+            alert("提交失敗!");
         }
-    } catch (error) {
-        console.log("Error: ", error);
-        if (error.response && !error.response.data.success) {
-            alert("資料創建失敗!"); // 資料創建失敗，但捕捉到的異常
-        } else {
-            alert("提交失敗!"); // 其他異常
-        }
+    } else {
+        const errorMessage = Object.values(validation).filter(Boolean).join("\n");
+        alert(`表單驗證失敗，請檢查以下內容:\n\n${errorMessage}`);
+        console.log("Validation errors: ", validation);
     }
 };
+
+const clearForm = () => {
+    Title.value = "";
+    totalPrice.value = "";
+    PaidBy.value = "";
+    insideData.forEach(item => {
+        item.paid = false;
+    });
+    selectedOption.value = 'avg';
+    selectionChange();
+}
 
 const selectAllText = (event) => {
     event.target.select();
@@ -292,7 +312,7 @@ const handleTotalPrice = () => {
         item.price = item.exactPrice.toFixed(2);
     });
 }
-//確保墊款人paid始終為true
+
 watch(PaidBy, (newVal, oldVal) => {
 
     if (oldVal) {
