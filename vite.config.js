@@ -33,6 +33,8 @@ export default defineConfig({
             // cert: fs.readFileSync("./localhost-Tai-iSpan.pem"),
             // key: fs.readFileSync("./localhost-key-Tai-Laptop.pem"),
             // cert: fs.readFileSync("./localhost-Tai-Laptop.pem"),
+            // key: fs.readFileSync("./localhost-key-David.pem"),
+            // cert: fs.readFileSync("./localhost-David.pem"),
             // key: fs.readFileSync("./localhost-key-JiEn.pem"),
             // cert: fs.readFileSync("./localhost-JiEn.pem"),
         },
