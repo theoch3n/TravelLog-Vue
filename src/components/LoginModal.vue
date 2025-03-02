@@ -439,29 +439,42 @@ async function registerUser() {
       password: register.value.formData.password
     })
     console.log("註冊成功：", response.data)
-    // 使用 Snackbar 顯示註冊成功訊息
-    snackbarText.value = "註冊成功！歡迎加入！"
+    snackbarText.value = "註冊成功！正在自動登入..."
     snackbar.value = true
-    // 清空表單資料
+
+    // 在清除表單前先儲存必要的資訊
+    const userEmail = register.value.formData.email
+    const userPassword = register.value.formData.password
+
+    // 清空表單資料（可選）
     register.value.formData.accountName = ""
     register.value.formData.email = ""
     register.value.formData.phone = ""
     register.value.formData.password = ""
     register.value.formData.confirmPassword = ""
-    currentView.value = "login"
+
+    // 使用儲存的 email 與 password 自動登入
+    const loginResponse = await axios.post("https://localhost:7092/api/User/login", {
+      email: response.data.email || userEmail,
+      password: userPassword,
+      rememberMe: false  // 依需求設定
+    })
+    console.log("自動登入成功：", loginResponse.data)
+    userStore.setToken(loginResponse.data.token)
+
     hide()
     router.push("/")
   } catch (error) {
     console.error("註冊錯誤：", error)
     if (error.response && error.response.data && error.response.data.message) {
       snackbarText.value = "註冊失敗：" + error.response.data.message
-      snackbar.value = true
     } else {
       snackbarText.value = "註冊時發生錯誤!可能是API沒開"
-      snackbar.value = true
     }
+    snackbar.value = true
   }
 }
+
 
 // 控制 dialog 顯示與關閉
 function show() {
