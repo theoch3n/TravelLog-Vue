@@ -113,30 +113,33 @@
   
   // 送出變更密碼請求，並以 snackbar 顯示通知
   async function ChangePassword() {
-    const isValid = await formRef.value.validate() as boolean
-    if (!isValid) return
-  
-    try {
-      const requestData: ChangePasswordRequest = {
-        oldPassword: form.value.oldPassword,
-        newPassword: form.value.newPassword
-      }
-      const response = await axios.put('https://localhost:7092/api/ChangePassword', requestData)
-      snackbarText.value = response.data.message || '密碼變更成功！'
-      snackbarColor.value = 'success'
-      snackbar.value = true
-  
-      // 變更成功後清空表單
-      form.value.oldPassword = ''
-      form.value.newPassword = ''
-      form.value.confirmNewPassword = ''
-    } catch (err: any) {
-      console.error('變更密碼錯誤：', err)
-      snackbarText.value = err.response?.data?.message || '變更密碼失敗！'
-      snackbarColor.value = 'error'
-      snackbar.value = true
+  const isValid = await formRef.value.validate() as boolean
+  if (!isValid) return
+
+  try {
+    const requestData: ChangePasswordRequest = {
+      oldPassword: form.value.oldPassword,
+      newPassword: form.value.newPassword
     }
+    const response = await axios.put('https://localhost:7092/api/ChangePassword', requestData)
+    snackbarText.value = response.data.message || '密碼變更成功！'
+    snackbarColor.value = 'success'
+    snackbar.value = true
+
+    // 變更成功後清空表單資料
+    form.value.oldPassword = ''
+    form.value.newPassword = ''
+    form.value.confirmNewPassword = ''
+
+    // 重置表單驗證狀態，避免驗證因欄位清空而觸發警告
+    formRef.value.resetValidation()
+  } catch (err: any) {
+    console.error('變更密碼錯誤：', err)
+    snackbarText.value = err.response?.data?.message || '變更密碼失敗！'
+    snackbarColor.value = 'error'
+    snackbar.value = true
   }
+}
   </script>
   
   <style scoped>
