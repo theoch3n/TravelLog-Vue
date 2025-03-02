@@ -10,8 +10,8 @@
                         <h5 class="card-text d-flex justify-content-center">{{ item.itineraryTitle }}</h5>
                         <p class="card-text text-center fs-3">
                             <rating :rating="infoData[index]?.rating" />
-                        <h5> {{ "立即訂購價: " + infoData[index]?.price }}</h5>
                         </p>
+                        <h5> {{ "立即訂購價: " + infoData[index]?.price }}</h5>
                     </div>
                 </div>
 
