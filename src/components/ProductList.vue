@@ -9,7 +9,7 @@
                             class="card-img-top rounded-3" alt="google api沒抓到圖" :title="item.itineraryTitle">
                         <h5 class="card-text d-flex justify-content-center">{{ item.itineraryTitle }}</h5>
                         <p class="card-text text-center fs-3">
-                            <rating :rating="infoData[index]?.rating" />
+                            <rating v-if="infoData" :rating="infoData[index]?.rating" />
                         </p>
                         <h5> {{ "立即訂購價: " + infoData[index]?.price }}</h5>
                     </div>
@@ -130,10 +130,10 @@
                                 </div>
                                 <!-- </div> -->
                             </div>
-                            <div class="modal-footer d-flex justify-content-between">
+                            <div class="modal-footer d-flex justify-content-end">
                                 <!-- <p>售價: {{ travelInfo?.price }}</p> -->
                                 <div>
-                                    <button class="btn btn-danger" @click="test()">測試按鈕</button>
+                                    <!-- <button class="btn btn-danger me-3" @click="test()">測試按鈕</button> -->
                                     <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
                                     <v-btn class="btn btn-primary" @click="selectItem(item)"
                                         :to="payUrl.to">立即結帳</v-btn>

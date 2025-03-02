@@ -18,7 +18,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-center" v-for="(bill, index) in bills" :key="bill.id"
+                            <tr class="text-center pointer" v-for="(bill, index) in bills" :key="bill.id"
                                 @click="openDetails(bill.id)">
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ bill.title }}</td>
@@ -37,7 +37,8 @@
         </div>
     </div>
     <bill v-model="itineraryInfo" :toggleModal="toggleModal" @refreshData="getBillsData()"></bill>
-    <BillDetails v-model="itineraryInfo" :billWithDetails="selectedItem" :toggleModal="toggleModal"></BillDetails>
+    <BillDetails v-model="itineraryInfo" :billWithDetails="selectedItem" :toggleModal="toggleModal"
+        @refreshData="getBillsData()"></BillDetails>
 </template>
 
 <script setup>
@@ -68,7 +69,6 @@ watch(() => props.modelValue, (newValue) => {
         toggleModal('modalBillList', 'show');
     }
 });
-
 const getBillsData = async () => {
     itineraryId = props.modelValue.itineraryId
     itineraryTitle = props.modelValue.itineraryTitle
