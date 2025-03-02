@@ -38,7 +38,7 @@
   
           <!-- 送出按鈕 -->
           <v-btn :disabled="!valid" color="primary" class="mt-4" @click="ChangePassword">
-            變更密碼
+            <v-icon left class="mr-2">mdi-rename</v-icon>變更密碼
           </v-btn>
         </v-form>
       </v-card-text>

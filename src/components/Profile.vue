@@ -13,9 +13,12 @@
           <div class="d-flex align-center flex-grow-1 justify-end" style="gap: 8px;">
             <!-- 警示框靠右 -->
             <v-alert v-if="!profile.isEmailVerified" type="warning" dense outlined
-              style="max-width: 500px;  margin-left: auto;">
-              您的 Email 未驗證，請點擊下方按鈕重新發送驗證信。
-              <v-btn color="secondary" class="mt-2" @click="resendVerificationEmail" right>重新寄送</v-btn>
+              style="max-width: 500px; margin-left: auto;">
+              您的 Email 未驗證，請點擊下方按鈕重新發送驗證信
+              <v-btn color="secondary" class="mt-2" @click="resendVerificationEmail" style="float: right;">
+                <v-icon left class="mr-2">mdi-email-arrow-right</v-icon>
+                重新寄送
+              </v-btn>
             </v-alert>
             <v-alert v-else type="success" dense outlined style="max-width: 500px; margin-left: auto; ">
               您的 Email 已經驗證！
@@ -49,7 +52,7 @@
               <v-text-field label="帳號名稱" v-model="profile.userName" :rules="accountNameRules" required></v-text-field>
               <v-text-field label="電話" v-model="profile.userPhone" :rules="phoneRules" required></v-text-field>
               <v-btn color="primary" class="mt-4" @click="updateProfile" :disabled="!valid">
-                更新資料
+                <v-icon left class="mr-2">mdi-book-refresh</v-icon>更新資料
               </v-btn>
             </v-form>
           </v-card-text>
