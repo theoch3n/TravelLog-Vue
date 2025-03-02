@@ -8,8 +8,9 @@
                         <img :src="item.itineraryImage ? item.itineraryImage : '/imgs/noImage.png'"
                             class="card-img-top rounded-3" alt="google api沒抓到圖" :title="item.itineraryTitle">
                         <h5 class="card-text d-flex justify-content-center">{{ item.itineraryTitle }}</h5>
-                        <p class="card-text d-flex justify-content-center fs-3">
-                            <!-- <rating :rating="itinerary.rating" /> -->
+                        <p class="card-text text-center fs-3">
+                            <rating :rating="infoData[index]?.rating" />
+                        <h5> {{ "立即訂購價: " + infoData[index]?.price }}</h5>
                         </p>
                     </div>
                 </div>
@@ -34,8 +35,7 @@
 
                                                 <li class="nav-item">
                                                     <button class="nav-link" :class="{ active: activeTab === 0 }"
-                                                        @click="setActiveTab(null, 0)">
-                                                        首頁
+                                                        @click="setActiveTab(null, 0)"> 首頁
                                                     </button>
                                                 </li>
 
@@ -50,8 +50,38 @@
                                         </div>
                                     </div>
                                     <!-- 內容 -->
-                                    <div v-if="activeTab === 0" class="tab-pane fade show active border rounded">
-                                        <p>這是首頁的內容</p>
+                                    <div v-if="activeTab === 0" class="tab-pane fade show active">
+                                        <!-- <p>這是首頁的內容</p> -->
+                                        <div class="container mt-5">
+                                            <div class="row justify-content-center">
+                                                <div class="col-md-8">
+                                                    <div class="card shadow">
+                                                        <img src="https://thumbor.4gamers.com.tw/Kr3aF4Mk53zGXn90q7nadNA-SZM=/adaptive-fit-in/1200x1200/filters:no_upscale():extract_cover():format(jpeg):quality(85)/https%3A%2F%2Fugc-media.4gamers.com.tw%2Fpuku-prod-zh%2Fanonymous-story%2F1a0eb606-3124-4f64-a157-6ab44faaced0.jpg"
+                                                            class="card-img-top" alt="行程圖片" />
+                                                        <div class="card-body">
+                                                            <h2 class="card-title text-primary">
+                                                                <!-- {{ itinerary.title }} -->
+                                                                {{ "放標題" }}
+                                                            </h2>
+                                                            <p class="text-muted">
+                                                                ⭐ 評分: {{ 5 }} / 5
+                                                                <!-- ⭐ 評分: {{ itinerary.rating }} / 5 -->
+                                                            </p>
+                                                            <p class="h5 text-success">💰 價格: {{
+                                                                formatPrice(200000) }}</p>
+                                                            <!-- formatPrice(itinerary.price) }}</p> -->
+                                                            <hr />
+                                                            <!-- <p class="card-text">{{ itinerary.description }}</p> -->
+                                                            <p class="card-text">
+                                                                宜蘭溫泉之旅讓您在大自然環抱中放鬆身心，入住頂級溫泉飯店，享受蘇澳冷泉與礁溪溫泉的療癒效果。搭配農場採果體驗與傳統手作米香DIY，讓旅程更加豐富，並探索龜山島海域與冬山河風光。
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- <p> {{ travelInfo }}</p>
+                                        <p> {{ travelInfo?.description }}</p> -->
                                     </div>
                                     <div v-else class="row border rounded">
                                         <div class="col-lg-5 p-3 overflow-auto" style="max-height: 500px;">
@@ -93,23 +123,21 @@
                                                         </button>
                                                     </div>
                                                 </div>
-
                                                 <p>{{ detailsData.detail }}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- tab -->
-                                <!-- <div class="d-flex justify-content-between">
-                                    <p>聯絡電話: {{ item.contactInfo }}</p>
-                                    <p>售價: {{ item.price }}</p>
-                                </div> -->
+                                <!-- </div> -->
                             </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-danger" @click="test()">測試按鈕</button>
-                                <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
-                                <v-btn class="btn btn-primary" @click="selectItem(item)" :to="payUrl.to">立即結帳</v-btn>
+                            <div class="modal-footer d-flex justify-content-between">
+                                <!-- <p>售價: {{ travelInfo?.price }}</p> -->
+                                <div>
+                                    <button class="btn btn-danger" @click="test()">測試按鈕</button>
+                                    <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
+                                    <v-btn class="btn btn-primary" @click="selectItem(item)"
+                                        :to="payUrl.to">立即結帳</v-btn>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -138,7 +166,7 @@ import axios, { Axios } from 'axios';
 
 //原始資料
 const props = defineProps({
-    categoryArray: Array
+    categoryArray: Array,
 });
 
 //分頁
@@ -161,26 +189,48 @@ const displayContentByDate = (item) => {
     // console.log(JSON.stringify(item))
 }
 const test = () => {
-    alert("123");
+    //    alert()
+    // GetTravelPackageInfo();
+
 }
+onMounted(() => {
+    getInfo();
+})
+
+const infoData = ref();
+const getInfo = async () => {
+    const response = await axios.get(`${baseAddress}/api/TravelPackage/GetTravelPackageInfo`)
+    if (response.data) {
+        infoData.value = response.data;
+    } else {
+        alert("不太對")
+    }
+}
+
+const formatPrice = (price) => {
+    return new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD" }).format(price);
+};
+
 const detailsData = ref("");
+const getPlaceImgs = async (id) => {
+    const response = await axios.get(`${baseAddress}/api/PlaceDetails/GetPlaceImgs/${id}`)
+    if (response.data) {
+        console.log(response.data)
+        const imageUrls = response.data.map(p => p.imageUrl);
+        imgs.value = imageUrls;
+    } else {
+        alert("沒抓到東西")
+    }
+}
 const getDetails = async (id) => {
     const response = await axios.get(`${baseAddress}/api/PlaceDetails/${id}`)
     if (response.data) {
         // alert(JSON.stringify(response.data))
+        detailsData.value = response.data;
+        getPlaceImgs(detailsData.value.placeId);
     } else {
         alert("初四了阿伯!沒抓到資料!")
     }
-    detailsData.value = response.data;
-    imgs.value = [];
-    nextTick(() =>
-        imgs.value = [
-            //隨便抓的，之後抓api
-            "https://memeprod.sgp1.digitaloceanspaces.com/user-wtf/1589720631052.jpg",
-            "https://megapx-assets.dcard.tw/images/3bf423a4-3729-4189-aa04-e207fd65d24b/full.jpeg",
-            "https://megapx-assets.dcard.tw/images/a7baca03-0434-4a49-ae83-9ba5bb229e1d/640.jpeg"
-        ]
-    )
 }
 const imgs = ref([])
 //date
@@ -191,7 +241,6 @@ const setActiveTab = (date, index) => {
     selectedDate.value = date;
     activeTab.value = index;
     imgs.value = [];
-    //這裡寫預設
 }
 onMounted(() => {
     if (dateList.value.length > 0) {
@@ -214,31 +263,36 @@ const fetchPlacesByDate = async () => {
         if (!response.ok) throw new Error("無法取得資料");
 
         const allData = await response.json();
-        console.log("============");
-        console.log(allData);
+        // console.log(allData);
         places.value = allData.filter((place) => {
-            const placeDate = place.date.split("T")[0]; // 去掉時間部分
-            const selectedDateStr = selectedDate.value.split("T")[0]; // 去掉時間部分
+            const placeDate = place.date.split("T")[0];
+            const selectedDateStr = selectedDate.value.split("T")[0];
             return placeDate === selectedDateStr;
         });
-        console.log("取得的資料:", JSON.stringify(places.value));
+        // console.log("取得的資料:", JSON.stringify(places.value));
     } catch (error) {
         console.error("獲取資料時發生錯誤：", error);
     }
 };
-
 const selectedId = ref(null);
 const baseAddress = "https://localhost:7092";
 const itinerary = computed(() => props.categoryArray)
 
-
-
-
+const travelInfo = ref();
 const selectedCard = (item) => {
     activeTab.value = 0;
     selectedId.value = null;
     selectedDate.value = item.itineraryStartDate.split("T")[0];
     nextTick(() => selectedId.value = item.itineraryId)
+}
+const GetTravelPackageInfo = async (id) => {
+    const response = await axios.get(`${baseAddress}/api/TravelPackage/GetTravelPackageInfo/${id}`)
+    if (response.data) {
+        console.log(JSON.stringify(response.data))
+        travelInfo.value = response.data;
+    } else {
+        alert("沒東西抓")
+    }
 }
 
 watch(
@@ -248,12 +302,8 @@ watch(
             const selectedItem = itinerary.value.find(item => item.itineraryId === newData);
             date_St.value = dayjs(selectedItem.itineraryStartDate);
             date_Ed.value = dayjs(selectedItem.itineraryEndDate);
-            // console.log(
-            //     "更新後的日期:",
-            //     date_St.value.format("YYYY-MM-DD"),
-            //     date_Ed.value.format("YYYY-MM-DD"),
-            // );
             // fetchPlacesByDate()
+            GetTravelPackageInfo(selectedId.value)
         }
     },
     { deep: true, immediate: true }
@@ -272,8 +322,23 @@ const payUrl = {
 }
 
 const selectItem = (item) => {
-    console.log(productPara.selectItem);
-    productPara.selectToPay(item);
+    //id 名字 地點 開始日 結束日 天數 價格 描述 評分 聯絡方式
+    const date_St = dayjs(item.itineraryStartDate);
+    const date_Ed = dayjs(item.itineraryEndDate);
+    const days = computed(() => date_Ed.diff(date_St, "day"));
+    const para = {
+        id: item.itineraryId,
+        title: item.itineraryTitle,
+        location: item.itineraryLocation,
+        starDate: item.itineraryStartDate,
+        endDate: item.itineraryEndDate,
+        days: days.value,
+        price: infoData.value[item.itineraryId].price,
+        description: infoData.value[item.itineraryId].description,
+        rating: infoData.value[item.itineraryId].rating,
+    };
+    // console.log(productPara.selectItem);
+    productPara.selectToPay(para);
 }
 
 </script>
