@@ -268,10 +268,10 @@ function handleProfileClick() {
     gap: 12px;
   ">
             <!-- 主要導覽按鈕 -->
-            <v-btn v-for="(page, index) in filteredPages" :key="index" :to="page.to" text color="white"
+            <!-- <v-btn v-for="(page, index) in filteredPages" :key="index" :to="page.to" text color="white"
               style="text-transform: none; box-shadow: none;">
               {{ page.text }}
-            </v-btn>
+            </v-btn> -->
 
             <!-- 未登入：會員登入按鈕 -->
             <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="btn_account"
@@ -381,7 +381,6 @@ function handleProfileClick() {
 .tool-button {
   transition: transform 0.1s ease;
 }
-
 /* 當按鈕被點擊（active 狀態），縮小至 95% */
 .tool-button:active {
   transform: scale(0.75);
