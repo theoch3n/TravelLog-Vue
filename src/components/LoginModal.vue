@@ -1,5 +1,4 @@
 <template>
-
     <!-- Vuetify 對話框 -->
     <v-dialog v-model="dialog" persistent max-width="600px">
         <v-card>
@@ -129,32 +128,52 @@
                 </div>
                 <!-- Email 驗證視窗 -->
                 <div v-else-if="currentView === 'verifyEmail'">
-                    <!-- 引入 VerifyEmail 子組件，將 token 傳入 -->
                     <VerifyEmail :token="emailVerificationToken" @verified="onVerified" />
                 </div>
-                <!-- 其他視窗內容 -->
             </v-card-text>
         </v-card>
     </v-dialog>
-</template>
 
+    <!-- 使用 Vuetify Snackbar 取代原生 alert -->
+    <!-- 提示的 snackbar -->
+    <v-snackbar v-model="snackbar" :timeout="3000" vertical :color="snackbarColor"
+        elevation="24" style="font-size: 2rem; font-weight: bold; min-width: 400px; padding: 16px;">
+        <p style="color: white; font-size: 1.5rem;">{{ snackbarTitle }}</p>
+        <div style="color: white;">{{ snackbarText }}</div>
+
+        <template v-slot:actions>
+            <v-btn color="indigo" variant="text" @click="snackbar = false" style="color: white;">
+                Close
+            </v-btn>
+        </template>
+    </v-snackbar>
+
+
+
+
+
+</template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
-import axios from 'axios';
-import { useUserStore } from '@/stores/userStore';
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { useUserStore } from '@/stores/userStore'
 import VerifyEmail from '@/components/VerifyEmail.vue'
 
+const snackbarColor = ref("primary")
+const router = useRouter()
+const userStore = useUserStore()
 
-const router = useRouter();
-const userStore = useUserStore();
+// 控制 v-dialog 的顯示與否
+const dialog = ref(false)
+// 切換視窗的變數，目前值可為 "login", "register", "forgotPassword", "verifyEmail"
+const currentView = ref("login")
 
-// 用來控制 v-dialog 顯示與否
-const dialog = ref(false);
-
-// 切換視窗的變數，目前值可為 "login", "register", "forgotPassword"
-const currentView = ref("login");
+// Snackbar 狀態與訊息
+const snackbar = ref(false)
+const snackbarText = ref("")
+const snackbarTitle = ref("")
 
 // 登入資料與驗證邏輯
 const login = ref({
@@ -163,7 +182,7 @@ const login = ref({
     showPassword: false,
     rememberMe: false,
     errors: {}
-});
+})
 
 // 註冊資料與驗證邏輯
 const register = ref({
@@ -177,13 +196,12 @@ const register = ref({
     showPassword: false,
     showPasswordConfirm: false,
     errors: {}
-});
+})
 
 // 忘記密碼相關變數
 const forgotPasswordEmail = ref("")
-const verificationCode = ref("")  // 新增驗證碼變數
+const verificationCode = ref("")
 const forgotPasswordMessage = ref("")
-// 用來保存從 URL 或其他來源獲取的 email 驗證 token
 const emailVerificationToken = ref("")
 const forgotPasswordErrors = reactive({
     email: "",
@@ -192,51 +210,51 @@ const forgotPasswordErrors = reactive({
 
 // 切換視窗方法
 function switchToRegister() {
-    currentView.value = "register";
+    currentView.value = "register"
 }
 function switchToLogin() {
-    currentView.value = "login";
+    currentView.value = "login"
 }
 function switchToForgotPassword() {
-    currentView.value = "forgotPassword";
+    currentView.value = "forgotPassword"
 }
 
 // 密碼顯示切換
 function toggleLoginPassword() {
-    login.value.showPassword = !login.value.showPassword;
+    login.value.showPassword = !login.value.showPassword
 }
 function toggleRegisterPassword() {
-    register.value.showPassword = !register.value.showPassword;
+    register.value.showPassword = !register.value.showPassword
 }
 function toggleRegisterPasswordConfirm() {
-    register.value.showPasswordConfirm = !register.value.showPasswordConfirm;
+    register.value.showPasswordConfirm = !register.value.showPasswordConfirm
 }
 
 // 登入表單提交
 async function loginHandler() {
-    login.value.errors.general = "";
+    login.value.errors.general = ""
     const loginData = {
         email: login.value.email,
         password: login.value.password,
         rememberMe: login.value.rememberMe
-    };
+    }
     try {
-        const response = await axios.post("https://localhost:7092/api/User/login", loginData);
-        console.log("登入成功：", response.data);
-        alert("登入成功！歡迎回來！");
-        userStore.setToken(response.data.token);
-        hide();
-        router.push("/");
+        const response = await axios.post("https://localhost:7092/api/User/login", loginData)
+        console.log("登入成功：", response.data)
+        // 使用 Snackbar 顯示成功訊息
+        snackbarTitle.value = "登入成功！"
+        snackbarText.value = "歡迎回來！"
+        snackbar.value = true
+        userStore.setToken(response.data.token)
+        hide()
+        router.push("/")
     } catch (error) {
-        console.error("登入錯誤：", error);
-        login.value.errors.general = "帳號或密碼有誤";
+        console.error("登入錯誤：", error)
+        login.value.errors.general = "帳號或密碼有誤"
     }
 }
 
-// 忘記密碼表單提交
-let lastForgotPasswordRequest = 0;
-
-// 忘記密碼表單提交
+// 忘記密碼表單提交（這邊與原本邏輯相同）
 async function forgotPasswordHandler() {
     if (!validateForgotPasswordEmail() || !validateVerificationCode()) return
 
@@ -247,7 +265,6 @@ async function forgotPasswordHandler() {
         })
 
         forgotPasswordMessage.value = response.data.message || "如果該 Email 已註冊，我們將發送驗證碼。"
-        // 清除錯誤訊息
         forgotPasswordErrors.email = ""
         forgotPasswordErrors.verificationCode = ""
     } catch (error) {
@@ -266,10 +283,8 @@ async function forgotPasswordHandler() {
     }
 }
 
-// 假設當用戶發送忘記密碼時，後端會寄出驗證碼，然後用戶在驗證流程中點選連結時，URL query 包含 token
-// 例如：在 onMounted 中檢查 URL query 中是否有驗證 token
+// URL 帶 token 時切換到 Email 驗證視圖
 onMounted(() => {
-    // 假設驗證 token 來自 URL query，如果存在則切換到 verifyEmail 視圖
     const token = router.currentRoute.value.query.token
     if (token) {
         emailVerificationToken.value = token
@@ -277,45 +292,43 @@ onMounted(() => {
     }
 })
 
-// 當 VerifyEmail 子組件發出 verified 事件後，可以處理後續流程
+// 當 VerifyEmail 子組件發出 verified 事件後
 function onVerified(msg) {
-    // 可以顯示提示訊息
-    // 例如，切換到登入視圖或其他操作
     currentView.value = "login"
-    // 清除 URL query（如果需要）
     router.push({ query: {} })
 }
+
 // 驗證確認密碼是否一致
 function validateConfirmPassword() {
     if (register.value.formData.confirmPassword !== register.value.formData.password) {
-        register.value.errors.confirmPassword = "確認密碼不相符！";
+        register.value.errors.confirmPassword = "確認密碼不相符！"
     } else {
-        register.value.errors.confirmPassword = "";
+        register.value.errors.confirmPassword = ""
     }
 }
 
 // 帳號名稱驗證：必須為 3~20 個字元
 function validateAccountName() {
-    const name = register.value.formData.accountName;
+    const name = register.value.formData.accountName
     if (name.length < 3 || name.length > 20) {
-        register.value.errors.accountName = "帳號必須介於 3 到 20 個字元";
+        register.value.errors.accountName = "帳號必須介於 3 到 20 個字元"
     } else {
-        register.value.errors.accountName = "";
+        register.value.errors.accountName = ""
     }
 }
 
 // Email 格式驗證
 function validateEmail() {
-    const email = register.value.formData.email;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const email = register.value.formData.email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-        register.value.errors.email = "Email 格式不正確";
+        register.value.errors.email = "Email 格式不正確"
     } else {
-        register.value.errors.email = "";
+        register.value.errors.email = ""
     }
 }
 
-// 驗證 Email
+// 驗證 Email（忘記密碼）
 function validateForgotPasswordEmail() {
     const email = forgotPasswordEmail.value.trim()
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -330,7 +343,8 @@ function validateForgotPasswordEmail() {
         return true
     }
 }
-// 驗證驗證碼：此處僅檢查是否有輸入，若有需要，也可以加入數字格式、長度檢查等
+
+// 驗證驗證碼
 function validateVerificationCode() {
     const code = verificationCode.value.trim()
     if (!code) {
@@ -352,7 +366,6 @@ async function sendVerificationCode() {
         const response = await axios.post("https://localhost:7092/api/ForgotPassword", {
             email: forgotPasswordEmail.value.trim()
         })
-        // 假設後端已發送驗證碼到 Email
         forgotPasswordMessage.value = response.data.message || "驗證碼已發送，請檢查您的信箱。"
     } catch (error) {
         console.error("發送驗證碼錯誤：", error)
@@ -365,59 +378,56 @@ async function submitVerificationCode() {
     if (!validateForgotPasswordEmail() || !validateVerificationCode()) return
 
     try {
-        // 先保存輸入的值
-        const emailInput = forgotPasswordEmail.value.trim();
-        const codeInput = verificationCode.value.trim();
+        const emailInput = forgotPasswordEmail.value.trim()
+        const codeInput = verificationCode.value.trim()
 
         const response = await axios.post("https://localhost:7092/api/ForgotPassword/ValidateCode", {
             email: emailInput,
             verificationCode: codeInput
-        });
-        forgotPasswordMessage.value = response.data.message || "驗證成功，請繼續進行密碼重置。";
+        })
+        forgotPasswordMessage.value = response.data.message || "驗證成功，請繼續進行密碼重置。"
 
         // 清除輸入框內容
-        forgotPasswordEmail.value = "";
-        verificationCode.value = "";
+        forgotPasswordEmail.value = ""
+        verificationCode.value = ""
 
-        hide();
-        router.push({ name: 'ResetPassword', query: { token: codeInput, email: emailInput } });
+        hide()
+        router.push({ name: 'ResetPassword', query: { token: codeInput, email: emailInput } })
     } catch (error) {
-        console.error("驗證碼驗證失敗：", error);
+        console.error("驗證碼驗證失敗：", error)
         if (error.response && error.response.data && error.response.data.message) {
-            forgotPasswordMessage.value = error.response.data.message;
+            forgotPasswordMessage.value = error.response.data.message
         } else {
-            forgotPasswordMessage.value = "驗證碼驗證失敗，請確認驗證碼是否正確。";
+            forgotPasswordMessage.value = "驗證碼驗證失敗，請確認驗證碼是否正確。"
         }
     }
-
 }
-
 
 // 驗證電話格式
 function validatePhone() {
     if (!/^09\d{8}$/.test(register.value.formData.phone)) {
-        register.value.errors.phone = "電話格式不正確，必須以09開頭且為10位數字。";
+        register.value.errors.phone = "電話格式不正確，必須以09開頭且為10位數字。"
     } else {
-        register.value.errors.phone = "";
+        register.value.errors.phone = ""
     }
 }
 
 // 驗證密碼格式
 async function validatePassword() {
     if (!/^(?=.*[A-Z]).{6,20}$/.test(register.value.formData.password)) {
-        register.value.errors.password = "密碼必須為 6-20 字元，並包含至少一個大寫英文字母。";
+        register.value.errors.password = "密碼必須為 6-20 字元，並包含至少一個大寫英文字母。"
     } else {
-        register.value.errors.password = "";
+        register.value.errors.password = ""
     }
 }
 
 // 總驗證並發送註冊請求
 async function validateForm() {
-    validateAccountName();
-    validateEmail();
-    await validatePassword();
-    validateConfirmPassword();
-    validatePhone();
+    validateAccountName()
+    validateEmail()
+    await validatePassword()
+    validateConfirmPassword()
+    validatePhone()
     if (
         register.value.errors.accountName ||
         register.value.errors.email ||
@@ -425,10 +435,10 @@ async function validateForm() {
         register.value.errors.confirmPassword ||
         register.value.errors.phone
     ) {
-        console.warn("驗證失敗，不提交註冊請求");
-        return;
+        console.warn("驗證失敗，不提交註冊請求")
+        return
     }
-    await registerUser();
+    await registerUser()
 }
 
 async function registerUser() {
@@ -438,40 +448,60 @@ async function registerUser() {
             email: register.value.formData.email,
             phone: register.value.formData.phone,
             password: register.value.formData.password
-        });
-        console.log("註冊成功：", response.data);
-        alert("註冊成功！歡迎加入！");
-        register.value.formData.accountName = "";
-        register.value.formData.email = "";
-        register.value.formData.phone = "";
-        register.value.formData.password = "";
-        register.value.formData.confirmPassword = "";
-        currentView.value = "login";
-        hide();
-        router.push("/");
+        })
+        console.log("註冊成功：", response.data)
+        snackbarTitle.value = "註冊成功！"
+        snackbarText.value = "正在寄送Email驗證信..."
+        snackbar.value = true
+
+        // 在清除表單前先儲存必要的資訊
+        const userEmail = register.value.formData.email
+        const userPassword = register.value.formData.password
+
+        // 清空表單資料（可選）
+        register.value.formData.accountName = ""
+        register.value.formData.email = ""
+        register.value.formData.phone = ""
+        register.value.formData.password = ""
+        register.value.formData.confirmPassword = ""
+
+        // 使用儲存的 email 與 password 自動登入
+        const loginResponse = await axios.post("https://localhost:7092/api/User/login", {
+            email: response.data.email || userEmail,
+            password: userPassword,
+            rememberMe: false  // 依需求設定
+        })
+        console.log("自動登入成功：", loginResponse.data)
+        userStore.setToken(loginResponse.data.token)
+
+        hide()
+        router.push("/")
     } catch (error) {
-        console.error("註冊錯誤：", error);
+        console.error("註冊錯誤：", error)
         if (error.response && error.response.data && error.response.data.message) {
-            alert("註冊失敗：" + error.response.data.message);
+            snackbarText.value = "註冊失敗"
+            snackbarText.value =  error.response.data.message
         } else {
-            alert("註冊時發生錯誤!可能是API沒開");
+            snackbarText.value = "註冊時發生錯誤!可能是API沒開"
         }
+        snackbar.value = true
     }
 }
 
+
 // 控制 dialog 顯示與關閉
 function show() {
-    currentView.value = "login"; // 確保打開時顯示登入介面
-    dialog.value = true;
+    currentView.value = "login"
+    dialog.value = true
 }
 
 function hide() {
-    dialog.value = false;
+    dialog.value = false
 }
 
 // 將方法暴露給父組件
 defineExpose({
     show,
     hide,
-});
+})
 </script>
