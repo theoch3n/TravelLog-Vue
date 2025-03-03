@@ -29,7 +29,7 @@
     </v-card>
 
     <!-- 使用 v-snackbar 顯示通知訊息 -->
-    <v-snackbar v-model="snackbar" location="" :timeout="3000" :color="snackbarColor"
+    <v-snackbar v-model="snackbar"  :timeout="3000" :color="snackbarColor"
         style="font-size: 1.2rem; font-weight: bold; min-width: 300px; padding: 16px;">
         {{ snackbarText }}
     </v-snackbar>

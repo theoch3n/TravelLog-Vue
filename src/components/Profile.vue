@@ -76,7 +76,7 @@
     </v-row>
 
     <!-- Snackbar 通知訊息 -->
-    <v-snackbar v-model="snackbar" location="" :timeout="3000" :color="snackbarColor"
+    <v-snackbar v-model="snackbar"  :timeout="3000" :color="snackbarColor"
       style="font-size: 1.2rem; font-weight: bold; min-width: 300px; padding: 16px;">
       {{ snackbarText }}
     </v-snackbar>
@@ -87,7 +87,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import ChangePassword from '@/components/ChangePassword.vue'
+import ChangePassword from "../components/ChangePassword.vue"
 
 // 驗證規則（簡短文字）
 const showAlert = ref(true)
