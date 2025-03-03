@@ -1,10 +1,23 @@
 <template>
-    <!-- 引入子組件 -->
-    <LoginModal ref="loginModalRef" />
-
     <header class="sidebar" @mouseenter="show = true" @mouseleave="show = false">
         <div class="sidebar-inner" :class="{ 'sidebar-show': show }">
             <ul class="sidebar-menu">
+                <!-- 第一個選單項：觸發 overlay -->
+                <li>
+                    <div>
+                        <button @click="openOverlay" class="overlay-btn">顯示 Overlay</button>
+                        <transition name="overlay-slide">
+                            <div v-if="showOverlay" class="overlay">
+                                <div class="inner">
+                                    <h2>這是 Overlay</h2>
+                                    <p>從上方滑落進場動畫</p>
+                                    <button @click="closeOverlay" class="close-btn">關閉</button>
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
+                </li>
+                <!-- 其他選單項目 -->
                 <li>
                     <button @click="toggleDarkMode" class="tool-button text-black"
                         style="display: flex; align-items: center; background: none; border: none; padding: 0;">
@@ -18,7 +31,6 @@
                         </i>
                     </button>
                 </li>
-
                 <li>
                     <i class="mdi mdi-account" style="font-size: 24px;"></i>
                     <button @click="handleProfileClick">
@@ -46,174 +58,76 @@
             </ul>
         </div>
     </header>
-
 </template>
 
-<script>
+<script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import LoginModal from "../components/LoginModal.vue"; // 引入 LoginModal 組件
+import* as DarkReader from "darkreader"; // 若有使用 DarkReader 的話
 
-export default {
-    components: {
-        LoginModal, // 註冊子組件
-    },
-    setup() {
-        // 控制登入對話框 & 行動選單
-        const loginDialog = ref(false);
-        const mobileMenu = ref(false);
-        const show = ref(false);
-        const isDark = ref(false);
-        const loginModalRef = ref(null); // 使用 ref 引用 LoginModal
-        const router = useRouter(); // 引入 Vue Router
-        // 從 pages 陣列中找出會員登入項目
-        const accountPage = computed(() =>
-            pages.find((page) => page.value === "Account")
-        );
+// 控制側邊欄顯示狀態
+const show = ref(false);
+// 定義 overlay 狀態
+const showOverlay = ref(false);
 
-        const filteredPages = computed(() =>
-            // 過濾條件：排除 value 為 "Account" 和 "Profile" 的項目
-            pages.filter((page) => page.value !== "Account" && page.value !== "Profile")
-        );
-        // 切換深色模式
-        const toggleDarkMode = () => {
-            isDark.value = !isDark.value;
-            if (isDark.value) {
-                DarkReader.setFetchMethod(window.fetch);
-                DarkReader.enable({
-                    brightness: 100,
-                    contrast: 90,
-                    sepia: 10,
-                });
-            } else {
-                DarkReader.disable();
-            }
-        };
-        // 定義選單
-        const pages = [
-            {
-                value: "payment",
-                text: "Payment",
-                textClass: "text-brown-darken-1",
-                to: "/payment",
-            },
-            {
-                value: "about",
-                text: "關於我們",
-                textClass: "text-blue",
-                to: "/about",
-            },
-            {
-                value: "contact",
-                text: "客服中心",
-                textClass: "text-yellow-darken-4",
-                to: "/contact",
-            },
-            {
-                value: "products",
-                text: "Products",
-                textClass: "text-purple-darken-4",
-                to: "/products",
-            },
-            {
-                value: "Itinerary",
-                text: "行程",
-                icon: "mdi-phone-incoming",
-                textClass: "text-yellow-darken-4",
-                to: "/Itinerary",
-            },
-            {
-                value: "OrderDetail",
-                text: "訂單詳情",
-                textClass: "text-yellow-darken-4",
-                to: "/orderDetail",
-            },
-            // {
-            //   value: "Itinerary",
-            //   text: "行程",
-            //   icon: "mdi-phone-incoming",
-            //   textClass: "text-yellow-darken-4",
-            //   to: "/Googlemap",
-            // },
-            {
-                value: "Account",
-                text: "會員登入",
-                icon: "mdi-account",
-                textClass: "text-black",
-                to: "/account",
-            },
-            {
-                value: "Profile",
-                text: "會員資料",
-                icon: "mdi-account",
-                textClass: "text-black",
-                to: "/profile",
-            },
-            {
-                value: "PaymentResult",
-                text: "付款結果",
-                textClass: "text-yellow-darken-4",
-                to: "/paymentResult",
-            },
-            {
-                value: "MyOrder",
-                text: "我的訂單",
-                textClass: "text-yellow-darken-4",
-                to: "/myorder",
-            },
-        ];
-        // 控制登入模態框顯示
-        const openLoginModal = () => {
-            if (loginModalRef.value) {
-                loginModalRef.value.show();
-            }
-        };
+// 定義其他狀態與 router
+const isDark = ref(false);
+const router = useRouter();
 
+// 點擊按鈕時顯示 overlay
+function openOverlay() {
+    showOverlay.value = true;
+}
 
-        // 點擊會員中心按鈕，根據用戶登入狀態進行處理
-        const handleProfileClick = () => {
-            // 假設 userStore.isAuthenticated 是用來檢查登入狀態的
-            const isAuthenticated = false; // 這邊應該從你的狀態管理（例如 Vuex 或 Pinia）獲取登入狀態
-            if (!isAuthenticated) {
-                openLoginModal(); // 未登入時打開登入模態框
-            } else {
-                router.push("/profile"); // 已登入則跳轉到 profile 頁面
-            }
-        };
+// 點擊 overlay 內關閉按鈕時隱藏 overlay
+function closeOverlay() {
+    showOverlay.value = false;
+}
 
-        // 導向不同頁面
-        const navigateToStore = () => {
-            router.push("/store");
-        };
+// 切換深色模式（僅作示範）
+function toggleDarkMode() {
+    isDark.value = !isDark.value;
+    if (isDark.value) {
+        DarkReader.setFetchMethod(window.fetch);
+        DarkReader.enable({
+            brightness: 100,
+            contrast: 90,
+            sepia: 10,
+        });
+    } else {
+        DarkReader.disable();
+    }
+}
 
-        const navigateToContact = () => {
-            router.push("/contact");
-        };
+// 以下方法僅供參考，你可依據實際需求修改
+function handleProfileClick() {
+    const isAuthenticated = false; // 實際應從狀態管理獲取
+    if (!isAuthenticated) {
+        // 如需彈出登入模態框，請自行處理
+        alert("請先登入！");
+    } else {
+        router.push("/profile");
+    }
+}
 
-        const navigateToCart = () => {
-            router.push("/cart");
-        };
+function navigateToStore() {
+    router.push("/store");
+}
 
-        return {
-            show,
-            isDark,
-            loginModalRef,
-            toggleDarkMode,
-            handleProfileClick,
-            navigateToStore,
-            navigateToContact,
-            navigateToCart,
-        };
-    },
-};
+function navigateToContact() {
+    router.push("/contact");
+}
 
+function navigateToCart() {
+    router.push("/cart");
+}
 </script>
 
 <style scoped>
+/* 側邊欄樣式 */
 header.sidebar {
     display: flex;
     min-height: 100vh;
-
 }
 
 .sidebar {
@@ -227,12 +141,10 @@ header.sidebar {
     transition: width 0.3s ease;
     overflow: hidden;
     display: flex;
-    min-height: 100vh;
 }
 
 .sidebar:hover {
     width: 200px;
-
 }
 
 .sidebar-inner {
@@ -282,5 +194,78 @@ header.sidebar {
 
 .sidebar-show .sidebar-menu li span {
     opacity: 1;
+}
+
+/* Overlay 與動畫樣式 */
+.overlay-btn {
+    padding: 10px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.inner {
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+}
+
+.close-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #fff;
+    color: #000;
+    border: none;
+    cursor: pointer;
+}
+
+/* 定義從上方滑落進場與離場動畫 */
+.overlay-slide-enter-active {
+    animation: slideIn 500ms ease-out forwards;
+}
+
+.overlay-slide-leave-active {
+    animation: slideOut 500ms ease-in forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%) rotate(10deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-100%) rotate(-10deg);
+    }
 }
 </style>

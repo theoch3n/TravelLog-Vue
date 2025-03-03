@@ -5,17 +5,41 @@ import Footer from "../components/Footer.vue";
 import Sidebar from "../components/Sidebar.vue";
 import Announcement from "../components/announcement.vue";
 import PageTop from "../components/PageTop.vue";
+import { ref } from 'vue'
+
+// 定義用來控制 overlay 顯示狀態的 reactive 變數
+const showOverlay = ref(false)
+
+// 開啟 overlay 的方法（你可以從頁面中觸發，例如按鈕）
+function openOverlay() {
+    showOverlay.value = true
+}
+
+// 關閉 overlay 的方法
+function closeOverlay() {
+    showOverlay.value = false
+}
 </script>
 
 <template>
     <v-app>
+        <!-- 全域 Overlay -->
+        <transition name="fade">
+            <div v-if="showOverlay" class="overlay">
+                <div class="inner">
+                    <h2>新視窗內容</h2>
+                    <p>這個區塊會覆蓋整個頁面。</p>
+                    <button class="close-btn" @click="closeOverlay">關閉</button>
+                </div>
+            </div>
+        </transition>
         <!-- 公告欄 -->
         <!-- 跑馬燈會擋到底下按鈕，修好再放回去 -->
         <!-- <Announcement /> -->
 
         <!-- 側邊欄 -->
         <aside>
-            <Sidebar></Sidebar>
+            <Sidebar :openOverlay="openOverlay" />
         </aside>
         <!-- 上方導覽欄 -->
         <nav>
@@ -71,7 +95,44 @@ nav {
     /* 新增的右側間隔 */
 }
 
+/* Overlay 基本樣式 */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.inner {
+    color: #fff;
+    text-align: center;
+}
+
+.close-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #fff;
+    color: #000;
+    border: none;
+    cursor: pointer;
+}
+
+/* 過渡動畫 */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 300ms ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 
 /* 調整主內容區域 */
 main {
