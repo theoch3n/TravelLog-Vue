@@ -57,6 +57,8 @@ nav {
     display: flex;
     align-items: center;
     /* 垂直置中 */
+    justify-content: flex-end;
+    /* 水平靠右 */
     height: 60px;
     /* 高度設定 */
     background-color: white;
@@ -65,7 +67,10 @@ nav {
     /* 讓 nav 佔滿整個寬度 */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     /* 陰影美化 */
+    padding-right: 20px;
+    /* 新增的右側間隔 */
 }
+
 
 
 /* 調整主內容區域 */

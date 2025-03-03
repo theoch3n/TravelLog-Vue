@@ -185,6 +185,8 @@ function handleProfileClick() {
     router.push("/profile");
   }
 }
+
+
 </script>
 
 <template>
@@ -258,28 +260,47 @@ function handleProfileClick() {
 
         <!-- 導航菜單 -->
         <nav class="desktop-nav">
-          <v-btn v-for="(page, index) in filteredPages" :to="page.to" :key="index">
-            {{ page.text }}
-          </v-btn>
+          <div class="nav-bar d-flex align-center" style="
+    border-radius: 20px;
+    padding: 0 12px;
+    height: 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    gap: 12px;
+  ">
+            <!-- 主要導覽按鈕 -->
+            <v-btn v-for="(page, index) in filteredPages" :key="index" :to="page.to" text color="white"
+              style="text-transform: none; box-shadow: none;">
+              {{ page.text }}
+            </v-btn>
 
-          <!-- 未登入：會員登入按鈕 -->
-          <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="mx-2"
-            :class="accountPage.textClass" text>
-            <v-icon left>{{ accountPage.icon }}</v-icon>
-            {{ accountPage.text }}
-          </v-btn>
+            <!-- 未登入：會員登入按鈕 -->
+            <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="btn_account"
+              :class="accountPage.textClass" text>
+              <v-icon left>{{ accountPage.icon }}</v-icon>
+              {{ accountPage.text }}
+            </v-btn>
 
-          <!-- 已登入：會員資料 -->
-          <v-btn v-if="userStore.isAuthenticated" @click="router.push('/profile')" class="mx-2" color="primary" text>
-            <v-icon left>mdi-account-circle</v-icon>
-            會員資料
-          </v-btn>
+            <!-- 已登入：會員下拉選單（範例示意） -->
+            <v-menu v-else-if="userStore.isAuthenticated" offset-y>
+              <template #activator="{ props }">
+                <v-btn text color="white" v-bind="props" class="btn_account">
+                  <v-icon left>mdi-account-circle</v-icon>
+                  會員
+                  <v-icon right>mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <!-- 下拉選單內容 -->
+              <v-list>
+                <v-list-item @click="router.push('/profile')">
+                  <v-list-item-title>會員資料</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="logout">
+                  <v-list-item-title>登出</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
 
-          <!-- 已登入：登出 -->
-          <v-btn v-if="userStore.isAuthenticated" @click="logout" class="mx-2" color="error" text>
-            <v-icon left>mdi-logout</v-icon>
-            登出
-          </v-btn>
         </nav>
         <!-- <form class="d-flex">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -293,6 +314,14 @@ function handleProfileClick() {
 </template>
 
 <style scoped>
+.btn_account {
+  border-radius: 12px;
+  padding: 0 12px;
+  height: 40px;
+  box-shadow: none !important; 
+  gap: 8px;
+}
+
 .img-sunmoon {
   height: 10px;
 }
@@ -312,10 +341,8 @@ function handleProfileClick() {
   /* 確保 LOGO 在最上層 */
   padding-left: 80px;
 
+
 }
-
-
-
 
 /* Desktop Header 樣式 */
 .desktop-nav {
@@ -325,13 +352,9 @@ function handleProfileClick() {
   font-size: 11.2px;
   line-height: 16px;
   padding-left: 60px;
+  gap: 12px;
 
 }
-
-
-
-
-
 
 
 /* 工具列按鈕樣式 */
