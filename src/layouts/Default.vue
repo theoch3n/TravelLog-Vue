@@ -87,62 +87,89 @@ function openLoginModal() {
       <Header />
     </nav>
 
-    <!-- 主要內容區域 -->
-    <main>
-      <v-main class="content d-flex flex-column">
-        <router-view v-slot="{ Component }">
-          <component :is="Component" />
-        </router-view>
-      </v-main>
-      <PageTop />
-    </main>
+        <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->
+        <main>
+            <v-main class="content d-flex flex-column">
+                <!--
+            路由視圖區域：
+            - v-slot="{ Component }" 接收當前路由對應的元件
+            - 使用動態元件渲染路由內容
+        -->
+                <router-view v-slot="{ Component }" class="router-view-container">
+                    <component :is="Component" />
+                </router-view>
+            </v-main>
+            <!-- Page-Top -->
+            <PageTop />
+        </main>
+        <!-- 頁尾 -->
+        <footer>
+            <Footer />
+        </footer>
 
-    <!-- Footer -->
-    <footer>
-      <Footer />
-    </footer>
-  </v-app>
+
+
+
+
+    </v-app>
 </template>
 
 <style scoped>
 nav {
-  padding-left: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: 60px;
-  background-color: white;
-  width: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding-right: 20px;
+    padding-left: 200px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    background-color: transparent;
+    width: 100%;
+    box-shadow: none;
+    position: relative;
+    z-index: 10;
 }
 
 main {
-  margin-left: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
+    margin-left: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    position: relative;
+    z-index: 5;
 }
 
-footer {
-  margin-left: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
+
+Footer {
+    margin-left: 20px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent !important;
+    padding: 10px 0;
+    min-height: 60px;
+    position: relative;
+    z-index: 10;
 }
 
 .content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+    position: relative;
+}
+
+.router-view-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
 .v-app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: transparent;
 }
 </style>
