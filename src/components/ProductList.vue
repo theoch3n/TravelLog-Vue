@@ -14,6 +14,9 @@
           @click="selectedCard(item)"
         >
           <div class="card-body">
+            <h5 class="card-text d-flex justify-content-center">
+              {{ item.itineraryTitle }}
+            </h5>
             <img
               :src="
                 item.itineraryImage ? item.itineraryImage : '/imgs/noImage.png'
@@ -22,13 +25,16 @@
               alt="google api沒抓到圖"
               :title="item.itineraryTitle"
             />
-            <h5 class="card-text d-flex justify-content-center">
-              {{ item.itineraryTitle }}
-            </h5>
+
             <p class="card-text text-center fs-3">
               <rating v-if="infoData" :rating="infoData[index]?.rating" />
             </p>
-            <h5>{{ "立即訂購價: " + infoData[index]?.price }}</h5>
+            <h5>
+              {{
+                "NT$ : " +
+                new Intl.NumberFormat().format(infoData[index]?.price)
+              }}
+            </h5>
           </div>
         </div>
 
