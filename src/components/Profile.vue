@@ -7,9 +7,15 @@
             <v-icon class="mr-2">mdi-account-box</v-icon>
             會員系統
           </h1>
-          <v-btn icon color="info" class="mt-3" @click="fetchProfile" title="重新載入資料">
-            <v-icon>mdi-reload</v-icon>
-          </v-btn>
+          <v-tooltip bottom>
+            <template #activator="{ props }">
+              <v-btn icon color="info" class="mt-3" @click="fetchProfile" v-bind="props">
+                <v-icon>mdi-reload</v-icon>
+              </v-btn>
+            </template>
+            <span>重新載入資料</span>
+          </v-tooltip>
+
         </div>
       </v-col>
     </v-row>
@@ -78,16 +84,16 @@
 
     <!-- Snackbar 通知訊息 -->
     <!-- 提示的 snackbar -->
-    <v-snackbar v-model="snackbar" :timeout="3000" vertical :color="snackbarColor"
-        elevation="24" style="font-size: 2rem; font-weight: bold; min-width: 400px; padding: 16px;">
-        <p style="color: white; font-size: 1.5rem;">{{ snackbarTitle }}</p>
-        <div style="color: white;">{{ snackbarText }}</div>
+    <v-snackbar v-model="snackbar" :timeout="3000" vertical :color="snackbarColor" elevation="24"
+      style="font-size: 2rem; font-weight: bold; min-width: 400px; padding: 16px;">
+      <p style="color: white; font-size: 1.5rem;">{{ snackbarTitle }}</p>
+      <div style="color: white;">{{ snackbarText }}</div>
 
-        <template v-slot:actions>
-            <v-btn color="indigo" variant="text" @click="snackbar = false" style="color: white;">
-                Close
-            </v-btn>
-        </template>
+      <template v-slot:actions>
+        <v-btn color="indigo" variant="text" @click="snackbar = false" style="color: white;">
+          Close
+        </v-btn>
+      </template>
     </v-snackbar>
 
   </v-container>
@@ -202,7 +208,7 @@ async function resendVerificationEmail() {
       email: profile.value.userEmail
     })
     snackbarTitle.value = '驗證信已寄出！'
-    snackbarText.value =  response.data.message ||'請查看信箱，尋找驗證信'
+    snackbarText.value = response.data.message || '請查看信箱，尋找驗證信'
     snackbarColor.value = 'success'
     snackbar.value = true
   } catch (err: any) {
