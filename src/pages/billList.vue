@@ -44,7 +44,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" @click="createNewBill()">新增項目</button>
-                    <button type="button" class="btn btn-danger" @click="test()">測試按鈕</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         @click="resetForm()">關閉</button>
                 </div>
@@ -75,9 +74,7 @@ const details = ref([]);
 let itineraryInfo = ref();
 let itineraryId = ref();
 let itineraryTitle = ref();
-const test = () => {
-    console.log(searchBill.value)
-}
+
 watch(() => props.modelValue, (newValue) => {
     if (newValue) {
         itineraryInfo.value = {
@@ -167,6 +164,7 @@ const openDetails = (BillId) => {
 const createNewBill = () => {
     toggleModal('modalBillList', 'hide');
     toggleModal('modalBill', 'show');
+    resetForm();
 }
 
 const toggleModal = (modalId, action) => {

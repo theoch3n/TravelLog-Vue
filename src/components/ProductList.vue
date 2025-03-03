@@ -133,7 +133,7 @@
                             <div class="modal-footer d-flex justify-content-end">
                                 <!-- <p>售價: {{ travelInfo?.price }}</p> -->
                                 <div>
-                                    <!-- <button class="btn btn-danger me-3" @click="test()">測試按鈕</button> -->
+                                    <button class="btn btn-danger me-3" @click="test(item)">測試按鈕</button>
                                     <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
                                     <v-btn class="btn btn-primary" @click="selectItem(item)"
                                         :to="payUrl.to">立即結帳</v-btn>
@@ -188,10 +188,50 @@ const displayContentByDate = (item) => {
     getDetails(item.id);
     // console.log(JSON.stringify(item))
 }
-const test = () => {
-    //    alert()
-    // GetTravelPackageInfo();
+//測
+const profile = ref()
+const test = async (item) => {
+    await getProfile();
+    await getPlace(item.itineraryId);
+    item.itineraryCreateUser = profile.value.userId;
+    item.place = place.value;
+    alert(JSON.stringify(item.place))
+    await addItinerary(item);
+};
+const place = ref();
+const getPlace = async (ItineraryId) => {
+    const response = await axios.get(`${baseAddress}/api/Places/GetPlaceByScheduleId/${ItineraryId}`)
+    if (response.data) {
+        place.value = response.data;
+        console.log("這是抓到的資料/n" + JSON.stringify(place.value))
+    }
+}
+const getProfile = async () => {
+    try {
+        const response = await axios.get(`${baseAddress}/api/Profile`);
+        profile.value = response.data;
+    } catch (err) {
+        console.error("取得資料錯誤：", err);
+    }
+};
 
+// 攔截器：自動將 token 加入請求標頭（建議此設定放在全域 axios 攔截器中）
+axios.interceptors.request.use(config => {
+    const token = localStorage.getItem("token")
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+}, error => Promise.reject(error))
+
+
+const addItinerary = async (item) => {
+    const response = await axios.post(`${baseAddress}/api/TravelPackage/addItinerary`, item)
+    if (response.data) {
+        alert("成功添加到資料庫")
+    } else {
+        alert("戳啦")
+    }
 }
 onMounted(() => {
     getInfo();
