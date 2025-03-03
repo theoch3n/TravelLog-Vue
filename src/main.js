@@ -28,6 +28,10 @@ import * as bootstrap from "bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 window.bootstrap = bootstrap;
 
+// 引入 Sweetalert2
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
 const vuetify = createVuetify({
     components,
     directives,
