@@ -39,13 +39,14 @@
           </slot>
   
           <!-- 關閉按鈕 -->
-          <button class="close-btn" @click="emitClose">關閉</button>
+          <button class="close-btn" @click="emitClose"><v-icon left class="mr-2">mdi-close</v-icon></button>
         </div>
       </div>
     </transition>
   </template>
   
   <script setup>
+  
   defineProps({
     show: {
       type: Boolean,
@@ -67,22 +68,30 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.8);
-    z-index: 2000;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
   /* 內部容器 */
-  .inner {
-    color: #fff;
-    text-align: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-  }
+  /* 內部容器 - 修改版 */
+.inner {
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  /* Optionally center the content vertically and horizontally */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Remove border-radius if you want a full-screen block */
+  border-radius: 0;
+}
+
   
   /* 導覽列樣式 */
   .overlay-nav {
@@ -111,13 +120,15 @@
   
   /* 關閉按鈕 */
   .close-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: #fff;
-    color: #000;
-    border: none;
-    cursor: pointer;
-  }
+  position: absolute;
+  top: 20px;    /* 可根據需求調整距離 */
+  left: 20px;   /* 可根據需求調整距離 */
+  padding: 10px 20px;
+  background: #fff;
+  color: #000;
+  border: none;
+  cursor: pointer;
+}
   
   /* 進出場動畫：由上而下滑落 */
   .overlay-slide-enter-active {

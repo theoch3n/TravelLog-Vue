@@ -1,5 +1,4 @@
 <template>
-  <!-- 背景面板：永遠置中 -->
   <div class="background-panel">
     <div class="row">
       <img src="/src/assets/logo-removebg-preview.png" alt="logo" class="logo" />
@@ -18,86 +17,73 @@
 </template>
 
 <style scoped>
-/* 1. 背景面板：絕對置中 + 玻璃特效 */
+/* 確保整個頁面高度充滿 */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+#app {
+  min-height: 100%;
+  position: relative;
+}
+
+/* 背景面板：完全置中、透明背景 */
 .background-panel {
-  position: absolute;   /* 直接相對於整個視窗 */
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
-  /* 玻璃化外觀 */
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-  /* 內容排版 */
-  display: flex;
+  background: transparent;
   padding: 20px;
-  /* 若想要最小寬度，避免太窄，可加上 min-width */
   min-width: 300px;
 }
 
-/* 2. row：可視需要讓 logo 和 wrap 並排，或垂直排 */
+/* row：logo 與圖示區塊並排 */
 .row {
   display: flex;
   align-items: center;
   gap: 50px;
 }
 
-/* 如果 logo 要固定大小，可自行調整 */
+/* logo 設定 */
 .logo {
-  max-height: 120px;
+  max-height: 200px;
   object-fit: contain;
 }
 
-/* 3. wrap：放多個 icon-container */
+/* wrap：放置 icon 連結 */
 .wrap {
   display: flex;
   gap: 100px;
-  justify-content: center; /* 新增這行 */
+  justify-content: center;
 }
 
-
-/* 4. icon-container：改用正常 margin 而非絕對定位來控制文字 */
+/* icon-container：直接顯示，不加入 hover 效果 */
 .icon-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-decoration: none;  /* 若想去掉 router-link 預設底線 */
-  color: inherit;         /* 文字顏色跟隨父層 */
-  transition: transform 0.3s ease-in-out;
+  text-decoration: none;
+  color: inherit;
 }
 
-.icon-container:hover {
-  transform: scale(1.1);
-}
-
-/* 5. icon 圖片大小 & 風格 */
+/* icon-img：放大圖示 */
 .icon-img {
-  width: 80px;
-  height: 80px;
+  width: 200px;
+  height: 200px;
   object-fit: contain;
-
-  /* 類似你的邊框與背景 */
-  border-top: 2px solid white;
-  border-left: 2px solid white;
-  border-right: 2px solid white;
+  border: none;
   border-radius: 10px;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: transparent;
 }
 
-/* 6. icon 文字：改用 margin-top，而不是 position: absolute */
+/* icon-text：放大文字 */
 .icon-text {
   margin-top: 8px;
-  color: white;
-  font-size: 14px;
+  color: #fff; /* 根據背景選擇合適的文字色彩 */
+  font-size: 20px;
   font-weight: bold;
-  transition: transform 0.3s ease-in-out;
-}
-
-.icon-container:hover .icon-text {
-  transform: scale(1.1);
 }
 </style>

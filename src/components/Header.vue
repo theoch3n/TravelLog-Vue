@@ -1,187 +1,67 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, defineProps } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useDisplay, useTheme } from "vuetify";
 import LoginModal from "@/components/LoginModal.vue";
+import Overlay from "@/components/Overlay.vue";
 import { useUserStore } from "@/stores/userStore";
-// import * as DarkReader from 'darkreader';
 
-// // 取得主題物件
-// const theme = useTheme()
-// // 宣告一個 isDark 的 ref 來追蹤目前是否為暗色模式
-// const isDark = ref(theme.global.name.value === 'dark')
-// // 定義切換主題的函式
-// function toggleDarkMode() {
-//   isDark.value = !isDark.value
-//   // 使用 theme 對象更新 Vuetify 的主题設定
-//   theme.global.name.value = isDark.value ? 'dark' : 'light'
-// }
+// 接收父層傳入的 overlay 相關 props
+const props = defineProps({
+  openOverlay: { type: Function, required: true },
+  showOverlay: { type: Boolean, required: true },
+  closeOverlay: { type: Function, required: true }
+});
 
-const isDark = ref(false);
-function toggleDarkMode() {
-  isDark.value = !isDark.value;
-  if (isDark.value) {
-    // 設定 Dark Reader 使用 window.fetch 處理跨來源請求
-    DarkReader.setFetchMethod(window.fetch);
-    DarkReader.enable({
-      brightness: 100,
-      contrast: 90,
-      sepia: 10,
-    });
-  } else {
-    DarkReader.disable();
-  }
-}
 
-// 控制登入對話框 & 行動選單
+
+// 控制登入對話框與行動選單
 const loginDialog = ref(false);
 const mobileMenu = ref(false);
-
-// 使用 Vuetify 提供的裝置偵測
 const { mdAndUp, mobile } = useDisplay();
 
-// 取得當前路由
 const route = useRoute();
 const pageTitle = ref("");
 
-// 取得 Pinia store 與 router
 const userStore = useUserStore();
 const router = useRouter();
 
-// 登出方法
 function logout() {
-  userStore.clearToken(); // 清除 Pinia 中的 token
-  // 導向首頁後強制刷新頁面
+  userStore.clearToken();
   router.push("/").then(() => {
     window.location.reload();
   });
 }
 
-// 定義按鈕選單
-// const buttons = [
-//     { value: "", text: "首頁", icon: "mdi-home", textClass: "text-green", to: "/" },
-//     { value: "payment", text: "Payment", icon: "mdi-file-account", textClass: "text-brown-darken-1", to: "/payment" },
-//     { value: "about", text: "關於我們", icon: "mdi-information", textClass: "text-blue", to: "/about" },
-//     { value: "contact", text: "客服中心", icon: "mdi-phone-incoming", textClass: "text-yellow-darken-4", to: "/contact" },
-//     { value: "products", text: "Products", icon: "mdi-shopping", textClass: "text-purple-darken-4", to: "/products" },
-// ];
-// 定義選單
+// 定義選單（包含會員登入與會員資料）
 const pages = [
-  {
-    value: "payment",
-    text: "Payment",
-    textClass: "text-brown-darken-1",
-    to: "/payment",
-  },
-  {
-    value: "about",
-    text: "關於我們",
-    textClass: "text-blue",
-    to: "/about",
-  },
-  {
-    value: "contact",
-    text: "客服中心",
-    textClass: "text-yellow-darken-4",
-    to: "/contact",
-  },
-  // {
-  //   value: "products",
-  //   text: "Products",
-  //   textClass: "text-purple-darken-4",
-  //   to: "/products",
-  // },
-  {
-    value: "TravelPackage",
-    text: "TravelPackage",
-    textClass: "text-purple-darken-4",
-    to: "/TravelPackage",
-  },
-  {
-    value: "Itinerary",
-    text: "行程",
-    icon: "mdi-phone-incoming",
-    textClass: "text-yellow-darken-4",
-    to: "/Itinerary",
-  },
-  {
-    value: "OrderDetail",
-    text: "訂單詳情",
-    textClass: "text-yellow-darken-4",
-    to: "/orderDetail",
-  },
-  // {
-  //   value: "Itinerary",
-  //   text: "行程",
-  //   icon: "mdi-phone-incoming",
-  //   textClass: "text-yellow-darken-4",
-  //   to: "/Googlemap",
-  // },
-  {
-    value: "Account",
-    text: "會員登入",
-    icon: "mdi-account",
-    textClass: "text-black",
-    to: "/account",
-  },
-  {
-    value: "Profile",
-    text: "會員資料",
-    icon: "mdi-account",
-    textClass: "text-black",
-    to: "/profile",
-  },
-  {
-    value: "PaymentResult",
-    text: "付款結果",
-    textClass: "text-yellow-darken-4",
-    to: "/paymentResult",
-  },
-  {
-    value: "MyOrder",
-    text: "我的訂單",
-    textClass: "text-yellow-darken-4",
-    to: "/myorder",
-  },
+  { value: "payment", text: "Payment", textClass: "text-brown-darken-1", to: "/payment" },
+  { value: "about", text: "關於我們", textClass: "text-blue", to: "/about" },
+  { value: "contact", text: "客服中心", textClass: "text-yellow-darken-4", to: "/contact" },
+  { value: "TravelPackage", text: "TravelPackage", textClass: "text-purple-darken-4", to: "/TravelPackage" },
+  { value: "Itinerary", text: "行程", icon: "mdi-phone-incoming", textClass: "text-yellow-darken-4", to: "/Itinerary" },
+  { value: "OrderDetail", text: "訂單詳情", textClass: "text-yellow-darken-4", to: "/orderDetail" },
+  { value: "Account", text: "會員登入", icon: "mdi-account", textClass: "text-black", to: "/account" },
+  { value: "Profile", text: "會員資料", icon: "mdi-account", textClass: "text-black", to: "/profile" },
+  { value: "PaymentResult", text: "付款結果", textClass: "text-yellow-darken-4", to: "/paymentResult" },
+  { value: "MyOrder", text: "我的訂單", textClass: "text-yellow-darken-4", to: "/myorder" }
 ];
 
-// 監聽路由變化，確保導航按鈕與路由同步
-// watch(route, () => {
-//     const matchedButton = buttons.find((btn) => btn.to === route.path);
-//     pageTitle.value = matchedButton ? matchedButton.value : "";
-// });
-
-// 頁面載入時同步導航按鈕狀態
-// onMounted(() => {
-//     const matchedButton = buttons.find((btn) => btn.to === route.path);
-//     pageTitle.value = matchedButton ? matchedButton.value : "";
-// });
-
-// 從 pages 陣列中找出會員登入項目
-const accountPage = computed(() =>
-  pages.find((page) => page.value === "Account")
-);
-
+const accountPage = computed(() => pages.find((page) => page.value === "Account"));
 const filteredPages = computed(() =>
-  // 過濾條件：排除 value 為 "Account" 和 "Profile" 的項目
   pages.filter((page) => page.value !== "Account" && page.value !== "Profile")
 );
 
-// 建立 ref 以存取子組件 LoginModel 的實例
+// 取得 LoginModal 實例並提供開啟方法
 const loginModalRef = ref(null);
-
-// 按鈕點擊觸發子組件的方法
 function openLoginModal() {
   loginModalRef.value.show();
 }
 
-// 點擊按鈕時依據登入狀態處理
 function handleProfileClick() {
   if (!userStore.isAuthenticated) {
-    // 未登入時打開登入模態框
     openLoginModal();
   } else {
-    // 已登入則導向 /profile
     router.push("/profile");
   }
 }
@@ -191,87 +71,33 @@ function handleProfileClick() {
 
 <template>
   <div>
-    <!-- 引入子組件 -->
+    <!-- 引入登入對話框 -->
     <LoginModal ref="loginModalRef" />
-    <!-- #region Header -->
-    <!-- Desktop Header -->
-    <div class="desktop-header">
-      <div class="container">
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">登入</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <!-- #region 表單 -->
-                <!-- form
-                            label.form-label{account}
-                            input.form-control#account
-                            label.form-label{password}
-                            input.font-control#password[type="password"]
-                            input:submit.btn.btn-primary[value="Log In"] -->
-                <div class="container mt-3">
-                  <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                      <form action="" class="needs-validation" novalidate>
-                        <div class="form-group mb-3">
-                          <input type="text" class="form-control" id="account" name="account" placeholder="電郵或手機號碼"
-                            required />
-                          <div class="invalid-feedback">
-                            電郵或手機號碼是必須的
-                          </div>
-                        </div>
-                        <div class="form-group mb-3">
-                          <input type="password" class="form-control" id="password" name="password" placeholder="密碼"
-                            required />
-                          <div class="invalid-feedback">密碼是必須的</div>
-                        </div>
-                        <p class="text-start">
-                          <a href="" class="text-primary text-decoration-none a-pwd">忘記密碼?</a>
-                        </p>
-                        <div class="text-center btn-login">
-                          <input type="submit" value="開始購物吧!" class="btn text-white" />
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-                <!-- #endregion -->
-              </div>
-              <!-- <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div> -->
-            </div>
+    <!-- Header 區塊 -->
+    <div class="desktop-header" >
+      <div class="header-container">
+        <!-- 左側：Overlay 區塊 -->
+        <div class="left-section">
+          <div class="overlay-container">
+            <button class="overlay-btn" @click="props.openOverlay">
+              ☰
+            </button>
+            <Overlay :show="props.showOverlay" @close="props.closeOverlay" :filteredPages="filteredPages"
+              :userStore="userStore" :router="router" />
+
           </div>
         </div>
-
-
-        <div class="py-3 headerLogo">
-
-          <a href="/">
-            <img class="img-fluid " src="../assets/logo-removebg-preview.png" alt="TravelLog" />
-          </a>
-
+        <!-- 中間：LOGO 區塊 -->
+        <div class="center-section">
+          <div class="headerLogo">
+            <a href="/">
+              <img class="img-fluid" src="../assets/logo-removebg-preview.png" alt="TravelLog" />
+            </a>
+          </div>
         </div>
-
-        <!-- 導航菜單 -->
-        <nav class="desktop-nav">
-          <div class="nav-bar d-flex align-center" style="
-    border-radius: 20px;
-    padding: 0 12px;
-    height: 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    gap: 12px;
-  ">
-            <!-- 主要導覽按鈕 -->
-            <!-- <v-btn v-for="(page, index) in filteredPages" :key="index" :to="page.to" text color="white"
-              style="text-transform: none; box-shadow: none;">
-              {{ page.text }}
-            </v-btn> -->
+        <!-- 右側：會員系統區塊 -->
+        <div class="right-section">
+          <nav class="desktop-nav">
 
             <!-- 未登入：會員登入按鈕 -->
             <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="btn_account"
@@ -279,17 +105,15 @@ function handleProfileClick() {
               <v-icon left>{{ accountPage.icon }}</v-icon>
               {{ accountPage.text }}
             </v-btn>
-
-            <!-- 已登入：會員下拉選單（範例示意） -->
+            <!-- 已登入：會員下拉選單 -->
             <v-menu v-else-if="userStore.isAuthenticated" offset-y>
-              <template #activator="{ props }">
-                <v-btn text color="white" v-bind="props" class="btn_account">
+              <template #activator="{ props: menuProps }">
+                <v-btn text color="white" v-bind="menuProps" class="btn_account">
                   <v-icon left>mdi-account-circle</v-icon>
                   會員
                   <v-icon right>mdi-menu-down</v-icon>
                 </v-btn>
               </template>
-              <!-- 下拉選單內容 -->
               <v-list>
                 <v-list-item @click="router.push('/profile')">
                   <v-list-item-title>會員資料</v-list-item-title>
@@ -299,90 +123,104 @@ function handleProfileClick() {
                 </v-list-item>
               </v-list>
             </v-menu>
-          </div>
 
-        </nav>
-        <!-- <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form> -->
+          </nav>
+        </div>
       </div>
     </div>
-
-
   </div>
 </template>
 
 <style scoped>
+/* Header 整體容器：使用 flex 分左右中 */
+.desktop-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  /* 你的 header 高度 */
+  background-color: transparent;
+  /* 或你想要的背景 */
+  z-index: 1000;
+  /* 確保在主內容上方 */
+}
+
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 60px;
+  background-color: transparent;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 左側：固定寬度 */
+.left-section {
+  flex: 0 0 50px;
+  display: flex;
+  align-items: center;
+}
+
+/* 中間：自動擴展並置中 */
+.center-section {
+  flex: 1;
+  text-align: center;
+}
+
+/* 右側：固定寬度 */
+.right-section {
+  flex: 0 0 50px;
+  text-align: right;
+}
+
+/* overlay 區塊 */
+.overlay-container {
+  display: flex;
+  align-items: center;
+}
+
+.overlay-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+/* LOGO 區塊 */
+.headerLogo {
+  display: inline-block;
+  height: 50px;
+  width: 200px;
+}
+
+/* Nav 相關 */
+.desktop-nav .nav-bar  {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: transparent;
+  z-index: 9999; /* 提升 z-index */
+}
+
 .btn_account {
   border-radius: 12px;
   padding: 0 12px;
   height: 40px;
-  box-shadow: none !important; 
-  gap: 8px;
+  box-shadow: none !important;
+  gap: 0px;
 }
 
-.img-sunmoon {
-  height: 10px;
-}
-
-.headerLogo {
-  position: absolute;
-  /* 設定絕對定位 */
-  top: 0;
-  /* 距離頂部 0 */
-  left: 0;
-  /* 距離左側 0 */
-  height: 50px;
-  /* LOGO 高度 */
-  width: 200px;
-  /* LOGO 寬度 */
-  z-index: 999;
-  /* 確保 LOGO 在最上層 */
-  padding-left: 80px;
-
-
-}
-
-/* Desktop Header 樣式 */
-.desktop-nav {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1rem 0;
-  font-size: 11.2px;
-  line-height: 16px;
-  padding-left: 60px;
-  gap: 12px;
-
-}
-
-
-/* 工具列按鈕樣式 */
 .tool-button {
   background: none;
   border: none;
   padding: 0.5rem;
   cursor: pointer;
-}
-
-.tool-button svg {
-  width: 20px;
-  height: 20px;
-}
-
-#mobileMenu {
-  max-width: 280px;
-}
-
-#cartMenu {
-  max-width: 280px;
-}
-
-.tool-button {
-  transition: transform 0.1s ease;
-}
-/* 當按鈕被點擊（active 狀態），縮小至 95% */
-.tool-button:active {
-  transform: scale(0.75);
 }
 </style>

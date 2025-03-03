@@ -1,8 +1,8 @@
 <script setup>
 import CarouselsCycle from "@/components/CarouselsCycle.vue";
 import icon from "@/components/Icon.vue";
-
 </script>
+
 <template>
   <div class="wrap">
     <div class="item">
@@ -26,7 +26,8 @@ import icon from "@/components/Icon.vue";
     width: 100%;
     position: relative;
 
-    &:hover {
+    /* 移除滑鼠移入效果，不再改變 .content 的 opacity */
+    /* &:hover {
       .content {
         opacity: 1;
       }
@@ -34,7 +35,7 @@ import icon from "@/components/Icon.vue";
       h2::after {
         width: 100%;
       }
-    }
+    } */
 
     .content {
       position: absolute;
@@ -47,7 +48,7 @@ import icon from "@/components/Icon.vue";
       display: flex;
       justify-content: center;
       flex-direction: column;
-      opacity: 0;
+      opacity: 1; /* 直接顯示 */
       transition: opacity 0.6s;
       cursor: pointer;
     }
