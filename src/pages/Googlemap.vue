@@ -35,7 +35,7 @@
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
+                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place" :hide="true"
                   :deletePlaceHandler="deletePlace">
                   <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
                     :id="`route-info-${index}`">

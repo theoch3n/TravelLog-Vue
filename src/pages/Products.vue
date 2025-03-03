@@ -13,6 +13,7 @@ const getData = async (keyword = '') => {
         const response = await axios.post(`${baseAddress}/api/TourBundles/GetTourBundlesByKeyword`, request);
         //alert(JSON.stringify(response.data));
         categoryArray.value = response.data;
+        getInfo();
     } catch (error) {
         alert(error.message + "\n檢查你的api有沒有開");
     }

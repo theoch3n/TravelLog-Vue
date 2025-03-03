@@ -18,18 +18,15 @@
                             <thead class="table-light">
                                 <tr class="text-center">
                                     <th>#</th>
-                                    <th>ID</th>
-                                    <th>BillId</th>
                                     <th>姓名</th>
                                     <th>金額</th>
                                     <th>已支付</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="text-center" v-for="(data, index) in datas?.billDetails" :key="data.id">
+                                <tr class="text-center pointer" v-for="(data, index) in datas?.billDetails"
+                                    @click="paidStatusUpdate(data)" :key="data.id">
                                     <td>{{ index + 1 }}</td>
-                                    <td>{{ data.id }}</td>
-                                    <td>{{ data.billId }}</td>
                                     <td>{{ data.memberName }}</td>
                                     <td>{{ data.amount }}</td>
                                     <td>
@@ -50,6 +47,7 @@
     </div>
 </template>
 <script setup>
+import axios from 'axios';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -63,11 +61,30 @@ const props = defineProps({
     },
     modelValue: Object
 })
-
+const baseAddress = "https://localhost:7092";
 const datas = computed(() => props.billWithDetails)
 const itinerary = computed(() => props.modelValue?.itinerary || "");
 const groupInfo = computed(() => props.groupInfo);
+const paidStatusUpdate = async (item) => {
+    if (item.paid) {
+        alert("已付款的項目不可修改")
+        return
+    }
 
+    var Confirmed = confirm("確定要將 " + item.memberName + " 的付款狀態修改為已支付嗎?");
+    if (!Confirmed) {
+        alert("操作已取消")
+        return;
+    }
+
+    const response = await axios.post(`${baseAddress}/api/Bill/updatePaidStatus/${item.id}`)
+    if (response.data) {
+        item.paid = true;
+        emit('refreshData');
+        alert("狀態修改成功!")
+    }
+}
+const emit = defineEmits(['refreshData'])
 const backToList = () => {
     props.toggleModal('modalDetails', 'hide')
     props.toggleModal('modalBillList', 'show')
