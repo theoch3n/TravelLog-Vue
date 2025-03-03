@@ -13,20 +13,7 @@ const props = defineProps({
   closeOverlay: { type: Function, required: true }
 });
 
-const isDark = ref(false);
-function toggleDarkMode() {
-  isDark.value = !isDark.value;
-  if (isDark.value) {
-    DarkReader.setFetchMethod(window.fetch);
-    DarkReader.enable({
-      brightness: 100,
-      contrast: 90,
-      sepia: 10,
-    });
-  } else {
-    DarkReader.disable();
-  }
-}
+
 
 // 控制登入對話框與行動選單
 const loginDialog = ref(false);
@@ -78,6 +65,8 @@ function handleProfileClick() {
     router.push("/profile");
   }
 }
+
+
 </script>
 
 <template>
@@ -85,7 +74,7 @@ function handleProfileClick() {
     <!-- 引入登入對話框 -->
     <LoginModal ref="loginModalRef" />
     <!-- Header 區塊 -->
-    <div class="desktop-header">
+    <div class="desktop-header" >
       <div class="header-container">
         <!-- 左側：Overlay 區塊 -->
         <div class="left-section">
@@ -93,13 +82,9 @@ function handleProfileClick() {
             <button class="overlay-btn" @click="props.openOverlay">
               ☰
             </button>
-            <Overlay 
-              v-if="props.showOverlay" 
-              @close="props.closeOverlay" 
-              :filteredPages="filteredPages" 
-              :userStore="userStore" 
-              :router="router" 
-            />
+            <Overlay :show="props.showOverlay" @close="props.closeOverlay" :filteredPages="filteredPages"
+              :userStore="userStore" :router="router" />
+
           </div>
         </div>
         <!-- 中間：LOGO 區塊 -->
@@ -113,32 +98,32 @@ function handleProfileClick() {
         <!-- 右側：會員系統區塊 -->
         <div class="right-section">
           <nav class="desktop-nav">
-            <div class="nav-bar">
-              <!-- 未登入：會員登入按鈕 -->
-              <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="btn_account"
-                :class="accountPage.textClass" text>
-                <v-icon left>{{ accountPage.icon }}</v-icon>
-                {{ accountPage.text }}
-              </v-btn>
-              <!-- 已登入：會員下拉選單 -->
-              <v-menu v-else-if="userStore.isAuthenticated" offset-y>
-                <template #activator="{ props: menuProps }">
-                  <v-btn text color="white" v-bind="menuProps" class="btn_account">
-                    <v-icon left>mdi-account-circle</v-icon>
-                    會員
-                    <v-icon right>mdi-menu-down</v-icon>
-                  </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item @click="router.push('/profile')">
-                    <v-list-item-title>會員資料</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="logout">
-                    <v-list-item-title>登出</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </div>
+
+            <!-- 未登入：會員登入按鈕 -->
+            <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="btn_account"
+              :class="accountPage.textClass" text>
+              <v-icon left>{{ accountPage.icon }}</v-icon>
+              {{ accountPage.text }}
+            </v-btn>
+            <!-- 已登入：會員下拉選單 -->
+            <v-menu v-else-if="userStore.isAuthenticated" offset-y>
+              <template #activator="{ props: menuProps }">
+                <v-btn text color="white" v-bind="menuProps" class="btn_account">
+                  <v-icon left>mdi-account-circle</v-icon>
+                  會員
+                  <v-icon right>mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item @click="router.push('/profile')">
+                  <v-list-item-title>會員資料</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="logout">
+                  <v-list-item-title>登出</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
           </nav>
         </div>
       </div>
@@ -147,6 +132,21 @@ function handleProfileClick() {
 </template>
 
 <style scoped>
+/* Header 整體容器：使用 flex 分左右中 */
+.desktop-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  /* 你的 header 高度 */
+  background-color: transparent;
+  /* 或你想要的背景 */
+  z-index: 1000;
+  /* 確保在主內容上方 */
+}
+
+
 .header-container {
   display: flex;
   align-items: center;
@@ -155,27 +155,29 @@ function handleProfileClick() {
   height: 60px;
   background-color: transparent;
   width: 100%;
+  box-sizing: border-box;
 }
 
-/* 左側區塊固定寬度 */
+/* 左側：固定寬度 */
 .left-section {
-  width: 50px;
+  flex: 0 0 50px;
   display: flex;
   align-items: center;
 }
 
-/* 中間區塊：使用 flex:1 並置中內容 */
+/* 中間：自動擴展並置中 */
 .center-section {
   flex: 1;
   text-align: center;
 }
 
-/* 右側區塊：固定寬度並右對齊 */
+/* 右側：固定寬度 */
 .right-section {
-  width: 200px;
+  flex: 0 0 50px;
   text-align: right;
 }
 
+/* overlay 區塊 */
 .overlay-container {
   display: flex;
   align-items: center;
@@ -185,23 +187,26 @@ function handleProfileClick() {
   background: none;
   border: none;
   font-size: 24px;
+  color: white;
   cursor: pointer;
 }
 
+/* LOGO 區塊 */
 .headerLogo {
   display: inline-block;
   height: 50px;
   width: 200px;
 }
 
-.desktop-nav .nav-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border-radius: 20px;
-  padding: 0 12px;
-  height: 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+/* Nav 相關 */
+.desktop-nav .nav-bar  {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: transparent;
+  z-index: 9999; /* 提升 z-index */
 }
 
 .btn_account {
@@ -209,7 +214,7 @@ function handleProfileClick() {
   padding: 0 12px;
   height: 40px;
   box-shadow: none !important;
-  gap: 8px;
+  gap: 0px;
 }
 
 .tool-button {

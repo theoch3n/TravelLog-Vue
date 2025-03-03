@@ -81,8 +81,8 @@ const filteredPages = computed(() => pages);
 </template>
 
 <style scoped>
+
 nav {
-  /* 移除 padding-left 或改為 0 */
   padding-left: 0; 
   display: flex;
   align-items: center;
@@ -90,9 +90,12 @@ nav {
   background-color: transparent;
   width: 100%;
   box-shadow: none;
-  position: relative;
-  z-index: 10;
+  position: fixed; /* 改為固定定位 */
+  top: 0;          /* 固定在螢幕上方 */
+  left: 0;         /* 固定在螢幕左側 */
+  z-index: 1000;   /* 設定一個高的 z-index 以確保最上層 */
 }
+
 
 
 main {
