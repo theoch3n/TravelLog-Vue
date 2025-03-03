@@ -1,10 +1,8 @@
 <script setup>
 import CarouselsCycle from "@/components/CarouselsCycle.vue";
 import icon from "@/components/Icon.vue";
-
 </script>
 <template>
-
   <div class="wrap">
     <div class="item">
       <CarouselsCycle class="carousels" />
@@ -15,6 +13,9 @@ import icon from "@/components/Icon.vue";
   </div>
 </template>
 <style scoped>
+CarouselsCycle {
+  max-height: 100%;
+}
 .wrap {
   width: 100vw;
   display: flex;
@@ -66,7 +67,7 @@ import icon from "@/components/Icon.vue";
 
       /* // 動態橫線 */
       &::after {
-        content: '';
+        content: "";
         display: block;
         width: 0;
         height: 2px;

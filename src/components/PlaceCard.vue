@@ -6,13 +6,23 @@
       </div>
       <div class="col-8">
         <div class="card-content">
-          <i v-if="hide" class="bi bi-x PlaceCard-closebtn" @click="Delete(data.id)"></i>
+          <i
+            v-if="hide"
+            class="bi bi-x PlaceCard-closebtn"
+            @click="Delete(data.id)"
+          ></i>
           <h4 class="placecard-title">{{ data.name }}</h4>
           <p>評分：{{ data.rating }}</p>
           <div class="rating">
             <!-- 根據評分顯示星星 -->
-            <span v-for="index in 5" :key="index" :class="{ filled: index <= data.rating }">
-              {{ index <= data.rating ? "★" : "☆" }} </span>
+            <span
+              v-for="index in 5"
+              :key="index"
+              :class="{ filled: index <= data.rating }"
+              :style="{ color: index <= data.rating ? 'blue' : 'gray' }"
+            >
+              {{ index <= data.rating ? "★" : "☆" }}
+            </span>
           </div>
           <p v-if="hide">到達時間: {{ data.time }}</p>
           <!--插槽 從父元件-->
@@ -35,10 +45,11 @@ const props = defineProps({
   deletePlaceHandler: {
     type: Function,
     required: false,
-  }, hide: {
+  },
+  hide: {
     type: Boolean,
-    required: false
-  }
+    required: false,
+  },
 });
 const Delete = (id) => {
   // 調用從父元件傳遞過來的刪除方法
@@ -72,7 +83,7 @@ const Delete = (id) => {
 
 .card-img {
   position: relative;
-  height: 100%;
+  max-height: 100%;
   border-radius: 10px;
   margin-right: 10px;
 }

@@ -3,8 +3,7 @@
   <div class="trip-planner">
     <div class="flex-container">
       <div class="controls-container col-4 rounded-3">
-        <h4 class="title mt-4">{{ Itinerarydata.itineraryTitle }}</h4>
-        <img :src="Itinerarydata.itineraryImage" alt="" class="titleimg" :style="{ height: '30%', width: '100%' }" />
+        <h4 class="title">{{ Itinerarydata.itineraryTitle }}</h4>
         <div class="date">
           <label for="itineraryStartDate">{{
             Itinerarydata.itineraryStartDate
@@ -14,31 +13,73 @@
             Itinerarydata.itineraryEndDate
           }}</label>
         </div>
-        <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
+        <img
+          :src="Itinerarydata.itineraryImage"
+          alt=""
+          class="titleimg"
+          :style="{ height: '30%', width: '100%' }"
+        />
+
+        <button
+          class="btn btn-primary draw_btn"
+          id="draw-route"
+          @click="drawRoute"
+        >
           規劃路線
         </button>
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
-            <button class="nav-link btn btn-outline-secondary border border-primary border-3" id="home-tab"
-              :class="{ active: selectedDate === date }" data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]"
-              type="button" role="tab" aria-selected="true" @click="handleDateClick(date)">
+          <li
+            class="nav-item"
+            v-for="(date, index) in dateList"
+            :key="index"
+            role="presentation"
+          >
+            <button
+              class="nav-link btn btn-outline-secondary border border-primary border-3"
+              id="home-tab"
+              :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab"
+              :data-bs-target="'#' + dateList[index]"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              @click="handleDateClick(date)"
+            >
               {{ date }}
             </button>
           </li>
         </ul>
-        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
-          <div class="tab-pane fade show" :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
+        <div
+          class="tab-content"
+          v-for="(date, index) in dateList"
+          :key="index"
+          id="myTabContent"
+        >
+          <div
+            class="tab-pane fade show"
+            :id="dateList[index]"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
             {{ dateList[index] }}
 
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
-                  :deletePlaceHandler="deletePlace">
-                  <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`">
+                <PlaceCard
+                  v-for="(place, index) in places"
+                  :key="place.id"
+                  :data="place"
+                  :hide="true"
+                  :deletePlaceHandler="deletePlace"
+                >
+                  <li
+                    v-if="index < places.length - 1"
+                    class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`"
+                  >
                     計算中...
                   </li>
                 </PlaceCard>
@@ -55,8 +96,12 @@
       </div>
       <div class="pt-2">
         <div class="input">
-          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別" id="textsearch-input-overlay" />
+          <input
+            v-model="textsearchInput"
+            class="form-control search-input-overlay p-1 border-5 border-primary"
+            placeholder="輸入類別"
+            id="textsearch-input-overlay"
+          />
           <button class="btn btn-danger" id="searchButton">搜尋</button>
           <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
         </div>
@@ -717,7 +762,7 @@ const fetchItineraryById = async () => {
 
 .title {
   position: absolute;
-  top: 100px;
+
   /* 確保標題貼近圖片頂部 */
   left: 50%;
   transform: translateX(-50%);
@@ -730,6 +775,15 @@ const fetchItineraryById = async () => {
   /* 半透明黑色背景提升可讀性 */
   border-radius: 5px;
   text-align: center;
+}
+.date {
+  position: absolute;
+  /* 確保標題貼近圖片頂部 */
+  left: 26%;
+  top: 49px;
+  background: rgba(0, 0, 0, 0.5);
+  /* 半透明黑色背景提升可讀性 */
+  color: rgb(233, 219, 219);
 }
 
 .titleimg {
