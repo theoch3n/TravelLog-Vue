@@ -198,7 +198,7 @@ const dateDiff = computed(() => date_Ed.value.diff(date_St.value, "day"));
 // 生成日期列表
 const dateList = computed(() => {
   return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
-    date_St.value.add(i, "day").format("MM/DD")
+    date_St.value.add(i, "day").format("YYYY-MM-DD")
   );
 });
 
