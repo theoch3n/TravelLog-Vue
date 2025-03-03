@@ -198,7 +198,7 @@ const dateDiff = computed(() => date_Ed.value.diff(date_St.value, "day"));
 // 生成日期列表
 const dateList = computed(() => {
   return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
-    date_St.value.add(i, "day").format("YYYY-MM-DD")
+    date_St.value.add(i, "day").format("MM/DD")
   );
 });
 
@@ -740,6 +740,28 @@ const fetchItineraryById = async () => {
 </script>
 
 <style scoped>
+.nav-link {
+  padding: 8px 16px;
+  margin: 0 5px;
+  min-width: 80px; /* 確保所有按鈕寬度一致 */
+  text-align: center;
+}
+
+.nav-link {
+  border-radius: 8px !important; /* 使圓角更明顯 */
+  font-weight: 500; /* 稍微加粗字體 */
+}
+
+.nav-link.active {
+  background-color: #0d6efd !important; /* 更鮮明的藍色 */
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加陰影增加層次感 */
+}
+
+.nav-link:not(.active) {
+  background-color: #f8f9fa; /* 非選中按鈕使用淺色背景 */
+}
+
 .input {
   z-index: 1000;
   /* 讓搜尋框浮在地圖之上 */
@@ -756,8 +778,12 @@ const fetchItineraryById = async () => {
 
 .draw_btn {
   display: block;
-  margin-left: auto;
-  border-radius: 50px;
+  width: 100%; /* 占滿整個容器寬度 */
+  text-align: center; /* 文字居中 */
+  padding: 12px 0; /* 上下內邊距，使按鈕更高 */
+  margin: 5px 0; /* 上下外邊距 */
+  border-radius: 4px; /* 圓角 */
+  font-weight: bold; /* 粗體文字 */
 }
 
 .title {
