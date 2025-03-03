@@ -29,10 +29,18 @@
     </v-card>
 
     <!-- 使用 v-snackbar 顯示通知訊息 -->
-    <v-snackbar v-model="snackbar"  :timeout="3000" :color="snackbarColor"
-        style="font-size: 1.2rem; font-weight: bold; min-width: 300px; padding: 16px;">
-        {{ snackbarText }}
+    <v-snackbar v-model="snackbar" :timeout="3000" vertical :color="snackbarColor"
+        elevation="24" style="font-size: 2rem; font-weight: bold; min-width: 400px; padding: 16px;">
+        <p style="color: white; font-size: 1.5rem;">{{ snackbarTitle }}</p>
+        <div style="color: white;">{{ snackbarText }}</div>
+
+        <template v-slot:actions>
+            <v-btn color="indigo" variant="text" @click="snackbar = false" style="color: white;">
+                Close
+            </v-btn>
+        </template>
     </v-snackbar>
+
 </template>
 
 <script setup lang="ts">
@@ -87,6 +95,7 @@ function toggleConfirmNewPassword() {
 
 // Snackbar 相關狀態與通知訊息
 const snackbar = ref(false)
+const snackbarTitle = ref('')
 const snackbarText = ref('')
 const snackbarColor = ref('success')
 
@@ -101,7 +110,8 @@ async function ChangePassword() {
             newPassword: form.value.newPassword
         }
         const response = await axios.put('https://localhost:7092/api/ChangePassword', requestData)
-        snackbarText.value = response.data.message || '密碼變更成功！'
+        snackbarTitle.value = '密碼變更成功！'
+        snackbarText.value = response.data.message 
         snackbarColor.value = 'success'
         snackbar.value = true
 
@@ -114,7 +124,8 @@ async function ChangePassword() {
         formRef.value.resetValidation()
     } catch (err: any) {
         console.error('變更密碼錯誤：', err)
-        snackbarText.value = err.response?.data?.message || '變更密碼失敗！'
+        snackbarTitle.value = '變更密碼失敗！'
+        snackbarText.value = err.response?.data?.message
         snackbarColor.value = 'error'
         snackbar.value = true
     }

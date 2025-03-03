@@ -66,7 +66,8 @@
           </div>
 
           <!-- 錯誤提示 -->
-          <v-alert v-if="error" type="error" dismissible class="mt-3" style="max-width: auto; width: auto;">
+          <v-alert v-if="error && errorAlertVisible" type="error" v-model:active="errorAlertVisible" dismissible
+            class="mt-3" style="max-width: auto; width: auto;">
             {{ error }}
           </v-alert>
           <!-- 載入中提示 -->
@@ -76,10 +77,19 @@
     </v-row>
 
     <!-- Snackbar 通知訊息 -->
-    <v-snackbar v-model="snackbar"  :timeout="3000" :color="snackbarColor"
-      style="font-size: 1.2rem; font-weight: bold; min-width: 300px; padding: 16px;">
-      {{ snackbarText }}
+    <!-- 提示的 snackbar -->
+    <v-snackbar v-model="snackbar" :timeout="3000" vertical :color="snackbarColor"
+        elevation="24" style="font-size: 2rem; font-weight: bold; min-width: 400px; padding: 16px;">
+        <p style="color: white; font-size: 1.5rem;">{{ snackbarTitle }}</p>
+        <div style="color: white;">{{ snackbarText }}</div>
+
+        <template v-slot:actions>
+            <v-btn color="indigo" variant="text" @click="snackbar = false" style="color: white;">
+                Close
+            </v-btn>
+        </template>
     </v-snackbar>
+
   </v-container>
 </template>
 
@@ -91,6 +101,7 @@ import ChangePassword from "../components/ChangePassword.vue"
 
 // 驗證規則（簡短文字）
 const showAlert = ref(true)
+const errorAlertVisible = ref(true)
 
 const accountNameRules = [
   (v: string) => !!v || '必填',
@@ -127,6 +138,7 @@ const router = useRouter()
 
 // Snackbar 相關狀態
 const snackbar = ref(false)
+const snackbarTitle = ref('')
 const snackbarText = ref('')
 const snackbarColor = ref('success')
 
@@ -170,12 +182,14 @@ async function updateProfile() {
   if (form.value && !form.value.validate()) return
   try {
     await axios.put('https://localhost:7092/api/Profile', profile.value)
-    snackbarText.value = '個人資料更新成功！'
+    snackbarTitle.value = '更新成功！'
+    snackbarText.value = '個人資料已完成變更'
     snackbarColor.value = 'success'
     snackbar.value = true
   } catch (err) {
     console.error('更新資料錯誤：', err)
-    snackbarText.value = '更新資料失敗！'
+    snackbarTitle.value = '更新失敗'
+    snackbarText.value = '資料更新失敗！'
     snackbarColor.value = 'error'
     snackbar.value = true
   }
@@ -187,12 +201,13 @@ async function resendVerificationEmail() {
     const response = await axios.post('https://localhost:7092/api/Account/ResendVerificationEmail', {
       email: profile.value.userEmail
     })
-    snackbarText.value = response.data.message || '驗證信已寄出！'
+    snackbarTitle.value = '驗證信已寄出！'
+    snackbarText.value =  response.data.message ||'請查看信箱，尋找驗證信'
     snackbarColor.value = 'success'
     snackbar.value = true
   } catch (err: any) {
     console.error('重新寄送驗證信失敗：', err)
-    snackbarText.value = err.response?.data?.message || '請稍後再試。'
+    snackbarTitle.value = err.response?.data?.message || '請稍後再試。'
     snackbarColor.value = 'error'
     snackbar.value = true
   }
@@ -212,7 +227,8 @@ onMounted(() => {
   margin: 20px;
   padding: 20px;
   background-color: #ffffff;
-  border: 1px solid #c4c4c4d7; /* 細邊框 */
+  border: 1px solid #c4c4c4d7;
+  /* 細邊框 */
   border-radius: 20px;
   box-shadow: 0px 6px 6px rgba(52, 52, 52, 0.1);
 }
