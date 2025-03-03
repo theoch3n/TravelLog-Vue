@@ -22,7 +22,7 @@ const icons = reactive([
 </script>
 
 <template>
-    <v-footer rounded>
+    <!-- <v-footer rounded> -->
         <v-container fluid class="pa-2">
             <v-row>
                 <v-col cols="12" lg="4" class="footer-text mb-3">
@@ -45,7 +45,7 @@ const icons = reactive([
                 </v-col>
             </v-row>
         </v-container>
-    </v-footer>
+    <!-- </v-footer> -->
 </template>
 
 <style scoped>

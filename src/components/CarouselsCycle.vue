@@ -19,7 +19,7 @@ const banners = ref([
 
 <template>
     <div class="carousel-container">
-        <v-carousel hide-delimiters :show-arrows="false" height="600" cycle hide-delimiter-background
+        <v-carousel hide-delimiters :show-arrows="false" height="100vh" cycle hide-delimiter-background
             class="full-width-carousel">
             <v-carousel-item v-for="(banner, i) in banners" :key="i">
                 <v-img :src="banner.src" :alt="banner.alt" cover height="100%" class="banner-image" />
@@ -31,13 +31,16 @@ const banners = ref([
 <style scoped>
 .carousel-container {
     width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    position: relative;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
 
 .full-width-carousel {
     width: 100%;
+    height: 100%;
 }
 
 .banner-image {

@@ -30,16 +30,15 @@ import PageTop from "../components/PageTop.vue";
             - v-slot="{ Component }" 接收當前路由對應的元件
             - 使用動態元件渲染路由內容
         -->
-                <router-view v-slot="{ Component }">
+                <router-view v-slot="{ Component }" class="router-view-container">
                     <component :is="Component" />
                 </router-view>
             </v-main>
             <!-- Page-Top -->
             <PageTop />
         </main>
-
-
-        <footer> <!-- 頁尾區域 -->
+        <!-- 頁尾 -->
+        <footer>
             <Footer />
         </footer>
 
@@ -53,54 +52,62 @@ import PageTop from "../components/PageTop.vue";
 <style scoped>
 nav {
     padding-left: 200px;
-    /* 讓內部內容向右偏移 */
     display: flex;
     align-items: center;
-    /* 垂直置中 */
     height: 60px;
-    /* 高度設定 */
-    background-color: white;
-    /* 背景色 */
+    background-color: transparent;
     width: 100%;
-    /* 讓 nav 佔滿整個寬度 */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    /* 陰影美化 */
+    box-shadow: none;
+    position: relative;
+    z-index: 10;
 }
 
 
 /* 調整主內容區域 */
 main {
     margin-left: 20px;
-    /* 確保內容不被側邊欄擋住 */
     flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: transparent;
+    position: relative;
+    z-index: 5;
 }
+
 
 Footer {
     margin-left: 20px;
-    /* 確保內容不被側邊欄擋住 */
-    flex: 1;
+    flex: none;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: transparent !important;
+    padding: 10px 0;
+    min-height: 60px;
+    position: relative;
+    z-index: 10;
 }
 
 .content {
-    /* 讓主要內容區域佔據剩餘空間 */
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* flex-shrink: 0; */
-    background-color: white;
+    background-color: transparent;
+    position: relative;
+}
+
+.router-view-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
 /* 確保 <v-app> 佔滿視窗高度 */
 .v-app {
     display: flex;
     flex-direction: column;
-    /* 確保應用高度至少等於視窗高度 */
     min-height: 100vh;
+    background-color: transparent;
 }
 </style>
