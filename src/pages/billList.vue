@@ -4,9 +4,22 @@
             <div class="modal-content">
                 <div class="modal-header text-center">
                     <h5 class="modal-title w-100" id="modalBillListLabel"> {{ itineraryTitle }} </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" @click="resetForm()"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- 篩選條件下拉選單 -->
+                    <div class="d-flex flex-column">
+                        <div class="mb-3 w-50 d-flex align-items-center">
+                            <input type="text" id="Search" class="form-control me-1" placeholder="搜尋明細"
+                                v-model="searchQuery">
+                            <select class="form-select" id="filterSelect" v-model="selectedFilter">
+                                <option value="all">全部</option>
+                                <option value="paid">已結單</option>
+                                <option value="unpaid">未結單</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr class="text-center">
@@ -18,8 +31,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-center pointer" v-for="(bill, index) in bills" :key="bill.id"
-                                @click="openDetails(bill.id)">
+                            <tr class="text-center pointer" :class="getBillStatusClass(bill)"
+                                v-for="(bill, index) in filteredBills" :key="bill.id" @click="openDetails(bill.id)">
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ bill.title }}</td>
                                 <td>{{ bill.paidBy }}</td>
@@ -31,7 +44,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" @click="createNewBill()">新增項目</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <button type="button" class="btn btn-danger" @click="test()">測試按鈕</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        @click="resetForm()">關閉</button>
                 </div>
             </div>
         </div>
@@ -42,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import BillDetails from './billDetails.vue';
 import bill from './bill.vue';
 import axios from "axios";
@@ -52,13 +67,17 @@ const props = defineProps({
 });
 
 const selectedItem = ref(null)
+const selectedFilter = ref("all");
+const searchBill = ref();
 const dataList = ref([]);
 const bills = ref([]);
 const details = ref([]);
 let itineraryInfo = ref();
 let itineraryId = ref();
 let itineraryTitle = ref();
-
+const test = () => {
+    console.log(searchBill.value)
+}
 watch(() => props.modelValue, (newValue) => {
     if (newValue) {
         itineraryInfo.value = {
@@ -69,19 +88,62 @@ watch(() => props.modelValue, (newValue) => {
         toggleModal('modalBillList', 'show');
     }
 });
+
+const resetForm = () => {
+    selectedFilter.value = 'all';
+    searchQuery.value = '';
+}
+const searchQuery = ref();
+const filteredBills = computed(() => {
+    return bills.value.filter(bill => {
+        let isValid = true;
+
+        const query = (searchQuery.value || "").toLowerCase();
+        if (searchQuery.value && !(
+            bill.title?.toLowerCase().includes(query) ||
+            bill.totalAmount?.toString().includes(query) ||
+            bill.paidBy?.toLowerCase().includes(query))) {
+            isValid = false;
+        }
+
+        if (selectedFilter.value === 'paid' && bill.billDetails.some(detail => detail.paid === false)) {
+            isValid = false;
+        } else if (selectedFilter.value === 'unpaid' && bill.billDetails.every(detail => detail.paid === true)) {
+            isValid = false;
+        }
+        return isValid;
+    });
+});
+
+const getBillStatusClass = (bill) => {
+    if (selectedFilter.value === 'all') {
+        const isPaid = bill.billDetails.every(detail => detail.paid === true);
+        return isPaid ? 'table-default' : 'table-danger';
+    }
+    return '';
+};
+
 const getBillsData = async () => {
     itineraryId = props.modelValue.itineraryId
     itineraryTitle = props.modelValue.itineraryTitle
     try {
+        bills.value = [];
+        details.value = [];
         const response = await axios.get(`https://localhost:7092/api/Bill/GetBillWithDetailsByItineraryId/${itineraryId}`);
+        //dataList.value = response.data;
+        // console.log(JSON.stringify(dataList.value))
+        //bills.value = [];
+        //details.value = [];
+        //for (const item of dataList.value) {
+        //    bills.value.push(item.bill);
+        //    details.value.push(item.bill.billDetails);
+        //}
         if (response.data) {
             dataList.value = response.data;
-            bills.value = [];
-            details.value = [];
-            for (const item of response.data) {
-                bills.value.push(item.bill);
-                details.value.push(item.bill.billDetails);
-            }
+            bills.value = dataList.value.map(item => ({
+                ...item.bill,
+                billDetails: item.bill.billDetails || []  // 確保每個帳單都有 billDetails
+            }));
         } else {
             alert("發生錯誤");
         }
@@ -121,4 +183,13 @@ const toggleModal = (modalId, action) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.modal-content {
+    height: 80%;
+    overflow: hidden;
+}
+
+.modal-body {
+    overflow-y: auto;
+}
+</style>

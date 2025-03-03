@@ -11,7 +11,7 @@
                         <p class="card-text text-center fs-3">
                             <rating v-if="infoData" :rating="infoData[index]?.rating" />
                         </p>
-                        <h5> {{ "立即訂購價: " + infoData[index]?.price }}</h5>
+                        <h5 v-if="infoData"> {{ "立即訂購價: " + infoData[index]?.price }}</h5>
                     </div>
                 </div>
 
