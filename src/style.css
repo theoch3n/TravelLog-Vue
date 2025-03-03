@@ -95,3 +95,14 @@ body,
 .pointer {
     cursor: pointer;
 }
+
+/* 強制移除模態框背景遮罩 */
+.modal-backdrop {
+    opacity: 0 !important;
+    display: none !important;
+  }
+  
+  body.modal-open {
+    overflow: auto !important;
+    padding-right: 0 !important;
+  }
