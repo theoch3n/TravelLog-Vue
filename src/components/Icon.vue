@@ -1,15 +1,18 @@
 <template>
   <div class="background-panel">
     <div class="row">
-      <!-- <img src="/src/assets/logo-removebg-preview.png" alt="logo" class="logo" /> -->
       <div class="wrap">
         <router-link to="/itinerary" class="icon-container">
-          <img src="/icon/icon01.png" alt="行程規劃" class="icon-img" />
-          <span class="icon-text">行程規劃</span>
+          <div class="icon-inner">
+            <img src="/icon/icon01.png" alt="行程規劃" class="icon-img" />
+            <span class="icon-text">行程規劃</span>
+          </div>
         </router-link>
         <router-link to="/TravelPackage" class="icon-container">
-          <img src="/icon/travel-and-tourism.png" alt="包套行程" class="img" />
-          <span class="icon-text">包套行程</span>
+          <div class="icon-inner">
+            <img src="/icon/travel-and-tourism.png" alt="包套行程" class="icon-img" />
+            <span class="icon-text">包套行程</span>
+          </div>
         </router-link>
       </div>
     </div>
@@ -46,13 +49,6 @@ html, body {
   gap: 50px;
 }
 
-/* logo 設定 */
-.logo {
-  max-height: 200px;
-  margin-top: -120px;
-  object-fit: contain;
-}
-
 /* wrap：放置 icon 連結 */
 .wrap {
   display: flex;
@@ -60,37 +56,82 @@ html, body {
   justify-content: center;
 }
 
-/* icon-container：直接顯示，不加入 hover 效果 */
+/* 新設計的 icon-container */
 .icon-container {
+  text-decoration: none;
+  color: inherit;
+  width: 220px;
+  height: 280px;
+  perspective: 1000px;
+  transition: transform 0.3s;
+}
+
+.icon-container:hover {
+  transform: translateY(-10px);
+}
+
+.icon-inner {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-decoration: none;
-  color: inherit;
-  border-radius: 18px;
-  /* 新增：白底與橘框 */
-  background-color: rgba(255, 255, 255, 0.537);      /* 白色背景 */
-  border: 10px double rgb(255, 119, 0);    /* 橘色框線 */
-  padding: 10px;               /* 建議加點內距，避免內容貼邊 */
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 119, 0, 0.6);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
 }
 
+.icon-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #ff7700, #ff9955);
+}
 
 /* icon-img：放大圖示 */
 .icon-img {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
-  background-color: transparent;
+  transition: transform 0.3s;
+  margin-bottom: 15px;
+}
+
+.icon-container:hover .icon-img {
+  transform: scale(1.1);
 }
 
 /* icon-text：放大文字 */
 .icon-text {
-  margin-top: 24px;
-  color: #000000; /* 根據背景選擇合適的文字色彩 */
-  font-size: 28px !important; 
+  color: #333;
+  font-size: 24px !important; 
   font-weight: bold;
+  text-align: center;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.icon-text::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: #ff7700;
+  transition: width 0.3s;
+}
+
+.icon-container:hover .icon-text::after {
+  width: 80%;
 }
 </style>

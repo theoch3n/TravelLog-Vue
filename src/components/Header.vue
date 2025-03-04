@@ -35,15 +35,15 @@ function logout() {
 
 // 定義選單（包含會員登入與會員資料）
 const pages = [
-  { value: "payment", text: "Payment", textClass: "text-brown-darken-1", to: "/payment" },
+  // { value: "payment", text: "Payment", textClass: "text-brown-darken-1", to: "/payment" },
   { value: "about", text: "關於我們", textClass: "text-blue", to: "/about" },
   { value: "contact", text: "客服中心", textClass: "text-yellow-darken-4", to: "/contact" },
   { value: "TravelPackage", text: "TravelPackage", textClass: "text-purple-darken-4", to: "/TravelPackage" },
   { value: "Itinerary", text: "行程", icon: "mdi-phone-incoming", textClass: "text-yellow-darken-4", to: "/Itinerary" },
-  { value: "OrderDetail", text: "訂單詳情", textClass: "text-yellow-darken-4", to: "/orderDetail" },
+  // { value: "OrderDetail", text: "訂單詳情", textClass: "text-yellow-darken-4", to: "/orderDetail" },
   { value: "Account", text: "會員登入", icon: "mdi-account", textClass: "text-black", to: "/account" },
   { value: "Profile", text: "會員資料", icon: "mdi-account", textClass: "text-black", to: "/profile" },
-  { value: "PaymentResult", text: "付款結果", textClass: "text-yellow-darken-4", to: "/paymentResult" },
+  // { value: "PaymentResult", text: "付款結果", textClass: "text-yellow-darken-4", to: "/paymentResult" },
   { value: "MyOrder", text: "我的訂單", textClass: "text-yellow-darken-4", to: "/myorder" }
 ];
 

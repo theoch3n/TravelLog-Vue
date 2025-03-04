@@ -90,7 +90,7 @@ onMounted(async () => {
             <v-col v-for="order in sortOrdersByDate" :key="order.OrderId" cols="12">
                 <v-card class="pa-3" outlined>
                     <v-card-title>
-                        {{ order.product?.eventName || '未知活動' }}
+                        {{ order.product?.itineraryTitle || '未知活動' }}
                     </v-card-title>
                     <v-card-subtitle>
                         訂單日期: {{ order.tradeDate }}
