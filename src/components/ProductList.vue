@@ -163,7 +163,7 @@
                             class="carousel slide"
                             data-bs-ride="carousel"
                           >
-                            <div class="carousel-inner">
+                            <div class="carousel-inner rounded-3 shadow-sm">
                               <div
                                 v-for="(img, i) in imgs"
                                 :key="i"
@@ -203,7 +203,18 @@
                             </button>
                           </div>
                         </div>
-                        <p>{{ detailsData.detail }}</p>
+                        <div
+                          class="details-content mt-3 p-3 bg-light rounded shadow-sm"
+                        >
+                          <h4 class="text-primary">{{ detailsData.title }}</h4>
+                          <hr />
+                          <p>{{ detailsData.detail }}</p>
+                          <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-primary">
+                              加入心裡收藏
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
