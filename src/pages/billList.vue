@@ -27,6 +27,7 @@
                                 <th>標題</th>
                                 <th>代墊人</th>
                                 <th>金額</th>
+                                <th>幣別</th>
                                 <th>創建日期</th>
                             </tr>
                         </thead>
@@ -34,10 +35,11 @@
                             <tr class="text-center pointer" :class="getBillStatusClass(bill)"
                                 v-for="(bill, index) in filteredBills" :key="bill.id" @click="openDetails(bill.id)">
                                 <td>{{ index + 1 }}</td>
-                                <td>{{ bill.title }}</td>
-                                <td>{{ bill.paidBy }}</td>
-                                <td>{{ bill.totalAmount }}</td>
-                                <td>{{ bill.createdAt }}</td>
+                                <td v-html="highlight(bill.title)"></td>
+                                <td v-html="highlight(bill.paidBy)"></td>
+                                <td v-html="highlight(bill.totalAmount)"></td>
+                                <td v-html="highlight(bill.currency)"></td>
+                                <td v-html="highlight(bill.createdAt)"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -86,6 +88,13 @@ watch(() => props.modelValue, (newValue) => {
     }
 });
 
+function highlight(text) {
+    const query = (searchQuery.value || "").toLowerCase();
+    if (!query || !text) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.toString().replace(regex, '<span style="color: skyblue; font-weight: bold;">$1</span>');
+}
+
 const resetForm = () => {
     selectedFilter.value = 'all';
     searchQuery.value = '';
@@ -99,6 +108,8 @@ const filteredBills = computed(() => {
         if (searchQuery.value && !(
             bill.title?.toLowerCase().includes(query) ||
             bill.totalAmount?.toString().includes(query) ||
+            bill.currency?.toLowerCase().includes(query) ||
+            bill.createdAt?.toString().includes(query) ||
             bill.paidBy?.toLowerCase().includes(query))) {
             isValid = false;
         }
@@ -149,6 +160,8 @@ const getBillsData = async () => {
         alert("提交失敗!");
     }
 };
+
+
 
 const openDetails = (BillId) => {
     const selectedBill = bills.value.find(item => item.id === BillId);

@@ -70,9 +70,8 @@
                             placeholder="搜尋">
                         <select class="form-select text-center w-50" v-model="selectedCurrency">
                             <option value="" disabled>選擇幣別</option>
-                            <option v-for="(rate, currency) in filteredRates" :key="currency" :value="rate">
-                                {{ currency }} -
-                                {{ rate }}
+                            <option v-for="currency in filteredCurrencies" :key="currency" :value="currency">
+                                {{ currency }}
                             </option>
                         </select>
                     </div>
@@ -106,13 +105,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import axios from 'axios';
-
-onMounted(() => {
-    // 匯率api次數快用完了，省點
-    // getExchangeRates();
-});
 
 let isUpdating = false;
 let savePaidByData;
@@ -147,28 +141,47 @@ const backToList = () => {
     clearForm();
 }
 
-const filteredRates = computed(() => {
-    if (!keyword.value) {
-        return rates.value;
-    }
-    return Object.fromEntries(
-        Object.entries(rates.value).filter(([currency]) => currency.includes(keyword.value.toUpperCase()))
-    );
-});
+// const filteredRates = computed(() => {
+//     if (!keyword.value) {
+//         return rates.value;
+//     }
+//     return Object.fromEntries(
+//         Object.entries(rates.value).filter(([currency]) => currency.includes(keyword.value.toUpperCase()))
+//     );
+// });
 
+const filteredCurrencies = computed(() => {
+    if (!keyword.value) {
+        return currencies;
+    }
+    return currencies.filter(currency => currency.includes(keyword.value.toUpperCase()));
+});
+const currencyBaseOn = ref();
 const getExchangeRates = async () => {
     const ExchangeRatesApiKey = "3bbb6fbca51af86d327efec8";
+    currencyBaseOn.value = selectedCurrency.value;
     const response = await axios.get(`https://v6.exchangerate-api.com/v6/${ExchangeRatesApiKey}/latest/TWD`);
     ExchangeRates.value = response.data;
     rates.value = ExchangeRates.value.conversion_rates;
 }
 
+const currencies = [
+    "USD", "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", "BSD",
+    "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", "COP", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR",
+    "FJD", "FKP", "FOK", "GBP", "GEL", "GGP", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "IMP", "INR", "IQD",
+    "IRR", "ISK", "JEP", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KID", "KMF", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD",
+    "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN",
+    "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLE", "SLL", "SOS", "SRD", "SSP",
+    "STN", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TVD", "TWD", "TZS", "UAH", "UGX", "UYU", "UZS", "VES", "VND", "VUV", "WST", "XAF",
+    "XCD", "XDR", "XOF", "XPF", "YER", "ZAR", "ZMW", "ZWL"
+]
 const generateBill = () => {
     return {
         ItineraryId: itinerary.value.itineraryId,
         ItineraryName: itinerary.value.itineraryTitle,
         Title: Title.value,
         TotalAmount: totalPrice.value,
+        Currency: selectedCurrency.value,
         PaidBy: PaidBy.value,
         CreatedAt: new Date(),
     };
@@ -188,6 +201,7 @@ const validateForm = () => {
         totalPrice: totalPrice.value <= 0 ? "總價格應大於0" : "",
         PaidBy: PaidBy.value === "" ? "付款人不能為空" : "",
         Title: Title.value === "" ? "標題不能為空" : "",
+        Currency: selectedCurrency.value === "" ? "幣別不能為空" : "",
     };
 
     const hasErrors = Object.values(errors).some(error => error !== "");
@@ -227,10 +241,12 @@ const clearForm = () => {
     Title.value = "";
     totalPrice.value = "";
     PaidBy.value = "";
+    keyword.value = "";
     insideData.forEach(item => {
         item.paid = false;
     });
     selectedOption.value = 'avg';
+    selectedCurrency.value = "";
     selectionChange();
 }
 
