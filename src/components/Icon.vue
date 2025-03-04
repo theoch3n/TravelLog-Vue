@@ -49,6 +49,7 @@ html, body {
 /* logo 設定 */
 .logo {
   max-height: 200px;
+  margin-top: -120px;
   object-fit: contain;
 }
 
@@ -66,7 +67,13 @@ html, body {
   align-items: center;
   text-decoration: none;
   color: inherit;
+  border-radius: 18px;
+  /* 新增：白底與橘框 */
+  background-color: rgba(255, 255, 255, 0.537);      /* 白色背景 */
+  border: 10px double rgb(255, 119, 0);    /* 橘色框線 */
+  padding: 10px;               /* 建議加點內距，避免內容貼邊 */
 }
+
 
 /* icon-img：放大圖示 */
 .icon-img {
@@ -81,9 +88,9 @@ html, body {
 
 /* icon-text：放大文字 */
 .icon-text {
-  margin-top: 8px;
-  color: #fff; /* 根據背景選擇合適的文字色彩 */
-  font-size: 20px;
+  margin-top: 24px;
+  color: #000000; /* 根據背景選擇合適的文字色彩 */
+  font-size: 28px !important; 
   font-weight: bold;
 }
 </style>

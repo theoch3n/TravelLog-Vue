@@ -88,13 +88,13 @@ function handleProfileClick() {
           </div>
         </div>
         <!-- 中間：LOGO 區塊 -->
-        <div class="center-section">
+        <!-- <div class="center-section">
           <div class="headerLogo">
             <a href="/">
               <img class="img-fluid" src="../assets/logo-removebg-preview.png" alt="TravelLog" />
             </a>
           </div>
-        </div>
+        </div> -->
         <!-- 右側：會員系統區塊 -->
         <div class="right-section">
           <nav class="desktop-nav">
@@ -186,9 +186,13 @@ function handleProfileClick() {
 .overlay-btn {
   background: none;
   border: none;
-  font-size: 24px;
-  color: white;
+  font-size: 18px;
+  color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
   cursor: pointer;
+  border-radius: 12px;
+  padding: 12 12px;
+  box-shadow: none !important;
 }
 
 /* LOGO 區塊 */
@@ -210,9 +214,9 @@ function handleProfileClick() {
 }
 
 .btn_account {
+  font-size: 24px;
   border-radius: 12px;
-  padding: 0 12px;
-  height: 40px;
+  padding: 12 12px;
   box-shadow: none !important;
   gap: 0px;
 }
