@@ -154,12 +154,12 @@
 </template>
 
 <script setup>
-import Rating from './Rating.vue';
-import { useProductPara } from '../stores/productPara';
-import { components } from 'vuetify/dist/vuetify-labs.js';
-import testPayment from '../pages/testPayment.vue';
-import { useRoute } from 'vue-router';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import Rating from "./Rating.vue";
+import { useProductPara } from "../stores/productPara";
+import { components } from "vuetify/dist/vuetify-labs.js";
+import testPayment from "../pages/testPayment.vue";
+import { useRoute } from "vue-router";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import dayjs from "dayjs";
 import PlaceCard from "../components/PlaceCard.vue";
 import axios, { Axios } from 'axios';
@@ -178,9 +178,9 @@ const date_St = ref(dayjs());
 const date_Ed = ref(dayjs());
 const dateDiff = computed(() => date_Ed.value.diff(date_St.value, "day"));
 const dateList = computed(() => {
-    return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
-        date_St.value.add(i, "day").format("YYYY-MM-DD")
-    );
+  return Array.from({ length: dateDiff.value + 1 }, (_, i) =>
+    date_St.value.add(i, "day").format("YYYY-MM-DD")
+  );
 });
 
 const displayContentByDate = (item) => {
@@ -243,17 +243,17 @@ const setActiveTab = (date, index) => {
     imgs.value = [];
 }
 onMounted(() => {
-    if (dateList.value.length > 0) {
-        activeTab.value = 0;
-        selectedDate.value = null;
-    }
+  if (dateList.value.length > 0) {
+    activeTab.value = 0;
+    selectedDate.value = null;
+  }
 });
 const places = ref([]);
 const selectedDate = ref();
 watch(selectedDate, (newVal) => {
-    if (newVal) {
-        fetchPlacesByDate();
-    }
+  if (newVal) {
+    fetchPlacesByDate();
+  }
 });
 const fetchPlacesByDate = async () => {
     try {
@@ -309,7 +309,6 @@ watch(
     { deep: true, immediate: true }
 );
 
-
 //東西在上面
 
 //泰智
@@ -317,9 +316,9 @@ const route = useRoute();
 const path = computed(() => route.path.replace("/", ""));
 const productPara = useProductPara();
 const payUrl = {
-    components: testPayment,
-    to: "/payment"
-}
+  components: testPayment,
+  to: "/payment",
+};
 
 const selectItem = (item) => {
     //id 名字 地點 開始日 結束日 天數 價格 描述 評分 聯絡方式
@@ -345,25 +344,25 @@ const selectItem = (item) => {
 
 <style scoped>
 .card-img-top {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    aspect-ratio: 16/9;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  aspect-ratio: 16/9;
 }
 
 .hover-effect {
-    background-color: #ffffff;
-    transition: background-color 0.3s ease;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
 }
 
 .hover-effect:hover {
-    background-color: #a0a0a0;
+  background-color: #a0a0a0;
 }
 
 .break-word {
-    word-wrap: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .carousel-item img {

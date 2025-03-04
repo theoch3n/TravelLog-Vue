@@ -15,6 +15,9 @@ import icon from "@/components/Icon.vue";
 </template>
 
 <style scoped>
+CarouselsCycle {
+  max-height: 100%;
+}
 .wrap {
   width: 100%;
   height: 100%;

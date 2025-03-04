@@ -3,8 +3,7 @@
   <div class="trip-planner">
     <div class="flex-container">
       <div class="controls-container col-4 rounded-3">
-        <h4 class="title mt-4">{{ Itinerarydata.itineraryTitle }}</h4>
-        <img :src="Itinerarydata.itineraryImage" alt="" class="titleimg" :style="{ height: '30%', width: '100%' }" />
+        <h4 class="title">{{ Itinerarydata.itineraryTitle }}</h4>
         <div class="date">
           <label for="itineraryStartDate">{{
             Itinerarydata.itineraryStartDate
@@ -14,31 +13,83 @@
             Itinerarydata.itineraryEndDate
           }}</label>
         </div>
-        <button class="btn btn-primary mt-4 draw_btn" id="draw-route" @click="drawRoute">
+        <img
+          :src="Itinerarydata.itineraryImage"
+          alt=""
+          class="titleimg"
+          :style="{ height: '30%', width: '100%' }"
+        />
+        <div class="search-box">
+          <input
+            v-model="textsearchInput"
+            class="search-input-overlay p-1 border-5"
+            placeholder="輸入類別"
+            id="textsearch-input-overlay"
+          />
+          <button class="search-button" id="searchButton">搜尋</button>
+        </div>
+
+        <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
+        <button
+          class="btn btn-primary draw_btn"
+          id="draw-route"
+          @click="drawRoute"
+        >
           規劃路線
         </button>
         <!-------------動態生成日期導覽列--------------------->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item" v-for="(date, index) in dateList" :key="index" role="presentation">
-            <button class="nav-link btn btn-outline-secondary border border-primary border-3" id="home-tab"
-              :class="{ active: selectedDate === date }" data-bs-toggle="tab" :data-bs-target="'#' + dateList[index]"
-              type="button" role="tab" aria-selected="true" @click="handleDateClick(date)">
-              {{ date }}
+          <li
+            class="nav-item"
+            v-for="(date, index) in dateList"
+            :key="index"
+            role="presentation"
+          >
+            <button
+              class="nav-link btn btn-outline-secondary border border-primary border-3"
+              id="home-tab"
+              :class="{ active: selectedDate === date }"
+              data-bs-toggle="tab"
+              :data-bs-target="'#' + dateList[index]"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              @click="handleDateClick(date)"
+            >
+              {{ formatDisplayDate(date) }}
             </button>
           </li>
         </ul>
-        <div class="tab-content" v-for="(date, index) in dateList" :key="index" id="myTabContent">
-          <div class="tab-pane fade show" :id="dateList[index]" role="tabpanel" aria-labelledby="home-tab">
+        <div
+          class="tab-content"
+          v-for="(date, index) in dateList"
+          :key="index"
+          id="myTabContent"
+        >
+          <div
+            class="tab-pane fade show"
+            :id="dateList[index]"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
             {{ dateList[index] }}
 
             <!--呼叫PlaceCard-->
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place" :hide="true"
-                  :deletePlaceHandler="deletePlace">
-                  <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`">
+                <PlaceCard
+                  v-for="(place, index) in places"
+                  :key="place.id"
+                  :data="place"
+                  :hide="true"
+                  :deletePlaceHandler="deletePlace"
+                >
+                  <li
+                    v-if="index < places.length - 1"
+                    class="list-group-item text-center text-muted route-info"
+                    :id="`route-info-${index}`"
+                  >
                     計算中...
                   </li>
                 </PlaceCard>
@@ -53,14 +104,7 @@
         </div>
         <!---------------------------------------------------------->
       </div>
-      <div class="pt-2">
-        <div class="input">
-          <input v-model="textsearchInput" class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別" id="textsearch-input-overlay" />
-          <button class="btn btn-danger" id="searchButton">搜尋</button>
-          <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
-        </div>
-      </div>
+      <div class="pt-2"></div>
       <div id="map" class="map-container col-8"></div>
       <div class="additional-controls"></div>
     </div>
@@ -156,6 +200,11 @@ const dateList = computed(() => {
     date_St.value.add(i, "day").format("YYYY-MM-DD")
   );
 });
+
+// 格式化顯示日期為 MM/DD
+const formatDisplayDate = (date) => {
+  return dayjs(date).format("MM/DD");
+};
 
 // console.log(dateList.value); // 測試輸出
 
@@ -415,7 +464,7 @@ const setupMarkerListener = (autocomplete1) => {
       console.error("搜尋結果無法取得地點資訊");
       return;
     }
-
+    console.log(place);
     const selectRestaurant = {
       location: place.geometry.location,
       placeId: place.place_id,
@@ -695,6 +744,28 @@ const fetchItineraryById = async () => {
 </script>
 
 <style scoped>
+.nav-link {
+  padding: 8px 16px;
+  margin: 0 2px;
+  min-width: 50px; /* 確保所有按鈕寬度一致 */
+  text-align: center;
+}
+
+.nav-link {
+  border-radius: 8px !important; /* 使圓角更明顯 */
+  font-weight: 500; /* 稍微加粗字體 */
+}
+
+.nav-link.active {
+  background-color: #0d6efd !important; /* 更鮮明的藍色 */
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加陰影增加層次感 */
+}
+
+.nav-link:not(.active) {
+  background-color: #f8f9fa; /* 非選中按鈕使用淺色背景 */
+}
+
 .input {
   z-index: 1000;
   /* 讓搜尋框浮在地圖之上 */
@@ -711,13 +782,17 @@ const fetchItineraryById = async () => {
 
 .draw_btn {
   display: block;
-  margin-left: auto;
-  border-radius: 50px;
+  width: 100%; /* 占滿整個容器寬度 */
+  text-align: center; /* 文字居中 */
+  padding: 12px 0; /* 上下內邊距，使按鈕更高 */
+  margin: 5px 0; /* 上下外邊距 */
+  border-radius: 4px; /* 圓角 */
+  font-weight: bold; /* 粗體文字 */
 }
 
 .title {
   position: absolute;
-  top: 100px;
+
   /* 確保標題貼近圖片頂部 */
   left: 50%;
   transform: translateX(-50%);
@@ -730,6 +805,15 @@ const fetchItineraryById = async () => {
   /* 半透明黑色背景提升可讀性 */
   border-radius: 5px;
   text-align: center;
+}
+.date {
+  position: absolute;
+  /* 確保標題貼近圖片頂部 */
+  left: 26%;
+  top: 49px;
+  background: rgba(0, 0, 0, 0.5);
+  /* 半透明黑色背景提升可讀性 */
+  color: rgb(233, 219, 219);
 }
 
 .titleimg {
@@ -778,6 +862,52 @@ const fetchItineraryById = async () => {
 }
 
 .search-input-overlay {
-  width: 200px;
+  width: 340px;
+}
+.search-box {
+  display: flex;
+  flex: 1;
+  margin-right: 10px;
+}
+.search-button {
+  background-color: #ff5a5f;
+  color: white;
+  border: none;
+  padding: 0 15px;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+.search-box input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+}
+.app-background {
+  /* 基本漸變背景 */
+  background: linear-gradient(135deg, #f6f9fc 0%, #f0f4f8 100%);
+
+  /* 或者更有特色的旅遊主題漸變 */
+  background: linear-gradient(135deg, #e6f2ff 0%, #fff0f5 100%);
+
+  /* 添加細微紋理 */
+  background-image: linear-gradient(135deg, #f6f9fc 0%, #f0f4f8 100%),
+    url("subtle-pattern.png");
+  background-blend-mode: overlay;
+}
+
+/* 提升卡片視覺感 */
+.card {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+  border-radius: 12px;
+}
+
+/* 日期選擇區域 */
+.date-selector-area {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 10px;
 }
 </style>
