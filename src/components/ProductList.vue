@@ -5,8 +5,8 @@
                 <div class="card my-2 pointer rounded-3 hover-effect" :data-bs-toggle="'modal'"
                     :data-bs-target="'#modal-' + index" @click="selectedCard(item)">
                     <div class="card-body">
-                        <img :src="item.itineraryImage ? item.itineraryImage : '/imgs/noImage.png'"
-                            class="card-img-top rounded-3" alt="google api沒抓到圖" :title="item.itineraryTitle">
+                        <img :src="item.itineraryImage" class="card-img-top rounded-3" alt="google api沒抓到圖"
+                            :title="item.itineraryTitle">
                         <h5 class="card-text d-flex justify-content-center">{{ item.itineraryTitle }}</h5>
                         <p class="card-text text-center fs-3">
                             <rating v-if="infoData" :rating="infoData[index]?.rating" />
@@ -49,43 +49,35 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <!-- 內容 -->
                                     <div v-if="activeTab === 0" class="tab-pane fade show active">
-                                        <!-- <p>這是首頁的內容</p> -->
                                         <div class="container mt-5">
                                             <div class="row justify-content-center">
                                                 <div class="col-md-8">
                                                     <div class="card shadow">
-                                                        <img src="https://thumbor.4gamers.com.tw/Kr3aF4Mk53zGXn90q7nadNA-SZM=/adaptive-fit-in/1200x1200/filters:no_upscale():extract_cover():format(jpeg):quality(85)/https%3A%2F%2Fugc-media.4gamers.com.tw%2Fpuku-prod-zh%2Fanonymous-story%2F1a0eb606-3124-4f64-a157-6ab44faaced0.jpg"
-                                                            class="card-img-top" alt="行程圖片" />
-                                                        <div class="card-body">
+                                                        <!-- <img src="https://thumbor.4gamers.com.tw/Kr3aF4Mk53zGXn90q7nadNA-SZM=/adaptive-fit-in/1200x1200/filters:no_upscale():extract_cover():format(jpeg):quality(85)/https%3A%2F%2Fugc-media.4gamers.com.tw%2Fpuku-prod-zh%2Fanonymous-story%2F1a0eb606-3124-4f64-a157-6ab44faaced0.jpg"
+                                                            class="card-img-top" alt="行程圖片" /> -->
+                                                        <img :src="item.itineraryImage" alt="行程圖片" />
+                                                        <div v-if="infoData" class="card-body">
                                                             <h2 class="card-title text-primary">
-                                                                <!-- {{ itinerary.title }} -->
-                                                                {{ "放標題" }}
+                                                                {{ item.itineraryTitle }}
                                                             </h2>
                                                             <p class="text-muted">
-                                                                ⭐ 評分: {{ 5 }} / 5
-                                                                <!-- ⭐ 評分: {{ itinerary.rating }} / 5 -->
+                                                                ⭐ 評分: {{ infoData[index]?.rating }} / 5
                                                             </p>
                                                             <p class="h5 text-success">💰 價格: {{
-                                                                formatPrice(200000) }}</p>
-                                                            <!-- formatPrice(itinerary.price) }}</p> -->
+                                                                formatPrice(infoData[index]?.price) }}</p>
                                                             <hr />
-                                                            <!-- <p class="card-text">{{ itinerary.description }}</p> -->
                                                             <p class="card-text">
-                                                                宜蘭溫泉之旅讓您在大自然環抱中放鬆身心，入住頂級溫泉飯店，享受蘇澳冷泉與礁溪溫泉的療癒效果。搭配農場採果體驗與傳統手作米香DIY，讓旅程更加豐富，並探索龜山島海域與冬山河風光。
+                                                                {{ infoData[index]?.description }}
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- <p> {{ travelInfo }}</p>
-                                        <p> {{ travelInfo?.description }}</p> -->
                                     </div>
                                     <div v-else class="row border rounded">
                                         <div class="col-lg-5 p-3 overflow-auto" style="max-height: 500px;">
-                                            <!-- <div > -->
                                             <div v-if="places.length > 0">
                                                 <PlaceCard class="pointer hover-effect" v-for="(place, index) in places"
                                                     :key="place.id" :data="place" :hide="false"
@@ -94,12 +86,9 @@
                                             <div v-else>
                                                 <p>目前沒有行程資料</p>
                                             </div>
-                                            <!-- </div> -->
                                         </div>
-                                        <!-- 右側詳細資訊區域 -->
                                         <div class="col-lg-7 p-3">
                                             <div class="details break-word">
-                                                <!-- <p>詳細資料顯示區</p> -->
                                                 <div v-if="imgs">
                                                     <div :id="'carousel-' + index" class="carousel slide"
                                                         data-bs-ride="carousel">
@@ -128,10 +117,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- </div> -->
                             </div>
                             <div class="modal-footer d-flex justify-content-end">
-                                <!-- <p>售價: {{ travelInfo?.price }}</p> -->
                                 <div>
                                     <button class="btn btn-danger me-3" @click="test(item)">測試按鈕</button>
                                     <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
@@ -164,16 +151,10 @@ import dayjs from "dayjs";
 import PlaceCard from "../components/PlaceCard.vue";
 import axios, { Axios } from 'axios';
 
-//原始資料
 const props = defineProps({
     categoryArray: Array,
 });
-
-//分頁
 const activeTab = ref();
-
-//東西在底下
-
 const date_St = ref(dayjs());
 const date_Ed = ref(dayjs());
 const dateDiff = computed(() => date_Ed.value.diff(date_St.value, "day"));
@@ -188,24 +169,24 @@ const displayContentByDate = (item) => {
     getDetails(item.id);
     // console.log(JSON.stringify(item))
 }
-//測
+
 const profile = ref()
 const test = async (item) => {
     await getProfile();
-    await getPlace(item.itineraryId);
+    // await getPlace(item.itineraryId);
     item.itineraryCreateUser = profile.value.userId;
-    item.place = place.value;
-    alert(JSON.stringify(item.place))
+    // item.place = place.value;
+    // alert(JSON.stringify(item.place))
     await addItinerary(item);
 };
-const place = ref();
-const getPlace = async (ItineraryId) => {
-    const response = await axios.get(`${baseAddress}/api/Places/GetPlaceByScheduleId/${ItineraryId}`)
-    if (response.data) {
-        place.value = response.data;
-        console.log("這是抓到的資料/n" + JSON.stringify(place.value))
-    }
-}
+// const place = ref();
+// const getPlace = async (ItineraryId) => {
+//     const response = await axios.get(`${baseAddress}/api/Places/GetPlaceByScheduleId/${ItineraryId}`)
+//     if (response.data) {
+//         place.value = response.data;
+//         console.log("這是抓到的資料/n" + JSON.stringify(place.value))
+//     }
+// }
 const getProfile = async () => {
     try {
         const response = await axios.get(`${baseAddress}/api/Profile`);
@@ -228,14 +209,12 @@ axios.interceptors.request.use(config => {
 const addItinerary = async (item) => {
     const response = await axios.post(`${baseAddress}/api/TravelPackage/addItinerary`, item)
     if (response.data) {
-        alert("成功添加到資料庫")
+        alert("ProductList.vue: \n" + "成功添加到資料庫")
     } else {
-        alert("戳啦")
+        alert("ProductList.vue: \n" + "發生錯誤")
     }
 }
-onMounted(() => {
-    getInfo();
-})
+
 
 const infoData = ref();
 const getInfo = async () => {
@@ -243,7 +222,7 @@ const getInfo = async () => {
     if (response.data) {
         infoData.value = response.data;
     } else {
-        alert("不太對")
+        alert("發生錯誤，無法取得行程資料!")
     }
 }
 
@@ -273,16 +252,16 @@ const getDetails = async (id) => {
     }
 }
 const imgs = ref([])
-//date
 
-//tabs
 const setActiveTab = (date, index) => {
     detailsData.value = "";
     selectedDate.value = date;
     activeTab.value = index;
     imgs.value = [];
 }
+
 onMounted(() => {
+    getInfo();
     if (dateList.value.length > 0) {
         activeTab.value = 0;
         selectedDate.value = null;
@@ -349,9 +328,6 @@ watch(
     { deep: true, immediate: true }
 );
 
-
-//東西在上面
-
 //泰智
 const route = useRoute();
 const path = computed(() => route.path.replace("/", ""));
@@ -410,8 +386,6 @@ const selectItem = (item) => {
     width: 100%;
     height: auto;
     max-height: 400px;
-    /* 您可以根據需要調整這個值 */
     object-fit: contain;
-    /* 確保圖片完整顯示 */
 }
 </style>
