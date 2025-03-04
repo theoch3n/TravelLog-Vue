@@ -1,26 +1,67 @@
+<template>
+  <v-app>
+    <!-- 全域 Overlay -->
+    <Overlay
+      :show="showOverlay"
+      @close="closeOverlay"
+      :filteredPages="filteredPages"
+      :userStore="userStore"
+      :router="router"
+      :accountPage="accountPage"
+      :openLoginModal="openLoginModal"
+      :logout="logout"
+    >
+      <!-- 預設內容，可覆寫 -->
+      <template #default>
+        <h2>Default Overlay Content</h2>
+        <p>This is the default content that you can customize.</p>
+      </template>
+    </Overlay>
+
+    <!-- 背景內容包裹容器，根據 showOverlay 改變背景色 -->
+    <div class="page-container" :class="{ 'move-bg': showOverlay }">
+      <!-- Header -->
+      <nav style="width: 100%;">
+        <Header
+          :openOverlay="openOverlay"
+          :showOverlay="showOverlay"
+          :closeOverlay="closeOverlay"
+        />
+      </nav>
+
+      <!-- 主要內容區域 -->
+      <main>
+        <v-main class="content d-flex flex-column">
+          <router-view v-slot="{ Component }" class="router-view-container">
+            <component :is="Component" />
+          </router-view>
+        </v-main>
+        <!-- PageTop -->
+        <PageTop />
+      </main>
+
+      <!-- 頁尾 -->
+      <footer>
+        <Footer />
+      </footer>
+    </div>
+  </v-app>
+</template>
+
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import Overlay from "@/components/Overlay.vue";
-import LoginModal from "@/components/LoginModal.vue";
-import Sidebar from "@/components/Sidebar.vue";
 import Header from "@/components/Header.vue";
 import PageTop from "@/components/PageTop.vue";
 import Footer from "@/components/Footer.vue";
 import { useUserStore } from "@/stores/userStore";
 
-// 先初始化 router 與 userStore
+// 初始化 router 與 userStore
 const router = useRouter();
 const userStore = useUserStore();
 
-// 定義 logout 函式（確保 userStore 與 router 已定義）
-function logout() {
-  userStore.clearToken();
-  router.push("/").then(() => {
-    window.location.reload();
-  });
-}
-
+// 控制顯示或關閉 Overlay
 const showOverlay = ref(false);
 function openOverlay() {
   showOverlay.value = true;
@@ -29,6 +70,7 @@ function closeOverlay() {
   showOverlay.value = false;
 }
 
+// 定義頁面列表
 const pages = [
   { value: "payment", text: "Payment", textClass: "text-brown-darken-1", to: "/payment" },
   { value: "about", text: "關於我們", textClass: "text-blue", to: "/about" },
@@ -36,140 +78,91 @@ const pages = [
   { value: "TravelPackage", text: "TravelPackage", textClass: "text-purple-darken-4", to: "/TravelPackage" },
   { value: "Itinerary", text: "行程", icon: "mdi-phone-incoming", textClass: "text-yellow-darken-4", to: "/Itinerary" },
   { value: "OrderDetail", text: "訂單詳情", textClass: "text-yellow-darken-4", to: "/orderDetail" },
-  { value: "Account", text: "會員登入", icon: "mdi-account", textClass: "text-black", to: "/account" },
-  { value: "Profile", text: "會員資料", icon: "mdi-account", textClass: "text-black", to: "/profile" },
   { value: "PaymentResult", text: "付款結果", textClass: "text-yellow-darken-4", to: "/paymentResult" },
   { value: "MyOrder", text: "我的訂單", textClass: "text-yellow-darken-4", to: "/myorder" }
 ];
 
-const accountPage = computed(() => pages.find(page => page.value === "Account") || {});
-const filteredPages = computed(() =>
-  pages.filter(page => page.value !== "Account" && page.value !== "Profile")
-);
+const filteredPages = computed(() => pages);
 
-const loginModalRef = ref(null);
+// 如果需要帳號相關功能
+const accountPage = computed(() => pages.find(page => page.value === "Account"));
 function openLoginModal() {
-  if (loginModalRef.value && loginModalRef.value.show) {
-    loginModalRef.value.show();
-  } else {
-    console.warn("LoginModal 沒有正確定義 show 方法");
-  }
+  // 這個函式需要搭配 LoginModal 元件的引用
+}
+function logout() {
+  userStore.clearToken();
+  router.push("/").then(() => {
+    window.location.reload();
+  });
 }
 </script>
 
-<template>
-  <v-app>
-    <!-- 全域 Overlay -->
-    <Overlay 
-      :show="showOverlay" 
-      @close="closeOverlay" 
-      :filteredPages="filteredPages" 
-      :accountPage="accountPage" 
-      :userStore="userStore" 
-      :openLoginModal="openLoginModal" 
-      :router="router" 
-      :logout="logout"
-    />
-
-    <!-- Login Modal -->
-    <LoginModal ref="loginModalRef" />
-
-    <!-- 公告欄（根據需要啟用） -->
-    <!-- <Announcement /> -->
-
-    <!-- 側邊欄 -->
-    <aside>
-      <Sidebar :openOverlay="openOverlay" />
-    </aside>
-
-    <!-- Header -->
-    <nav>
-      <Header />
-    </nav>
-
-        <!-- 主要內容區域，使用 Vuetify 的 v-main 元件 -->
-        <main>
-            <v-main class="content d-flex flex-column">
-                <!--
-            路由視圖區域：
-            - v-slot="{ Component }" 接收當前路由對應的元件
-            - 使用動態元件渲染路由內容
-        -->
-                <router-view v-slot="{ Component }" class="router-view-container">
-                    <component :is="Component" />
-                </router-view>
-            </v-main>
-            <!-- Page-Top -->
-            <PageTop />
-        </main>
-        <!-- 頁尾 -->
-        <footer>
-            <Footer />
-        </footer>
-
-
-
-
-
-    </v-app>
-</template>
-
 <style scoped>
+/* 包裹背景內容的容器，對 transform 與 background-color 做過渡 */
+.page-container {
+  transition: transform 1000ms ease-out, background-color 1000ms ease-out;
+  background-color: rgb(255, 255, 255);
+}
+
+
+/* 以下為原有樣式，可依需求調整 */
 nav {
-    padding-left: 200px;
-    display: flex;
-    align-items: center;
-    height: 60px;
-    background-color: transparent;
-    width: 100%;
-    box-shadow: none;
-    position: relative;
-    z-index: 10;
+  padding-left: 0; 
+  display: flex;
+  align-items: center;
+  height: 60px;
+  background-color: transparent;
+  width: 100%;
+  box-shadow: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 }
 
 main {
-    margin-left: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: transparent;
-    position: relative;
-    z-index: 5;
+  margin-left: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+  position: relative;
+  z-index: 5;
+  margin-top: 60px;
 }
 
-
-Footer {
-    margin-left: 20px;
-    flex: none;
-    display: flex;
-    flex-direction: column;
-    background-color: transparent !important;
-    padding: 10px 0;
-    min-height: 60px;
-    position: relative;
-    z-index: 10;
+footer {
+  margin-left: 20px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent !important;
+  padding: 10px 0;
+  min-height: 60px;
+  position: relative;
+  z-index: 10;
 }
 
 .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: transparent;
-    position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent;
+  position: relative;
 }
 
 .router-view-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 
 .v-app {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: transparent;
 }
 </style>
