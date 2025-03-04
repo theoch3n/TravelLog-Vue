@@ -18,15 +18,15 @@ onMounted(() => {
   document.documentElement.style.overflow = 'auto';
   document.body.style.overflow = 'auto';
   document.body.style.position = 'static';
-  
+
   // 獲取header和footer元素
   const header = document.querySelector('.desktop-header');
   const footer = document.querySelector('footer.footer-container');
-  
+
   // 添加透明背景
   if (header) header.style.backgroundColor = 'transparent';
   if (footer) footer.style.backgroundColor = 'transparent';
-  
+
   const backdrops = document.querySelectorAll('.modal-backdrop');
   backdrops.forEach(backdrop => backdrop.remove());
   console.log("接收的商品數據:", selectedItem.value);
@@ -37,15 +37,15 @@ onUnmounted(() => {
   document.documentElement.style.overflow = '';
   document.body.style.overflow = 'auto';
   document.body.style.position = 'static';
-  
+
   // 獲取header和footer元素
   const header = document.querySelector('.desktop-header');
   const footer = document.querySelector('footer.footer-container');
-  
+
   // 恢復原來的背景
   if (header) header.style.backgroundColor = '';
   if (footer) footer.style.backgroundColor = '';
-  
+
   isDialogVisible.value = false;
 });
 
@@ -79,9 +79,12 @@ async function initiatePayment() {
   <div class="payment-page-container">
     <div class="overlay-mask"></div>
     <CarouselsCycle class="background-carousel" />
-    
+
     <div class="payment-content">
       <div class="payment-grid">
+        <div class="product-banner-section">
+          <img v-if="selectedItem.img" :src="selectedItem.img" :alt="selectedItem.title" class="product-banner-image">
+        </div>
         <!-- 商品詳情卡片 -->
         <div class="product-details-section">
           <div class="product-card">
@@ -235,6 +238,27 @@ async function initiatePayment() {
   width: 100%;
   box-sizing: border-box;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-banner-section {
+  grid-column: 1 / -1;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1rem;
+}
+
+.product-banner-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.product-banner-image:hover {
+  transform: scale(1.05);
 }
 
 .product-card:hover {
