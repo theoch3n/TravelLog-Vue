@@ -9,14 +9,12 @@
 
         </slot>
         <!-- 會員相關區塊（固定於右上角） -->
-        <div class="member-area">
-          <!-- 未登入：會員登入按鈕 -->
+        <!-- <div class="member-area">
           <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="handleLogin" class="btn_account"
             :class="accountPage.textClass" text>
             <v-icon left>{{ accountPage.icon }}</v-icon>
             {{ accountPage.text }}
           </v-btn>
-          <!-- 已登入：會員下拉選單 -->
           <v-menu v-else-if="userStore.isAuthenticated" offset-y>
             <template #activator="{ props }">
               <v-btn text color="white" v-bind="props" class="btn_account">
@@ -34,7 +32,7 @@
               </v-list-item>
             </v-list>
           </v-menu>
-        </div>
+        </div> -->
 
         <!-- 導覽列：左右分割，分別置於左半邊與右半邊正中間 -->
         <nav class="overlay-nav" v-if="filteredPages && filteredPages.length">
@@ -70,7 +68,6 @@
 
         <!-- 關閉按鈕 -->
         <button class="close-btn" @click="emitClose">
-
           <v-icon left class="mr-2">mdi-close</v-icon>
         </button>
         <!-- 其他元件，例如 LoginModal -->
@@ -136,7 +133,7 @@ const handleProfile = () => {
   box-sizing: border-box;
   box-shadow: none !important;
   gap: 2px;
-  background-color: #fff; /* 舉例，如果需要白底 */
+  background-color: #fff;
 }
 
 
@@ -146,7 +143,7 @@ const handleProfile = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #000;
+  background: rgba(0, 0, 0, 0.85);
   z-index: 1;
   display: flex;
   align-items: center;
@@ -194,6 +191,7 @@ const handleProfile = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
 }
 
 .nav-left ul,
@@ -219,6 +217,7 @@ const handleProfile = () => {
   border-radius: 5px;
   background: transparent;
   transition: color 0.3s ease;
+  z-index: 2;
 }
 
 .nav-left li a:hover,
@@ -242,6 +241,7 @@ const handleProfile = () => {
   /* 使超出容器邊界的內容(圖片)被隱藏，防止超出範圍 */
   overflow: hidden;
   /* 添加 2px 寬的白色實線邊框，方便視覺辨識該區塊範圍 */
+  z-index: 1;
 }
 
 .image-area img {
@@ -273,14 +273,91 @@ h2 {
 /* 關閉按鈕 */
 .close-btn {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 10px 15px;
-  background: #fff;
-  border-radius: 12px;
-  color: #000;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px;
+  background: transparent;
   border: none;
+  color: #ffffff;
   cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.close-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.close-icon::before,
+.close-icon::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.close-icon::before {
+  transition-delay: 0.1s;
+}
+
+/* 現代互動動畫效果 */
+.close-btn:hover .close-icon::before {
+  transform: scale(1.2);
+}
+
+.close-btn:hover .close-icon::after {
+  transform: scale(1.6);
+  opacity: 0;
+}
+
+.close-btn:hover {
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.close-btn:active {
+  transform: translateX(-50%) translateY(0);
+}
+
+.close-btn i {
+  font-size: 24px;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.close-btn:hover i {
+  transform: rotate(180deg) scale(1.2);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .close-btn {
+    bottom: 30px;
+  }
+  
+  .close-icon {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 576px) {
+  .close-btn {
+    bottom: 20px;
+  }
+  
+  .close-icon {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 /* Overlay 進出場動畫 */
@@ -313,6 +390,211 @@ h2 {
   100% {
     opacity: 0;
     transform: translateY(-100%);
+  }
+}
+
+/* 响应式布局调整 */
+@media (max-width: 1440px) {
+  .nav-left li a,
+  .nav-right li a {
+    font-size: 42px;
+  }
+
+  .image-area {
+    width: 450px;
+    height: 450px;
+    top: 75%;
+  }
+
+  h2 {
+    font-size: 90px;
+    margin-top: -30px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .nav-left li a,
+  .nav-right li a {
+    font-size: 36px;
+  }
+
+  .image-area {
+    width: 400px;
+    height: 400px;
+    top: 75%;
+  }
+
+  h2 {
+    font-size: 80px;
+    margin-top: -25px;
+  }
+
+  .nav-left,
+  .nav-right {
+    width: 40%;
+  }
+}
+
+@media (max-width: 992px) {
+  .nav-left li a,
+  .nav-right li a {
+    font-size: 32px;
+  }
+
+  .image-area {
+    width: 350px;
+    height: 350px;
+    top: 70%;
+  }
+
+  h2 {
+    font-size: 70px;
+    margin-top: -20px;
+  }
+
+  .nav-left li,
+  .nav-right li {
+    margin: 8px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .overlay-nav {
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+
+  .nav-left,
+  .nav-right {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .nav-left li a,
+  .nav-right li a {
+    font-size: 28px;
+  }
+
+  .image-area {
+    width: 300px;
+    height: 300px;
+    top: 65%;
+  }
+
+  h2 {
+    font-size: 60px;
+    margin-top: -15px;
+  }
+
+  .close-btn {
+    bottom: 30px;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .nav-left li a,
+  .nav-right li a {
+    font-size: 24px;
+    padding: 6px 10px;
+  }
+
+  .image-area {
+    width: 250px;
+    height: 250px;
+    top: 60%;
+  }
+
+  h2 {
+    font-size: 48px;
+    margin-top: -10px;
+  }
+
+  .nav-left li,
+  .nav-right li {
+    margin: 6px 10px;
+  }
+
+  .close-btn {
+    bottom: 20px;
+    padding: 8px 16px;
+  }
+
+  .inner {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-left li a,
+  .nav-right li a {
+    font-size: 20px;
+    padding: 4px 8px;
+  }
+
+  .image-area {
+    width: 200px;
+    height: 200px;
+    top: 55%;
+  }
+
+  h2 {
+    font-size: 36px;
+    margin-top: -5px;
+  }
+
+  .close-btn {
+    bottom: 15px;
+    padding: 6px 12px;
+  }
+}
+
+/* 处理超高屏幕 */
+@media (min-height: 1000px) {
+  .image-area {
+    top: 70%;
+  }
+}
+
+/* 处理较矮屏幕 */
+@media (max-height: 700px) {
+  .image-area {
+    width: 250px;
+    height: 250px;
+    top: 75%;
+  }
+
+  h2 {
+    margin-top: -20px;
+  }
+
+  .nav-left li,
+  .nav-right li {
+    margin: 5px 10px;
+  }
+}
+
+/* 处理横屏模式 */
+@media (orientation: landscape) and (max-height: 600px) {
+  .image-area {
+    width: 200px;
+    height: 200px;
+    top: 80%;
+  }
+
+  h2 {
+    font-size: 48px;
+    margin-top: -15px;
+  }
+
+  .nav-left li a,
+  .nav-right li a {
+    font-size: 24px;
+  }
+
+  .nav-left li,
+  .nav-right li {
+    margin: 4px 8px;
   }
 }
 </style>

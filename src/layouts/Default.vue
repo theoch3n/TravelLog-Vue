@@ -102,8 +102,8 @@ function logout() {
 .page-container {
   transition: transform 1000ms ease-out, background-color 1000ms ease-out;
   background-color: rgb(255, 255, 255);
+  width: 100%;
 }
-
 
 /* 以下為原有樣式，可依需求調整 */
 nav {

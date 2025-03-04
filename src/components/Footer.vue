@@ -26,10 +26,10 @@ const icons = reactive([
         <v-container fluid class="py-1">
             <v-row class="align-center">
                 <!-- 聯絡資訊 -->
-                <v-col cols="12" lg="4" class="footer-text py-1">
+                <v-col cols="12" sm="4" lg="4" class="footer-text py-1">
                     <div class="d-flex align-center">
                         <h3 class="mr-2 mb-0">聯絡我們</h3>
-                        <div class="d-flex align-center ml-auto d-lg-none">
+                        <div class="d-flex align-center ml-auto d-sm-none">
                             <v-btn v-for="icon in icons" :key="icon.icon" 
                                 class="mx-1" :icon="icon.icon" :href="icon.link"
                                 color="black" variant="text" density="compact" size="small"></v-btn>
@@ -41,15 +41,15 @@ const icons = reactive([
                     </div>
                 </v-col>
 
-                <!-- 社交媒體圖標 - 僅在大屏幕顯示 -->
-                <v-col cols="12" lg="4" class="text-center py-1 d-none d-lg-flex justify-center">
+                <!-- 社交媒體圖標 - 在中小屏幕顯示並靠左 -->
+                <v-col cols="12" sm="4" lg="4" class="social-icons py-1 d-none d-sm-flex d-lg-flex">
                     <v-btn v-for="icon in icons" :key="icon.icon" 
                         class="mx-1" :icon="icon.icon" :href="icon.link"
                         color="#7B7B7B" variant="text" density="compact"></v-btn>
                 </v-col>
 
                 <!-- 版權信息 -->
-                <v-col cols="12" lg="4" class="footer-text text-lg-end py-1">
+                <v-col cols="12" sm="4" lg="4" class="footer-text text-sm-start text-lg-end py-1">
                     <p class="mb-0">© 2024-2025 TravelLog. All Rights Reserved.</p>
                 </v-col>
             </v-row>
@@ -63,6 +63,7 @@ footer {
     color: #7B7B7B;
     padding: 0px 0;
     /* 減少上下內邊距，讓頁腳更矮 */
+    width: 100%;
 }
 
 h3 {
@@ -77,7 +78,6 @@ h3 {
     color: #7B7B7B;
     margin: 5px 0;
     /* 減少段落間距 */
-
 }
 
 .v-btn {
@@ -94,15 +94,38 @@ h3 {
 .v-container {
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
 }
 
-@media (max-width: 768px) {
+.footer-container {
+    width: 100%;
+}
+
+.social-icons {
+    justify-content: flex-start;
+}
+
+@media (min-width: 960px) {
+    .social-icons {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
     footer {
-        text-align: center;
+        text-align: left;
+    }
+
+    .contact-info {
+        justify-content: flex-start;
     }
 
     .v-btn {
         margin: 5px;
+    }
+
+    .footer-text {
+        text-align: left;
     }
 }
 </style>

@@ -1,120 +1,102 @@
 <!-- TripPlanner.vue -->
 <template>
-  <div class="trip-planner">
-    <div class="flex-container">
-      <div class="controls-container col-4 rounded-3">
-        <h4 class="title">{{ Itinerarydata.itineraryTitle }}</h4>
-        <div class="date">
-          <label for="itineraryStartDate">{{
-            Itinerarydata.itineraryStartDate
-          }}</label>
-          <label for=""> ~ </label>
-          <label for="itineraryEndDate">{{
-            Itinerarydata.itineraryEndDate
-          }}</label>
-        </div>
-        <img
-          :src="Itinerarydata.itineraryImage"
-          alt=""
-          class="titleimg"
-          :style="{ height: '30%', width: '100%' }"
-        />
-        <div class="search-box">
-          <input
-            v-model="textsearchInput"
-            class="search-input-overlay p-1 border-5"
-            placeholder="輸入類別"
-            id="textsearch-input-overlay"
-          />
-          <button class="search-button" id="searchButton">搜尋</button>
-        </div>
-
-        <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
-        <button
-          class="btn btn-primary draw_btn"
-          id="draw-route"
-          @click="drawRoute"
-        >
-          規劃路線
-        </button>
-        <!-------------動態生成日期導覽列--------------------->
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li
-            class="nav-item"
-            v-for="(date, index) in dateList"
-            :key="index"
-            role="presentation"
-          >
-            <button
-              class="nav-link btn btn-outline-secondary border border-primary border-3"
-              id="home-tab"
-              :class="{ active: selectedDate === date }"
-              data-bs-toggle="tab"
-              :data-bs-target="'#' + dateList[index]"
-              type="button"
-              role="tab"
-              aria-selected="true"
-              @click="handleDateClick(date)"
-            >
-              {{ formatDisplayDate(date) }}
-            </button>
-          </li>
-        </ul>
-        <div
-          class="tab-content"
-          v-for="(date, index) in dateList"
-          :key="index"
-          id="myTabContent"
-        >
-          <div
-            class="tab-pane fade show"
-            :id="dateList[index]"
-            role="tabpanel"
-            aria-labelledby="home-tab"
-          >
-            {{ dateList[index] }}
-
-            <!--呼叫PlaceCard-->
-
-            <div class="container">
-              <div v-if="places.length > 0">
-                <PlaceCard
-                  v-for="(place, index) in places"
-                  :key="place.id"
-                  :data="place"
-                  :hide="true"
-                  :deletePlaceHandler="deletePlace"
-                >
-                  <li
-                    v-if="index < places.length - 1"
-                    class="list-group-item text-center text-muted route-info"
-                    :id="`route-info-${index}`"
-                  >
-                    計算中...
-                  </li>
-                </PlaceCard>
+  <div class="googlemap-page-container">
+    <!-- 背景輪播 -->
+    <CarouselsCycle class="background-carousel" />
+    
+    <!-- 遮罩層 -->
+    <div class="overlay-mask"></div>
+    
+    <div class="wrap">
+      <div class="item">
+        <div class="content-wrapper">
+          <!-- 頁面標題 -->
+          <div class="page-title-container">
+            <h1 class="page-title">{{ Itinerarydata.itineraryTitle }}</h1>
+            <p class="page-subtitle">
+              {{ Itinerarydata.itineraryStartDate }} ~ {{ Itinerarydata.itineraryEndDate }}
+            </p>
+          </div>
+          
+          <div class="map-content-container">
+            <div class="controls-container">
+              <div class="search-box">
+                <input
+                  v-model="textsearchInput"
+                  class="search-input"
+                  placeholder="搜尋景點、餐廳或活動"
+                  id="textsearch-input-overlay"
+                />
+                <button class="search-button" id="searchButton">
+                <i class="mdi mdi-magnify"></i>
+              </button>
               </div>
-              <div v-else>
-                <p>目前沒有行程資料</p>
+              
+              <button class="route-btn" id="draw-route" @click="drawRoute">
+                <i class="fas fa-route me-2"></i> 規劃路線
+              </button>
+              
+              <!-- 日期導覽列 -->
+              <div class="date-tabs-container">
+                <ul class="date-tabs">
+                  <li
+                    v-for="(date, index) in dateList"
+                    :key="index"
+                    class="date-tab-item"
+                  >
+                    <button
+                      class="date-tab-btn"
+                      :class="{ active: selectedDate === date }"
+                      @click="handleDateClick(date)"
+                    >
+                      {{ formatDisplayDate(date) }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              
+              <!-- 行程卡片區域 -->
+              <div class="places-container">
+                <div v-if="places.length > 0" class="places-list">
+                  <PlaceCard
+                    v-for="(place, index) in places"
+                    :key="place.id"
+                    :data="place"
+                    :hide="true"
+                    :deletePlaceHandler="deletePlace"
+                  >
+                    <li
+                      v-if="index < places.length - 1"
+                      class="route-info-item"
+                      :id="`route-info-${index}`"
+                    >
+                      <i class="fas fa-walking me-2"></i> 計算中...
+                    </li>
+                  </PlaceCard>
+                </div>
+                <div v-else class="no-places">
+                  <div class="no-data-container">
+                    <i class="fas fa-map-marked-alt no-data-icon"></i>
+                    <p class="no-data-text">目前沒有行程資料</p>
+                    <p class="no-data-hint">搜尋並添加景點開始規劃您的旅程</p>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <!---------------->
+            
+            <div id="map" class="map-container"></div>
           </div>
         </div>
-        <!---------------------------------------------------------->
       </div>
-      <div class="pt-2"></div>
-      <div id="map" class="map-container col-8"></div>
-      <div class="additional-controls"></div>
     </div>
   </div>
 </template>
 
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, onBeforeUnmount } from "vue";
 import PlaceCard from "../components/PlaceCard.vue";
+import CarouselsCycle from "@/components/CarouselsCycle.vue";
 import dayjs from "dayjs";
 import { format } from "date-fns";
 import { useRoute } from "vue-router";
@@ -725,189 +707,340 @@ const fetchItineraryById = async () => {
   }
 };
 
-//////////////////////////////////////////////
+// 添加頁面掛載和卸載時的樣式處理
+onMounted(() => {
+  document.body.classList.add('googlemap-page');
+  document.documentElement.style.overflow = 'auto';
+  document.body.style.overflow = 'auto';
+  
+  // 獲取header和footer元素
+  const header = document.querySelector('.desktop-header');
+  const footer = document.querySelector('footer.footer-container');
+  
+  // 添加透明背景
+  if (header) header.style.backgroundColor = 'transparent';
+  if (footer) footer.style.backgroundColor = 'transparent';
+});
 
-// Initialize Sortable
-// const initSortable = () => {
-//   if (itineraryList.value) {
-//     new Sortable(itineraryList.value, {
-//       animation: 150,
-//       onEnd: (event) => {
-//         const newItems = [...itineraryItems.value]
-//         const [movedItem] = newItems.splice(event.oldIndex, 1)
-//         newItems.splice(event.newIndex, 0, movedItem)
-//         itineraryItems.value = newItems
-//       }
-//     })
-//   }
-// }
+onBeforeUnmount(() => {
+  document.body.classList.remove('googlemap-page');
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+  
+  // 獲取header和footer元素
+  const header = document.querySelector('.desktop-header');
+  const footer = document.querySelector('footer.footer-container');
+  
+  // 恢復原來的背景
+  if (header) header.style.backgroundColor = '';
+  if (footer) footer.style.backgroundColor = '';
+});
 </script>
 
 <style scoped>
-.nav-link {
-  padding: 8px 16px;
-  margin: 0 2px;
-  min-width: 50px; /* 確保所有按鈕寬度一致 */
-  text-align: center;
+.googlemap-page-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
-.nav-link {
-  border-radius: 8px !important; /* 使圓角更明顯 */
-  font-weight: 500; /* 稍微加粗字體 */
+.background-carousel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
-.nav-link.active {
-  background-color: #0d6efd !important; /* 更鮮明的藍色 */
-  color: white !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 添加陰影增加層次感 */
+.overlay-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4));
+  z-index: 2;
+  pointer-events: none;
 }
 
-.nav-link:not(.active) {
-  background-color: #f8f9fa; /* 非選中按鈕使用淺色背景 */
+.wrap {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 20px 40px;
 }
 
-.input {
-  z-index: 1000;
-  /* 讓搜尋框浮在地圖之上 */
-  position: absolute;
-}
-
-.flex-container {
-  display: flex;
-  flex-direction: row;
-  /* 讓控制項目在左邊 */
-  height: 100vh;
+.item {
   width: 100%;
 }
 
-.draw_btn {
-  display: block;
-  width: 100%; /* 占滿整個容器寬度 */
-  text-align: center; /* 文字居中 */
-  padding: 12px 0; /* 上下內邊距，使按鈕更高 */
-  margin: 5px 0; /* 上下外邊距 */
-  border-radius: 4px; /* 圓角 */
-  font-weight: bold; /* 粗體文字 */
+.content-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.title {
-  position: absolute;
-
-  /* 確保標題貼近圖片頂部 */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  padding: 10px 15px;
+.page-title-container {
+  text-align: center;
+  margin-bottom: 30px;
   color: white;
-  font-size: 24px;
-  font-weight: bold;
-  background: rgba(0, 0, 0, 0.5);
-  /* 半透明黑色背景提升可讀性 */
-  border-radius: 5px;
-  text-align: center;
-}
-.date {
-  position: absolute;
-  /* 確保標題貼近圖片頂部 */
-  left: 26%;
-  top: 49px;
-  background: rgba(0, 0, 0, 0.5);
-  /* 半透明黑色背景提升可讀性 */
-  color: rgb(233, 219, 219);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.titleimg {
-  max-width: 100%;
-  /* 圖片寬度不超過容器 */
-  max-height: 100%;
-  /* 圖片高度不超過容器 */
-  object-fit: cover;
-  /* 圖片填滿容器，可能會裁剪部分內容 */
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.map-container {
-  width: 100%;
-  /* 讓地圖覆蓋剩餘空間 */
-  height: 100vh;
-  /* 為了定位覆蓋層 */
-  /* border: none; */
-  /* 移除邊界 */
+.page-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.map-content-container {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 200px);
+  min-height: 500px;
 }
 
 .controls-container {
-  padding: 0px;
-  width: 400px;
-  /* 調整控制項目的寬度 */
-  height: 100vh;
-  /* 讓控制項目佔滿左邊空間 */
+  flex: 0 0 350px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
-  /* 如果控制項目內容超出，則允許滾動 */
-  background-color: rgb(245, 235, 236);
-  position: relative;
-  /* 確保內部元素可以相對於它進行絕對定位 */
 }
 
-.additional-controls {
-  padding: 7px;
-  width: 20%;
-}
-
-.search-overlay {
-  top: 10px;
-  /* right: 5px; */
-  background-color: rgba(61, 118, 192, 0.9);
-  /* 白色半透明背景 */
-  padding: 5px;
-  border-radius: 5px;
-}
-
-.search-input-overlay {
-  width: 340px;
-}
 .search-box {
   display: flex;
-  flex: 1;
-  margin-right: 10px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
+
+.search-input {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 30px;
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
 .search-button {
-  background-color: #ff5a5f;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
   color: white;
   border: none;
-  padding: 0 15px;
-  border-radius: 0 4px 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}
+
+.search-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5);
+}
+
+.route-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  border: none;
+  font-size: 16px;
   font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.search-box input {
+
+.route-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5);
+}
+
+.date-tabs-container {
+  margin: 15px 0;
+  overflow-x: auto;
+}
+
+.date-tabs {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 10px;
+}
+
+.date-tab-item {
+  flex: 0 0 auto;
+}
+
+.date-tab-btn {
+  padding: 8px 15px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.date-tab-btn.active {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+.date-tab-btn:hover:not(.active) {
+  background: rgba(79, 70, 229, 0.1);
+  border-color: rgba(79, 70, 229, 0.5);
+}
+
+.places-container {
   flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px 0 0 4px;
-  font-size: 14px;
-}
-.app-background {
-  /* 基本漸變背景 */
-  background: linear-gradient(135deg, #f6f9fc 0%, #f0f4f8 100%);
-
-  /* 或者更有特色的旅遊主題漸變 */
-  background: linear-gradient(135deg, #e6f2ff 0%, #fff0f5 100%);
-
-  /* 添加細微紋理 */
-  background-image: linear-gradient(135deg, #f6f9fc 0%, #f0f4f8 100%),
-    url("subtle-pattern.png");
-  background-blend-mode: overlay;
+  overflow-y: auto;
+  margin-top: 10px;
 }
 
-/* 提升卡片視覺感 */
-.card {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
-  border-radius: 12px;
+.places-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* 日期選擇區域 */
-.date-selector-area {
-  background-color: rgba(255, 255, 255, 0.7);
+.route-info-item {
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 8px;
-  padding: 10px;
+  padding: 8px 12px;
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+  list-style: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.map-container {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.no-places {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-data-container {
+  text-align: center;
+  padding: 30px;
+}
+
+.no-data-icon {
+  font-size: 4rem;
+  color: rgba(79, 70, 229, 0.3);
+  margin-bottom: 15px;
+}
+
+.no-data-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.no-data-hint {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+@media (max-width: 992px) {
+  .map-content-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .controls-container {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+  
+  .map-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .wrap {
+    padding: 60px 15px 30px;
+  }
+}
+</style>
+
+<style>
+/* 全局樣式 */
+body.googlemap-page {
+  overflow-y: auto !important;
+  height: auto !important;
+  position: relative;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+body.googlemap-page .desktop-header {
+  background: transparent !important;
+  z-index: 10;
+}
+
+body.googlemap-page .header-container {
+  background: transparent !important;
+}
+
+body.googlemap-page footer.footer-container {
+  background: transparent !important;
+  z-index: 10;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  body.googlemap-page .desktop-header,
+  body.googlemap-page footer.footer-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+  }
 }
 </style>

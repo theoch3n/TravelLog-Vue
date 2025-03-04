@@ -1,119 +1,191 @@
 <template>
-  <v-tabs v-model="tab" align-tabs="center" color="deep-purple-accent-4">
-    <v-tab :value="1" @click="handleTabClick('personal')">我的旅遊</v-tab>
-    <v-tab :value="2" @click="handleTabClick('group')">旅遊群組</v-tab>
-  </v-tabs>
+  <div class="itinerary-page-container">
+    <!-- 背景輪播 -->
+    <CarouselsCycle class="background-carousel" />
 
-  <v-tabs-window v-model="tab">
-    <v-tabs-window-item :value="0">
-    </v-tabs-window-item>
-  </v-tabs-window>
+    <!-- 遮罩層 -->
+    <div class="overlay-mask"></div>
 
-  <div>
-    <div class="container">
-      <div class="row">
-        <div class="col-3">
-          <div class="accordion" id="accordionExample">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                  aria-expanded="false" aria-controls="collapseOne">
-                  新增行程
-                </button>
-              </h2>
-              <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-                data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                  <form>
-                    <div class="mb-3">
-                      <label for="travel-themes" class="col-form-label">旅程主題</label>
-                      <input type="text" class="form-control" id="travel-themes" placeholder="請輸入主題"
-                        v-model="itinerarytitle" />
-                    </div>
-                    <div class="mb-3">
-                      <label for="travel-location" class="col-form-label">旅程地點</label>
-                      <input type="text" class="form-control" id="travel-location" placeholder="請輸國家或城市"
-                        v-model="itinerarylocation" />
-                    </div>
-                    <label class="col-form-label">旅程日期</label>
-                    <div class="container" style="padding-left: 0px; padding-right: 0px;">
-                      <div class="row">
-                        <div class="col-6">
-                          <!-- 開始日期輸入框 -->
-                          <input type="text" id="startdate" class="form-control" @click="openDatePicker('start')"
-                            :value="startDate" placeholder="開始日期" readonly style="padding: 5px 10px; cursor: pointer" />
+    <div class="wrap">
+      <div class="item">
+        <div class="content-wrapper">
+          <!-- 頁面標題 -->
+          <div class="page-title-container">
+            <h1 class="page-title">探索旅遊行程</h1>
+            <p class="page-subtitle">開啟你的下一個完美旅程</p>
+          </div>
+
+          <!-- 標籤頁 -->
+          <div class="tabs-container">
+            <v-tabs v-model="tab" align-tabs="center" color="white" class="custom-tabs">
+              <v-tab :value="1" @click="handleTabClick('personal')" class="tab-item">我的旅遊</v-tab>
+              <v-tab :value="2" @click="handleTabClick('group')" class="tab-item">旅遊群組</v-tab>
+            </v-tabs>
+          </div>
+
+          <div class="container mt-4">
+            <!-- 新增行程區塊 -->
+            <div class="row mb-4">
+              <div class="col-md-4 col-lg-3">
+                <div class="accordion custom-accordion" id="accordionExample">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                        aria-expanded="false" aria-controls="collapseOne">
+                        <i class="fas fa-plus-circle me-2"></i> 新增行程
+                      </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                      data-bs-parent="#accordionExample">
+                      <div class="accordion-body">
+                        <form>
+                          <div class="mb-3">
+                            <label for="travel-themes" class="col-form-label">旅程主題</label>
+                            <input type="text" class="form-control custom-input" id="travel-themes" placeholder="請輸入主題"
+                              v-model="itinerarytitle" />
+                          </div>
+                          <div class="mb-3">
+                            <label for="travel-location" class="col-form-label">旅程地點</label>
+                            <input type="text" class="form-control custom-input" id="travel-location" placeholder="請輸國家或城市"
+                              v-model="itinerarylocation" />
+                          </div>
+                          <label class="col-form-label">旅程日期</label>
+                          <div class="container" style="padding-left: 0px; padding-right: 0px;">
+                            <div class="row">
+                              <div class="col-6">
+                                <input type="text" id="startdate" class="form-control custom-input" @click="openDatePicker('start')"
+                                  :value="startDate" placeholder="開始日期" readonly style="padding: 5px 10px; cursor: pointer" />
+                              </div>
+                              <div class="col-6">
+                                <input type="text" id="enddate" class="form-control custom-input" @click="openDatePicker('end')"
+                                  :value="endDate" placeholder="結束日期" readonly style="padding: 5px 10px; cursor: pointer" />
+                              </div>
+                              <v-menu v-model="showDatePicker" transition="scale-transition" offset-y class="date-picker-menu">
+                                <v-card class="date-picker-card">
+                                  <v-date-picker v-model="selectedDate" :min="minDate"
+                                    @update:model-value="setDate" class="custom-date-picker"></v-date-picker>
+                                </v-card>
+                              </v-menu>
+                            </div>
+                          </div>
+                        </form>
+                        <br />
+                        <div class="modal-footer">
+                          <button type="button" class="btn custom-btn" data-bs-target="#collapseOne"
+                            @click="insertdata()">
+                            <i class="fas fa-check me-1"></i> 完成
+                          </button>
                         </div>
-                        <div class="col-6">
-                          <!-- 結束日期輸入框 -->
-                          <input type="text" id="enddate" class="form-control" @click="openDatePicker('end')"
-                            :value="endDate" placeholder="結束日期" readonly style="padding: 5px 10px; cursor: pointer" />
-                        </div>
-                        <!-- 日期選擇器 -->
-                        <v-menu v-model="showDatePicker" transition="scale-transition" offset-y :style="{position: 'absolute',  left: '35%',  transform: 'translateX(-50%)',  top: '40%',  transform: 'translateY(-50%)',}">
-                          <v-card>
-                            <v-date-picker v-model="selectedDate" :min="minDate"
-                              @update:model-value="setDate"></v-date-picker>
-                          </v-card>
-                        </v-menu>
                       </div>
                     </div>
-                  </form>
-                  <br />
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary" data-bs-target="#collapseOne"
-                      @click="insertdata()"> 完成</button>
                   </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 行程卡片區域 -->
+            <div class="row">
+              <div class="col-lg-3 col-md-4 col-sm-6 mb-4" v-for="card in CardData" :key="card.itineraryId">
+                <div class="card itinerary-card hover-effect">
+                  <div class="card-img-container">
+                    <img class="card-img-top pointer" :src="card.itineraryImage || '/imgs/noImage.png'" 
+                      @click.stop="navigateToGoogleMap(card.itineraryId)" alt="行程圖片">
+                    <div class="image-overlay" @click.stop="navigateToGoogleMap(card.itineraryId)"></div>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">{{ card.itineraryTitle }}</h5>
+                    <p class="card-text">{{ card.itineraryStartDate.split("T")[0] + " ~ " + card.itineraryEndDate.split("T")[0] }}</p>
+                    <div class="card-actions">
+                      <button class="btn action-btn" @click.stop="showDialog(card.itineraryId)">
+                        <i class="fas fa-user-plus"></i> 邀請
+                      </button>
+                      <button class="btn custom-btn-secondary" @click.stop="openBillList(card)">
+                        <i class="fas fa-receipt"></i> 拆帳
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 無資料時顯示 -->
+              <div class="col-12 text-center no-data" v-if="CardData.length === 0">
+                <div class="no-data-container">
+                  <i class="fas fa-map-marked-alt no-data-icon"></i>
+                  <p class="no-data-text">目前沒有行程資料</p>
+                  <p class="no-data-hint">點擊「新增行程」開始您的旅程規劃</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <v-container>
-          <v-row>
-            <v-col cols="3" v-for="card in CardData" :key="card.itineraryId">
-              <v-card class="fixed-size-card" max-width="344">
-                <v-img class="pointer" :src="card.itineraryImage" cover
-                  @click="navigateToGoogleMap(card.itineraryId)"></v-img>
-                <v-card-title>{{ card.itineraryTitle }}</v-card-title>
-                <v-card-subtitle>{{ card.itineraryStartDate.split("T")[0] + " ~ " +
-                  card.itineraryEndDate.split("T")[0]
-                }}</v-card-subtitle>
-                <v-card-actions>
-                  <v-btn :icon="show ? 'mdi-chevron-up' : 'mdi-chevron-down'" @click.stop="showDialog(card.itineraryId)">
-                  </v-btn>
-                  <button class="btn btn-outline-primary" @click.stop="openBillList(card)">拆帳</button>
-                  <v-spacer></v-spacer>
-                  <v-dialog v-model="dialog" width="400">
-                    <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友"><v-text-field :rules="rules"
-                        hide-details="auto" label="請輸入帳號" v-model="GroupEmmail"></v-text-field>
-                      <template v-slot:actions>
-                        <v-btn class="ms-auto" text="加入" @click="invitefriends(card.itineraryId)"></v-btn>
-                      </template>
-                    </v-card>
-                  </v-dialog>
-                </v-card-actions>
-
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </div>
     </div>
     
-   
+    <!-- 邀請好友對話框 -->
+    <v-dialog v-model="dialog" width="400">
+      <v-card max-width="400" prepend-icon="mdi-star" title="邀請好友" class="invite-card">
+        <v-text-field :rules="rules" hide-details="auto" label="請輸入帳號" v-model="GroupEmmail" class="invite-input"></v-text-field>
+        <template v-slot:actions>
+          <v-btn class="ms-auto custom-btn" text="加入" @click="invitefriends(selectedItineraryId)"></v-btn>
+        </template>
+      </v-card>
+    </v-dialog>
+    
+    <BillList v-model="selectedId"></BillList>
   </div>
-  <BillList v-model="selectedId"></BillList>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, onBeforeUnmount } from "vue";
 import axios from "axios";
 import { format } from "date-fns"; // 格式化日期
-// import LocationSearch from "../components/LocationSearch.vue";
 import { useRouter } from "vue-router";
 import BillList from "./billList.vue";
+import CarouselsCycle from "@/components/CarouselsCycle.vue"; // 引入輪播組件
+
+// 添加页面挂载和卸载时的样式处理
+onMounted(() => {
+  document.body.classList.add('itinerary-page');
+  document.documentElement.style.overflow = 'auto';
+  document.body.style.overflow = 'auto';
+  
+  // 获取header和footer元素
+  const header = document.querySelector('.desktop-header');
+  const footer = document.querySelector('footer.footer-container');
+  
+  // 添加透明背景
+  if (header) header.style.backgroundColor = 'transparent';
+  if (footer) footer.style.backgroundColor = 'transparent';
+});
+
+// 添加页面挂载和卸载时的样式处理
+onMounted(() => {
+  document.body.classList.add('itinerary-page');
+  document.documentElement.style.overflow = 'auto';
+  document.body.style.overflow = 'auto';
+  
+  // 获取header和footer元素
+  const header = document.querySelector('.desktop-header');
+  const footer = document.querySelector('footer.footer-container');
+  
+  // 添加透明背景
+  if (header) header.style.backgroundColor = 'transparent';
+  if (footer) footer.style.backgroundColor = 'transparent';
+});
+
+onBeforeUnmount(() => {
+  document.body.classList.remove('itinerary-page');
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+  
+  // 获取header和footer元素
+  const header = document.querySelector('.desktop-header');
+  const footer = document.querySelector('footer.footer-container');
+  
+  // 恢复原来的背景
+  if (header) header.style.backgroundColor = '';
+  if (footer) footer.style.backgroundColor = '';
+});
 
 const baseAddress = "https://localhost:7092";
 
@@ -453,37 +525,403 @@ const navigateToGoogleMap = (itineraryId) => {
     params: { id: itineraryId }, // 只有 id 放 params
   });
 };
-
 </script>
 
 <style scoped>
-.custom-modal {
-  top: 25%;
-}
-
-.fixed-size-card {
-  /* width: 300px; */
-  /* 設定卡片寬度 */
-  height: 400px;
-  /* 設定卡片高度 */
-  /* overflow: auto; */
-}
-
-/* 確保圖片縮放以適應卡片大小 */
-.fixed-size-card .v-img {
+.itinerary-page-container {
+  position: relative;
   width: 100%;
-  height: 60%;
-  /* object-fit: cover;  */
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
-.row {
-  margin-left: 0;
-  /* 移除預設的 margin */
+.background-carousel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 
+.overlay-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4));
+  z-index: 4;
+  pointer-events: none;
+}
 
-.row {
-  margin-left: 0;
-  /* 移除預設的 margin */
+.wrap {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  margin: 0 auto;
+  position: relative;
+  overflow: visible;
+}
+
+.item {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* 頁面標題樣式 */
+.page-title-container {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: white;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.page-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* 標籤頁容器 */
+.tabs-container {
+  margin-bottom: 1.5rem;
+}
+
+/* 自定義標籤頁 */
+.custom-tabs {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+}
+
+.tab-item {
+  color: white !important;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+}
+
+.tab-item:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+/* 手風琴樣式 */
+.custom-accordion {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+}
+
+.accordion-button {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  color: white !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 15px 20px;
+}
+
+.accordion-body {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+}
+
+/* 輸入框樣式 */
+.custom-input {
+  border-radius: 8px;
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  transition: all 0.3s ease;
+  padding: 10px 15px;
+}
+
+.custom-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* 日期選擇器樣式 */
+.date-picker-menu {
+  z-index: 100;
+}
+
+.date-picker-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.custom-date-picker {
+  background: white;
+}
+
+/* 按鈕樣式 */
+.custom-btn {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  color: white !important;
+  border-radius: 30px !important;
+  padding: 8px 24px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4) !important;
+  border: none;
+}
+
+.custom-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5) !important;
+}
+
+.custom-btn-secondary {
+  background: linear-gradient(135deg, #6366f1, #818cf8) !important;
+  color: white !important;
+  border-radius: 30px !important;
+  padding: 5px 15px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4) !important;
+  border: none;
+}
+
+.custom-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5) !important;
+}
+
+/* 卡片樣式 */
+.itinerary-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.card-img-container {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.card-img-top {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card-img-top:hover {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3));
+  z-index: 1;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin: 15px 0 10px;
+}
+
+.card-text {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  /* background: rgba(255, 255, 255, 0.5); */
+}
+
+.action-btn {
+  color: #4f46e5;
+  background: rgba(79, 70, 229, 0.1);
+  border-radius: 20px;
+  padding: 5px 15px;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  background: rgba(79, 70, 229, 0.2);
+  transform: translateY(-2px);
+}
+
+/* 邀請卡片樣式 */
+.invite-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.invite-input {
+  margin: 16px;
+}
+
+/* 無資料顯示樣式 */
+.no-data {
+  padding: 40px 0;
+}
+
+.no-data-container {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  margin: 0 auto;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.no-data-icon {
+  font-size: 4rem;
+  color: #6366f1;
+  margin-bottom: 20px;
+}
+
+.no-data-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.no-data-hint {
+  color: #666;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .page-subtitle {
+    font-size: 1rem;
+  }
+  
+  .content-wrapper {
+    padding: 15px;
+  }
+  
+  .card-img-container {
+    height: 160px;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-title {
+    font-size: 1.8rem;
+  }
+  
+  .custom-tabs {
+    padding: 3px;
+  }
+  
+  .tab-item {
+    padding: 8px 15px;
+  }
+  
+  .card-img-container {
+    height: 140px;
+  }
+}
+</style>
+
+<style>
+/* 全局樣式 */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body.itinerary-page {
+  overflow-y: auto !important;
+  height: auto !important;
+  position: relative;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+body.itinerary-page .desktop-header {
+  background: transparent !important;
+  z-index: 10;
+}
+
+body.itinerary-page .header-container {
+  background: transparent !important;
+}
+
+body.itinerary-page footer.footer-container {
+  background: transparent !important;
+  z-index: 10;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  body.itinerary-page .desktop-header,
+  body.itinerary-page footer.footer-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+  }
 }
 </style>
