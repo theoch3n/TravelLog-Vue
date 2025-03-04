@@ -29,7 +29,7 @@ onUnmounted(() => {
 const totalPrice = computed(() => selectedItem.value.price || 0);
 
 async function initiatePayment() {
-  if (!selectedItem.value?.eventName) {
+  if (!selectedItem.value?.title) {
     alert("請先選擇商品！");
     return;
   }
@@ -37,8 +37,8 @@ async function initiatePayment() {
   try {
     const orderResult = await ECPayService.createOrder({
       totalAmount: selectedItem.value.price || 0,
-      itemName: selectedItem.value.eventName,
-      tradeDesc: `訂購行程：${selectedItem.value.eventName}`,
+      itemName: selectedItem.value.title,
+      tradeDesc: `訂購行程：${selectedItem.value.title}`,
       userId: userStore.profile?.userId,
       productId: selectedItem.value.id,
     });
@@ -54,15 +54,16 @@ async function initiatePayment() {
 
 <template>
   <div class="payment-page">
+    <div class="row">
     <!-- 商品詳情卡片 -->
     <div class="content-grid">
       <div class="product-details-section">
         <div class="product-card">
           <div class="product-header">
-            <h1 class="product-title">{{ selectedItem.eventName }}</h1>
+            <h1 class="product-title">{{ selectedItem.title }}</h1>
             <div class="rating-container">
               <v-rating
-                v-model="selectedItem.ratings"
+                v-model="selectedItem.rating"
                 color="amber-darken-2"
                 background-color="grey-lighten-2"
                 half-increments
@@ -72,31 +73,31 @@ async function initiatePayment() {
               ></v-rating>
             </div>
           </div>
-
-          <p class="product-description">{{ selectedItem.eventDescription }}</p>
+          <p class="product-days">天數：{{ selectedItem.days }}</p>
+          <p class="product-description">{{ selectedItem.description }}</p>
 
           <div class="info-grid">
             <div class="info-item">
               <v-icon color="primary" class="info-icon">mdi-map-marker</v-icon>
               <div class="info-content">
                 <span class="info-label">目的地</span>
-                <span class="info-value">{{ selectedItem.destination }}</span>
+                <span class="info-value">{{ selectedItem.location }}</span>
               </div>
             </div>
 
-            <div class="info-item">
+            <!-- <div class="info-item">
               <v-icon color="primary" class="info-icon">mdi-airplane-takeoff</v-icon>
               <div class="info-content">
                 <span class="info-label">出發地點</span>
                 <span class="info-value">{{ selectedItem.startingPoint }}</span>
               </div>
-            </div>
+            </div> -->
 
             <div class="info-item">
               <v-icon color="primary" class="info-icon">mdi-calendar-start</v-icon>
               <div class="info-content">
                 <span class="info-label">開始日期</span>
-                <span class="info-value">{{ selectedItem.firstDate }}</span>
+                <span class="info-value">{{ selectedItem.starDate }}</span>
               </div>
             </div>
 
@@ -104,17 +105,17 @@ async function initiatePayment() {
               <v-icon color="primary" class="info-icon">mdi-calendar-end</v-icon>
               <div class="info-content">
                 <span class="info-label">結束日期</span>
-                <span class="info-value">{{ selectedItem.lastDate }}</span>
+                <span class="info-value">{{ selectedItem.endDate }}</span>
               </div>
             </div>
 
-            <div class="info-item">
+            <!-- <div class="info-item">
               <v-icon color="primary" class="info-icon">mdi-phone</v-icon>
               <div class="info-content">
                 <span class="info-label">聯絡電話</span>
                 <span class="info-value">{{ selectedItem.contactInfo }}</span>
               </div>
-            </div>
+            </div> -->
 
             <div class="info-item">
               <v-icon color="primary" class="info-icon">mdi-cash</v-icon>
@@ -126,7 +127,9 @@ async function initiatePayment() {
           </div>
         </div>
       </div>
+    </div>
 
+    <div class="row">
       <!-- 訂單摘要卡片 -->
       <div class="order-summary-section">
         <div class="summary-card">
@@ -135,7 +138,7 @@ async function initiatePayment() {
           <div class="summary-content">
             <div class="summary-item">
               <span class="item-label">商品名稱</span>
-              <span class="item-value">{{ selectedItem.eventName }}</span>
+              <span class="item-value">{{ selectedItem.title }}</span>
             </div>
 
             <div class="summary-item">
@@ -148,34 +151,51 @@ async function initiatePayment() {
               <span class="total-value">NT$ {{ totalPrice.toLocaleString() }}</span>
             </div>
           </div>
-
-          <v-btn
-            block
-            color="primary"
-            size="large"
-            class="payment-button"
-            elevation="2"
-            @click="initiatePayment"
-          >
-            <v-icon left>mdi-credit-card</v-icon>
-            確認付款
-          </v-btn>
+          <div class="button-container">
+            <v-btn
+              color="primary"
+              size="large"
+              class="payment-button"
+              elevation="2"
+              @click="initiatePayment"
+            >
+              <v-icon left>mdi-credit-card</v-icon>
+              確認付款
+            </v-btn>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <style scoped>
 .payment-page {
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 1rem;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.row {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 1fr;
   gap: 2rem;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* 商品詳情卡片樣式 */
@@ -184,6 +204,14 @@ async function initiatePayment() {
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.product-details-section {
+  width: 100%;
 }
 
 .product-header {
@@ -247,6 +275,12 @@ async function initiatePayment() {
   position: sticky;
   top: calc(68px + 2rem);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 100%;
+}
+
+.order-summary-section {
+  width: 100%;
 }
 
 .summary-title {
@@ -291,6 +325,42 @@ async function initiatePayment() {
   margin-top: 1.5rem;
 }
 
+.product-days{
+    font-size: 14px;
+    color:lightslategrey
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.payment-button {
+  width: auto;
+  min-width: 150px;
+}
+
+/* 添加全局樣式覆蓋 */
+:deep(.modal-open) {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+:deep(.page-container) {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
 /* 響應式設計 */
 @media (max-width: 1024px) {
   .content-grid {
@@ -300,14 +370,6 @@ async function initiatePayment() {
 
   .summary-card {
     position: static;
-  }
-}
-
-@media (max-width: 640px) {
-  .product-card,
-  .summary-card {
-    padding: 1rem;
-    border-radius: 12px;
   }
 
   .info-grid {
