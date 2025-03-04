@@ -88,13 +88,13 @@ function handleProfileClick() {
           </div>
         </div>
         <!-- 中間：LOGO 區塊 -->
-        <!-- <div class="center-section">
+        <div class="center-section">
           <div class="headerLogo">
             <a href="/">
               <img class="img-fluid" src="../assets/logo-removebg-preview.png" alt="TravelLog" />
             </a>
           </div>
-        </div> -->
+        </div>
         <!-- 右側：會員系統區塊 -->
         <div class="right-section">
           <nav class="desktop-nav">

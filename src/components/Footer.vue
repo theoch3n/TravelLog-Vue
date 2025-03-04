@@ -22,30 +22,39 @@ const icons = reactive([
 </script>
 
 <template>
-    <!-- <v-footer rounded> -->
-        <v-container fluid class="pa-2">
-            <v-row>
-                <v-col cols="12" lg="4" class="footer-text mb-3">
-                    <h3 class="mb-1 pt-2">聯絡我們</h3>
-                    <p>電話 / 09877287720</p>
-                    <p>Email / sunsanrothree@gmail.com</p>
-                    <p>聯絡地址 / 上善市若水區菩提街無樹號解鈴樓</p>
+    <footer class="footer-container">
+        <v-container fluid class="py-1">
+            <v-row class="align-center">
+                <!-- 聯絡資訊 -->
+                <v-col cols="12" lg="4" class="footer-text py-1">
+                    <div class="d-flex align-center">
+                        <h3 class="mr-2 mb-0">聯絡我們</h3>
+                        <div class="d-flex align-center ml-auto d-lg-none">
+                            <v-btn v-for="icon in icons" :key="icon.icon" 
+                                class="mx-1" :icon="icon.icon" :href="icon.link"
+                                color="black" variant="text" density="compact" size="small"></v-btn>
+                        </div>
+                    </div>
+                    <div class="contact-info d-flex flex-wrap">
+                        <p class="mr-3"><v-icon size="x-small" class="mr-1">mdi-phone</v-icon> 09877287720</p>
+                        <p class="mr-3"><v-icon size="x-small" class="mr-1">mdi-email</v-icon> sunsanrothree@gmail.com</p>
+                    </div>
                 </v-col>
 
-                <v-col cols="12" lg="4" class="mb-3">
-                    <v-btn v-for="icon in icons" :key="icon.icon" class="mx-2" :icon="icon.icon" :href="icon.link"
-                        color="black" variant="text"></v-btn>
+                <!-- 社交媒體圖標 - 僅在大屏幕顯示 -->
+                <v-col cols="12" lg="4" class="text-center py-1 d-none d-lg-flex justify-center">
+                    <v-btn v-for="icon in icons" :key="icon.icon" 
+                        class="mx-1" :icon="icon.icon" :href="icon.link"
+                        color="#7B7B7B" variant="text" density="compact"></v-btn>
                 </v-col>
 
-                <v-col cols="12" lg="4" class="footer-text mb-3 mt-2">
-                    <p>© 2024-2025 TravelLog. All Rights Reserved.</p>
-                    <p>旅遊產品由 TravelLog 負責提供。</p>
-                    <p>右丞說的</p>
-                    <p>旅行業註冊編號：交觀甲第XXXXXX號。</p>
+                <!-- 版權信息 -->
+                <v-col cols="12" lg="4" class="footer-text text-lg-end py-1">
+                    <p class="mb-0">© 2024-2025 TravelLog. All Rights Reserved.</p>
                 </v-col>
             </v-row>
         </v-container>
-    <!-- </v-footer> -->
+    </footer>
 </template>
 
 <style scoped>
@@ -59,7 +68,7 @@ footer {
 h3 {
     font-size: 18px;
     /* 調整標題字體大小 */
-    color: black;
+    color: #7B7B7B;
 }
 
 .footer-text p {
@@ -73,10 +82,13 @@ h3 {
 
 .v-btn {
     transition: transform 0.2s ease-in-out;
+    height: 32px !important;
+    width: 32px !important;
 }
 
 .v-btn:hover {
     transform: scale(1.1);
+    color: #ff6b6b !important;
 }
 
 .v-container {

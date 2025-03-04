@@ -1,7 +1,7 @@
 <template>
   <div class="background-panel">
     <div class="row">
-      <img src="/src/assets/logo-removebg-preview.png" alt="logo" class="logo" />
+      <!-- <img src="/src/assets/logo-removebg-preview.png" alt="logo" class="logo" /> -->
       <div class="wrap">
         <router-link to="/itinerary" class="icon-container">
           <img src="/icon/icon01.png" alt="行程規劃" class="icon-img" />
