@@ -93,22 +93,29 @@ const clearForm = () => {
 };
 const paidStatusUpdate = async (item) => {
     if (item.paid) {
-        alert("已付款的項目不可修改")
+        $Warning("已付款的項目不可修改")
         return
     }
 
-    var Confirmed = confirm("確定要將 " + item.memberName + " 的付款狀態修改為已支付嗎?");
-    if (!Confirmed) {
-        alert("操作已取消")
-        return;
-    }
-
-    const response = await axios.post(`${baseAddress}/api/Bill/updatePaidStatus/${item.id}`)
-    if (response.data) {
-        item.paid = true;
-        emit('refreshData');
-        alert("狀態修改成功!")
-    }
+    window.$Confirm(
+        `確定要標記 ${item.memberName} 的付款狀態為已支付嗎?`,
+        "",
+        async () => {
+            try {
+                const response = await axios.post(`${baseAddress}/api/Bill/updatePaidStatus/${item.id}`);
+                if (response.data) {
+                    item.paid = true;
+                    emit('refreshData');
+                    window.$Success("🎉 付款狀態已更新!");
+                }
+            } catch (error) {
+                window.$Error("😞 修改失敗，請稍後再試!");
+            }
+        },
+        () => {
+            window.$Info("💡 操作已取消");
+        }
+    );
 }
 const emit = defineEmits(['refreshData'])
 const backToList = () => {

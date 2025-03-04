@@ -18,10 +18,10 @@ const getData = async (keyword = '') => {
     try {
         const request = { itineraryTitle: keyword };
         const response = await axios.post(`${baseAddress}/api/TravelPackage/GetTravelPackageByKeyword`, request);
-        //alert(JSON.stringify(response.data));
+        //Success(JSON.stringify(response.data));
         categoryArray.value = response.data;
     } catch (error) {
-        alert(error.message + "\n檢查你的api有沒有開");
+        $Error(error.message + "\n檢查你的api有沒有開");
     }
 };
 

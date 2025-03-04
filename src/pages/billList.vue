@@ -153,11 +153,11 @@ const getBillsData = async () => {
                 billDetails: item.bill.billDetails || []  // 確保每個帳單都有 billDetails
             }));
         } else {
-            alert("發生錯誤");
+            $Error("發生錯誤");
         }
     } catch (error) {
         console.log("Error: ", error);
-        alert("提交失敗!");
+        $Error("提交失敗!");
     }
 };
 
@@ -166,7 +166,7 @@ const getBillsData = async () => {
 const openDetails = (BillId) => {
     const selectedBill = bills.value.find(item => item.id === BillId);
     if (!selectedBill) {
-        alert("找不到該帳單");
+        $Error("找不到該帳單");
         return;
     }
     selectedItem.value = selectedBill;

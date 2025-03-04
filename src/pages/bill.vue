@@ -220,19 +220,19 @@ const saveData = async () => {
             const response = await axios.post(`${baseAddress}/api/Bill/AddBillWithDetails`, billDto);
             if (response.data.success) {
                 emit('refreshData');
-                alert("資料創建成功!");
+                $Success("資料創建成功!");
                 clearForm();
                 backToList();
             } else {
-                alert("資料創建失敗!");
+                $Error("資料創建失敗!");
             }
         } catch (error) {
             console.log("Error: ", error);
-            alert("提交失敗!");
+            $Error("提交失敗!");
         }
     } else {
         const errorMessage = Object.values(validation).filter(Boolean).join("\n");
-        alert(`表單驗證失敗，請檢查以下內容:\n\n${errorMessage}`);
+        $Error(`表單驗證失敗:\n\n${errorMessage}`);
         console.log("Validation errors: ", validation);
     }
 };

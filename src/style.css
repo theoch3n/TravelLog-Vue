@@ -95,3 +95,83 @@ body,
 .pointer {
     cursor: pointer;
 }
+
+.travel-swal-button {
+    border: none !important;
+    border-radius: 12px !important;
+    /* 圆角统一设置为12px */
+    padding: 0.6rem 1.2rem !important;
+    /* 按钮内边距 */
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    margin: 0.5rem !important;
+}
+
+.travel-swal-confirm-button {
+    background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+    color: white !important;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.6) !important;
+    /* 更加明显的阴影效果 */
+    border-radius: 8px !important;
+    /* 圆角 */
+    padding: 0.8rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.travel-swal-confirm-button:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.8) !important;
+    /* 鼠标悬停时更强烈的阴影效果 */
+}
+
+
+.travel-swal-success-button {
+    background: linear-gradient(135deg, #10b981, #34d399) !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4) !important;
+}
+
+.travel-swal-success-button:hover {
+    transform: translateY(-3px) !important;
+    /* 统一hover效果 */
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5) !important;
+}
+
+.travel-swal-warning-button {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24) !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
+}
+
+.travel-swal-warning-button:hover {
+    transform: translateY(-3px) !important;
+    /* 统一hover效果 */
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5) !important;
+}
+
+.travel-swal-error-button {
+    background: linear-gradient(135deg, #ef4444, #f87171) !important;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4) !important;
+}
+
+.travel-swal-error-button:hover {
+    transform: translateY(-3px) !important;
+    /* 统一hover效果 */
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5) !important;
+}
+
+.travel-swal-cancel-button {
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: #4b5563 !important;
+    border: 1px solid #d1d5db !important;
+    box-shadow: none !important;
+    padding: 0.6rem 1.2rem !important;
+    /* 保持一致的内边距 */
+}
+
+.travel-swal-cancel-button:hover {
+    background: rgba(243, 244, 246, 0.9) !important;
+    transform: translateY(-3px) !important;
+    /* 统一hover效果 */
+}

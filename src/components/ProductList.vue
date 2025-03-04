@@ -171,13 +171,26 @@ const displayContentByDate = (item) => {
 }
 
 const profile = ref()
+let count = ref(0);
 const test = async (item) => {
-    await getProfile();
+    if (count.value >= 5)
+        count.value = 0
+    count.value++;
+    if (count.value == 1)
+        $Info("123")
+    if (count.value == 2)
+        $Success("123")
+    if (count.value == 3)
+        $Error("123")
+    if (count.value == 4)
+        $Warning("123")
+
+    // await getProfile();
     // await getPlace(item.itineraryId);
-    item.itineraryCreateUser = profile.value.userId;
+    // item.itineraryCreateUser = profile.value.userId;
     // item.place = place.value;
-    // alert(JSON.stringify(item.place))
-    await addItinerary(item);
+    // $Success(JSON.stringify(item.place))
+    // await addItinerary(item);
 };
 // const place = ref();
 // const getPlace = async (ItineraryId) => {
@@ -209,9 +222,9 @@ axios.interceptors.request.use(config => {
 const addItinerary = async (item) => {
     const response = await axios.post(`${baseAddress}/api/TravelPackage/addItinerary`, item)
     if (response.data) {
-        alert("ProductList.vue: \n" + "成功添加到資料庫")
+        $Success("ProductList.vue: \n" + "成功添加到資料庫")
     } else {
-        alert("ProductList.vue: \n" + "發生錯誤")
+        $Error("ProductList.vue: \n" + "發生錯誤")
     }
 }
 
@@ -222,7 +235,7 @@ const getInfo = async () => {
     if (response.data) {
         infoData.value = response.data;
     } else {
-        alert("發生錯誤，無法取得行程資料!")
+        $Error("發生錯誤，無法取得行程資料!")
     }
 }
 
@@ -238,17 +251,17 @@ const getPlaceImgs = async (id) => {
         const imageUrls = response.data.map(p => p.imageUrl);
         imgs.value = imageUrls;
     } else {
-        alert("沒抓到東西")
+        $Error("沒抓到東西")
     }
 }
 const getDetails = async (id) => {
     const response = await axios.get(`${baseAddress}/api/PlaceDetails/${id}`)
     if (response.data) {
-        // alert(JSON.stringify(response.data))
+        // $Success(JSON.stringify(response.data))
         detailsData.value = response.data;
         getPlaceImgs(detailsData.value.placeId);
     } else {
-        alert("初四了阿伯!沒抓到資料!")
+        $Error("初四了阿伯!沒抓到資料!")
     }
 }
 const imgs = ref([])
@@ -310,7 +323,7 @@ const GetTravelPackageInfo = async (id) => {
         console.log(JSON.stringify(response.data))
         travelInfo.value = response.data;
     } else {
-        alert("沒東西抓")
+        $Error("沒東西抓")
     }
 }
 
