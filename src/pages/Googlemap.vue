@@ -19,7 +19,17 @@
           class="titleimg"
           :style="{ height: '30%', width: '100%' }"
         />
+        <div class="search-box">
+          <input
+            v-model="textsearchInput"
+            class="search-input-overlay p-1 border-5"
+            placeholder="輸入類別"
+            id="textsearch-input-overlay"
+          />
+          <button class="search-button" id="searchButton">搜尋</button>
+        </div>
 
+        <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
         <button
           class="btn btn-primary draw_btn"
           id="draw-route"
@@ -46,7 +56,7 @@
               aria-selected="true"
               @click="handleDateClick(date)"
             >
-              {{ date }}
+              {{ formatDisplayDate(date) }}
             </button>
           </li>
         </ul>
@@ -94,18 +104,7 @@
         </div>
         <!---------------------------------------------------------->
       </div>
-      <div class="pt-2">
-        <div class="input">
-          <input
-            v-model="textsearchInput"
-            class="form-control search-input-overlay p-1 border-5 border-primary"
-            placeholder="輸入類別"
-            id="textsearch-input-overlay"
-          />
-          <button class="btn btn-danger" id="searchButton">搜尋</button>
-          <!-- <input v-model="searchInput" class="form-control mt-2" placeholder="地點搜尋" id="search-input" /> -->
-        </div>
-      </div>
+      <div class="pt-2"></div>
       <div id="map" class="map-container col-8"></div>
       <div class="additional-controls"></div>
     </div>
@@ -201,6 +200,11 @@ const dateList = computed(() => {
     date_St.value.add(i, "day").format("YYYY-MM-DD")
   );
 });
+
+// 格式化顯示日期為 MM/DD
+const formatDisplayDate = (date) => {
+  return dayjs(date).format("MM/DD");
+};
 
 // console.log(dateList.value); // 測試輸出
 
@@ -460,7 +464,7 @@ const setupMarkerListener = (autocomplete1) => {
       console.error("搜尋結果無法取得地點資訊");
       return;
     }
-
+    console.log(place);
     const selectRestaurant = {
       location: place.geometry.location,
       placeId: place.place_id,
@@ -742,8 +746,8 @@ const fetchItineraryById = async () => {
 <style scoped>
 .nav-link {
   padding: 8px 16px;
-  margin: 0 5px;
-  min-width: 80px; /* 確保所有按鈕寬度一致 */
+  margin: 0 2px;
+  min-width: 50px; /* 確保所有按鈕寬度一致 */
   text-align: center;
 }
 
@@ -858,6 +862,52 @@ const fetchItineraryById = async () => {
 }
 
 .search-input-overlay {
-  width: 200px;
+  width: 340px;
+}
+.search-box {
+  display: flex;
+  flex: 1;
+  margin-right: 10px;
+}
+.search-button {
+  background-color: #ff5a5f;
+  color: white;
+  border: none;
+  padding: 0 15px;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+.search-box input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+}
+.app-background {
+  /* 基本漸變背景 */
+  background: linear-gradient(135deg, #f6f9fc 0%, #f0f4f8 100%);
+
+  /* 或者更有特色的旅遊主題漸變 */
+  background: linear-gradient(135deg, #e6f2ff 0%, #fff0f5 100%);
+
+  /* 添加細微紋理 */
+  background-image: linear-gradient(135deg, #f6f9fc 0%, #f0f4f8 100%),
+    url("subtle-pattern.png");
+  background-blend-mode: overlay;
+}
+
+/* 提升卡片視覺感 */
+.card {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+  border-radius: 12px;
+}
+
+/* 日期選擇區域 */
+.date-selector-area {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  padding: 10px;
 }
 </style>
