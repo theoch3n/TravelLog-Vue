@@ -7,13 +7,15 @@ import banner02 from "../assets/banner02.jpg";
 import banner03 from "../assets/banner03.jpg";
 import banner04 from "../assets/banner04.jpeg";
 import banner05 from "../assets/banner05.jpg";
+import banner06 from "../assets/banner06.jpg";
 
 const banners = ref([
-    { src: banner01, alt: "Banner 1" },
-    { src: banner02, alt: "Banner 2" },
-    { src: banner03, alt: "Banner 3" },
-    { src: banner04, alt: "Banner 4" },
-    { src: banner05, alt: "Banner 5" }
+    // { src: banner01, alt: "Banner 1" },
+    // { src: banner02, alt: "Banner 2" },
+    // { src: banner03, alt: "Banner 3" },
+    // { src: banner04, alt: "Banner 4" },
+    // { src: banner05, alt: "Banner 5" }
+    {src: banner06, alt:"Banner"}
 ]);
 </script>
 
