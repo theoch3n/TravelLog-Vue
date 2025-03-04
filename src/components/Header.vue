@@ -77,7 +77,7 @@ function handleProfileClick() {
     <div class="desktop-header" >
       <div class="header-container">
         <!-- 左側：Overlay 區塊 -->
-        <div class="left-section">
+        <!-- <div class="left-section"> -->
           <div class="overlay-container">
             <button class="overlay-btn" @click="props.openOverlay">
               ☰
@@ -86,18 +86,18 @@ function handleProfileClick() {
               :userStore="userStore" :router="router" />
 
           </div>
-        </div>
+        <!-- </div> -->
         <!-- 中間：LOGO 區塊 -->
-        <div class="center-section">
+        <!-- <div class="center-section"> -->
           <div class="headerLogo">
             <a href="/">
               <img class="img-fluid" src="../assets/logo-removebg-preview.png" alt="TravelLog" />
             </a>
           </div>
-        </div>
+        <!-- </div> -->
         <!-- 右側：會員系統區塊 -->
-        <div class="right-section">
-          <nav class="desktop-nav">
+        <!-- <div class="right-section"> -->
+          <!-- <nav class="desktop-nav"> -->
 
             <!-- 未登入：會員登入按鈕 -->
             <v-btn v-if="accountPage && !userStore.isAuthenticated" @click="openLoginModal" class="btn_account"
@@ -124,8 +124,8 @@ function handleProfileClick() {
               </v-list>
             </v-menu>
 
-          </nav>
-        </div>
+          <!-- </nav> -->
+        <!-- </div> -->
       </div>
     </div>
   </div>
@@ -154,7 +154,7 @@ function handleProfileClick() {
   padding: 0 20px;
   height: 60px;
   background-color: transparent;
-  width: 100%;
+  width: 1536px;
   box-sizing: border-box;
 }
 
@@ -174,7 +174,7 @@ function handleProfileClick() {
 /* 右側：固定寬度 */
 .right-section {
   flex: 0 0 50px;
-  text-align: right;
+  /* text-align: right; */
 }
 
 /* overlay 區塊 */
@@ -186,13 +186,14 @@ function handleProfileClick() {
 .overlay-btn {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 24px;
   color: rgb(0, 0, 0);
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
   cursor: pointer;
   border-radius: 12px;
   padding: 12 12px;
   box-shadow: none !important;
+  margin-top: 12px;
 }
 
 /* LOGO 區塊 */
@@ -200,6 +201,7 @@ function handleProfileClick() {
   display: inline-block;
   height: 50px;
   width: 200px;
+  margin-top: 12px;
 }
 
 /* Nav 相關 */
@@ -214,11 +216,14 @@ function handleProfileClick() {
 }
 
 .btn_account {
-  font-size: 24px;
+  font-size: 18px;
   border-radius: 12px;
-  padding: 12 12px;
+  padding: 12px 12px;
   box-shadow: none !important;
   gap: 0px;
+  background: transparent !important;
+  margin-right: 20px;
+  min-width: 120px;
 }
 
 .tool-button {

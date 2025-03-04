@@ -46,14 +46,22 @@ CarouselsCycle {
       bottom: 0;
       right: 0;
       left: 0;
-      padding: 0 520px;
+      padding: 0;  /* 移除水平内边距 */
       background: rgba(0, 0, 0, 0.4);
       display: flex;
       justify-content: center;
+      align-items: center;  /* 添加垂直居中 */
       flex-direction: column;
       opacity: 1; /* 直接顯示 */
       transition: opacity 0.6s;
       cursor: pointer;
+    }
+
+    .icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;  /* 确保宽度占满 */
     }
   }
 }

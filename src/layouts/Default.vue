@@ -121,7 +121,7 @@ nav {
 }
 
 main {
-  margin-left: 20px;
+  margin-left: 0px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -132,7 +132,7 @@ main {
 }
 
 footer {
-  margin-left: 20px;
+  margin-left: 0px;
   flex: none;
   display: flex;
   flex-direction: column;
