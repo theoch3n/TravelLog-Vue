@@ -4,7 +4,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../pages/Home.vue";
 import About from "../pages/About.vue";
 import Payment from "../pages/Payment.vue";
-import Products from "../pages/Products.vue";
+// import Products from "../pages/Products.vue";
+import TravelPackage from "../pages/TravelPackage.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
 import AccountLayout from "../layouts/AccountLayout.vue";
@@ -22,6 +23,8 @@ import PaymentResult from "../pages/PaymentResult.vue";
 import ItineraryTemp from "../pages/ItineraryTemp.vue";
 import Profile from "@/components/Profile.vue";
 import MyOrder from "@/pages/MyOrder.vue";
+import VerifyEmail from "@/components/VerifyEmail.vue";
+import ResetPassword from '@/pages/ResetPassword.vue'
 
 // 定義路由配置
 const routes = [
@@ -40,10 +43,15 @@ const routes = [
                 component: About,
             },
             {
-                path: "/products", // 路由路徑 (根目錄)
-                name: "Products", // 路由名稱 (用於程式內部識別)
-                component: Products, // 顯示的頁面
+                path: "/TravelPackage", // 路由路徑 (根目錄)
+                name: "TravelPackage", // 路由名稱 (用於程式內部識別)
+                component: TravelPackage, // 顯示的頁面
             },
+            // {
+            //     path: "/products", // 路由路徑 (根目錄)
+            //     name: "Products", // 路由名稱 (用於程式內部識別)
+            //     component: Products, // 顯示的頁面
+            // },
             {
                 path: "/Googlemap/:id", // 路由路徑 (根目錄)
                 name: "Googlemap", // 路由名稱 (用於程式內部識別)
@@ -110,6 +118,18 @@ const routes = [
                 name: "MyOrder",
                 component: MyOrder,
             },
+            {
+                path: '/reset-password',
+                name: 'ResetPassword',
+                component: ResetPassword
+              },
+              {
+                path: '/verify-email',
+                name: 'VerifyEmail',
+                component: VerifyEmail,
+                props: route => ({ token: route.query.token })
+              }
+              
         ],
     },
     {

@@ -10,11 +10,11 @@ import OrderComplete from "./OrderComplete.vue";
 
 const steps = [
     { title: '選擇方案', component: OrderConfirmation },
-    { title: '填寫資料', component: PaymentMethod },
+    { title: '確認方案', component: PaymentMethod },
     { title: '完成訂單', component: OrderComplete }
 ]
 
-const currentStep = ref(2)
+const currentStep = ref(1)
 
 const setCurrentStep = (step) => {
     currentStep.value = step + 1

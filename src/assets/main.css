@@ -1,0 +1,14 @@
+/* 透過 Google Fonts 服務載入 Pacifico 字體 */
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+/* 定義 .pacifico-regular 類別來套用 Pacifico Regular */
+.pacifico-regular {
+  /* 指定字型為 "Pacifico"，載入失敗時以 cursive 為備援 */
+  font-family: "Pacifico", cursive;
+
+  /* 字重 400，對應到「Regular」粗細 */
+  font-weight: 400;
+
+  /* 字體樣式：normal（非斜體） */
+  font-style: normal;
+}

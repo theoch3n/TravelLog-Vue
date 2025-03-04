@@ -1,8 +1,8 @@
 <template>
     <v-card class="profile">
         <v-card-title class="justify-center">
-              <h2>變更密碼</h2>
-            </v-card-title>
+            <h2>變更密碼</h2>
+        </v-card-title>
         <v-card-text>
             <v-form ref="formRef" v-model="valid" lazy-validation>
                 <!-- 原密碼欄位 -->
@@ -22,19 +22,25 @@
 
                 <!-- 送出按鈕 -->
                 <v-btn :disabled="!valid" color="primary" class="mt-4" @click="ChangePassword">
-                    變更密碼
+                    <v-icon left class="mr-2">mdi-rename</v-icon>變更密碼
                 </v-btn>
             </v-form>
-
-            <!-- 成功或錯誤提示 -->
-            <v-alert v-if="message" type="success" class="mt-4">
-                {{ message }}
-            </v-alert>
-            <v-alert v-if="error" type="error" class="mt-4">
-                {{ error }}
-            </v-alert>
         </v-card-text>
     </v-card>
+
+    <!-- 使用 v-snackbar 顯示通知訊息 -->
+    <v-snackbar v-model="snackbar" :timeout="3000" vertical :color="snackbarColor"
+        elevation="24" style="font-size: 2rem; font-weight: bold; min-width: 400px; padding: 16px;">
+        <p style="color: white; font-size: 1.5rem;">{{ snackbarTitle }}</p>
+        <div style="color: white;">{{ snackbarText }}</div>
+
+        <template v-slot:actions>
+            <v-btn color="indigo" variant="text" @click="snackbar = false" style="color: white;">
+                Close
+            </v-btn>
+        </template>
+    </v-snackbar>
+
 </template>
 
 <script setup lang="ts">
@@ -47,7 +53,7 @@ interface ChangePasswordRequest {
 }
 
 // 表單驗證旗標與參考
-const valid = ref(false)
+const valid = ref<boolean | null>(false)
 const formRef = ref()
 
 // 表單資料：原密碼、新密碼與確認新密碼
@@ -61,14 +67,8 @@ const form = ref({
 const showNewPassword = ref(false)
 const showConfirmNewPassword = ref(false)
 
-// 成功與錯誤提示訊息
-const message = ref('')
-const error = ref('')
-
 // 驗證規則：必填
-const requiredRules = [
-    (v: string) => !!v || '此欄位必填'
-]
+const requiredRules = [(v: string) => !!v || '此欄位必填']
 
 // 驗證新密碼格式：必須 6-20 字元且至少包含一個大寫字母
 const newPasswordRules = [
@@ -93,9 +93,15 @@ function toggleConfirmNewPassword() {
     showConfirmNewPassword.value = !showConfirmNewPassword.value
 }
 
-// 送出變更密碼請求
+// Snackbar 相關狀態與通知訊息
+const snackbar = ref(false)
+const snackbarTitle = ref('')
+const snackbarText = ref('')
+const snackbarColor = ref('success')
+
+// 送出變更密碼請求，並以 snackbar 顯示通知
 async function ChangePassword() {
-    const isValid = await formRef.value.validate()
+    const isValid = await formRef.value.validate() as boolean
     if (!isValid) return
 
     try {
@@ -104,32 +110,41 @@ async function ChangePassword() {
             newPassword: form.value.newPassword
         }
         const response = await axios.put('https://localhost:7092/api/ChangePassword', requestData)
-        message.value = response.data.message || '密碼變更成功！'
-        error.value = ''
-        // 變更成功後清空表單
+        snackbarTitle.value = '密碼變更成功！'
+        snackbarText.value = response.data.message 
+        snackbarColor.value = 'success'
+        snackbar.value = true
+
+        // 變更成功後清空表單資料
         form.value.oldPassword = ''
         form.value.newPassword = ''
         form.value.confirmNewPassword = ''
+
+        // 重置表單驗證狀態，避免驗證因欄位清空而觸發警告
+        formRef.value.resetValidation()
     } catch (err: any) {
         console.error('變更密碼錯誤：', err)
-        error.value = err.response?.data?.message || '變更密碼失敗！'
-        message.value = ''
+        snackbarTitle.value = '變更密碼失敗！'
+        snackbarText.value = err.response?.data?.message
+        snackbarColor.value = 'error'
+        snackbar.value = true
     }
 }
 </script>
 
 <style scoped>
- .profile {
-  /* 這裡設定左半邊的個人資料面板的樣式 */
-  margin: 20px;
-  padding: 20px;
-  background-color: #fdfdfd;
-  border-radius: 20px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+.profile {
+    margin: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #c4c4c4d7;
+    /* 細邊框 */
+    border-radius: 20px;
+    box-shadow: 0px 6px 6px rgba(52, 52, 52, 0.1);
 }
 
 h2 {
-  text-align: center;
-  margin: 0;
+    text-align: center;
+    margin: 0;
 }
 </style>

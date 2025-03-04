@@ -35,7 +35,7 @@
 
             <div class="container">
               <div v-if="places.length > 0">
-                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place"
+                <PlaceCard v-for="(place, index) in places" :key="place.id" :data="place" :hide="true"
                   :deletePlaceHandler="deletePlace">
                   <li v-if="index < places.length - 1" class="list-group-item text-center text-muted route-info"
                     :id="`route-info-${index}`">
@@ -99,6 +99,7 @@ const Itinerarydata = ref({
   itineraryStartDate: "",
   itineraryEndDate: "",
   itineraryImage: "",
+  itineraryLocation: "",
 });
 // 初始化為當前時間，避免 undefined 問題
 const date_St = ref(dayjs());
@@ -123,7 +124,6 @@ window.onload = () => {
   if (typeof google !== "undefined" && google.maps) {
     initMap();
     console.log("Google Maps API 加載完成！");
-
   } else {
     console.error("Google Maps API 尚未加載完成！");
   }
@@ -239,7 +239,15 @@ const initMap = () => {
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     };
-    map.value.setCenter(currentPosition);
+    // 假設 itineraryLocation 是 "22.6234049,120.2951227" 格式的字串
+    const itineraryLocation = Itinerarydata.value.itineraryLocation.split(","); //從行程抓取經緯度
+
+    // 轉換為 { lat, lng } 物件
+    const itineraryLocationObj = {
+      lat: parseFloat(itineraryLocation[0]), // 解析為浮點數
+      lng: parseFloat(itineraryLocation[1]), // 解析為浮點數
+    };
+    map.value.setCenter(itineraryLocationObj);
     map.value.setZoom(16);
   });
 
@@ -658,10 +666,11 @@ const fetchItineraryById = async () => {
       itineraryStartDate: itinerary.itineraryStartDate.split("T")[0], // 去掉時間部分
       itineraryEndDate: itinerary.itineraryEndDate.split("T")[0], // 去掉時間部分
       itineraryImage: itinerary.itineraryImage,
+      itineraryLocation: itinerary.itineraryCoordinate,
     };
     console.log("取得的資料1:", String(Itinerarydata.value.itineraryStartDate));
 
-    console.log("取得的資料2:", "2025-02-16");
+    console.log("取得的資料2:", Itinerarydata.value.itineraryLocation);
   } catch (error) {
     console.error("獲取資料時發生錯誤：", error);
   }
@@ -704,7 +713,6 @@ const fetchItineraryById = async () => {
   display: block;
   margin-left: auto;
   border-radius: 50px;
-
 }
 
 .title {
