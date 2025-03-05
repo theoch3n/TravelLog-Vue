@@ -141,7 +141,7 @@ onBeforeUnmount(() => {
                         <div v-else-if="orders.length" class="orders-list">
                             <div v-for="order in sortOrdersByDate" :key="order.OrderId" class="order-card">
                                 <div class="order-header">
-                                    <h3 class="order-title">{{ order.product?.eventName || '未知活動' }}</h3>
+                                    <h3 class="order-title">{{ order.product?.itineraryTitle || '未知活動' }}</h3>
                                     <span class="order-date">{{ order.tradeDate }}</span>
                                 </div>
                                 

@@ -8,6 +8,7 @@ class testECPayService {
     async createOrder(orderDetails) {
         try {
             console.log("送出 API 的訂單資料:", orderDetails);
+            console.log("購買商品的ID:", orderDetails.productId);
             const response = await axios.post(
                 `${this.ApiBaseUrl}/Ecpay/CreateOrder`,
                 {

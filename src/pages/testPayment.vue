@@ -30,6 +30,7 @@ onMounted(() => {
   const backdrops = document.querySelectorAll('.modal-backdrop');
   backdrops.forEach(backdrop => backdrop.remove());
   console.log("接收的商品數據:", selectedItem.value);
+  console.log("商品ID:", selectedItem.value.id);
 });
 
 onUnmounted(() => {

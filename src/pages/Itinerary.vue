@@ -53,19 +53,67 @@
                           <div class="container" style="padding-left: 0px; padding-right: 0px;">
                             <div class="row">
                               <div class="col-6">
-                                <input type="text" id="startdate" class="form-control custom-input" @click="openDatePicker('start')"
-                                  :value="startDate" placeholder="開始日期" readonly style="padding: 5px 10px; cursor: pointer" />
+                                <!-- 開始日期選擇器 -->
+                                <v-menu
+                                  v-model="showStartDatePicker"
+                                  :close-on-content-click="false"
+                                  location="bottom"
+                                  transition="scale-transition"
+                                >
+                                  <template v-slot:activator="{ props }">
+                                    <input 
+                                      type="text" 
+                                      id="startdate" 
+                                      class="form-control custom-input" 
+                                      v-bind="props"
+                                      @click="openDatePicker('start')"
+                                      :value="startDate" 
+                                      placeholder="開始日期" 
+                                      readonly 
+                                      style="padding: 5px 10px; cursor: pointer" 
+                                    />
+                                  </template>
+                                  <v-card class="date-picker-card">
+                                    <v-date-picker 
+                                      v-model="selectedDate" 
+                                      :min="minDate"
+                                      @update:model-value="setDate" 
+                                      class="custom-date-picker"
+                                    ></v-date-picker>
+                                  </v-card>
+                                </v-menu>
                               </div>
                               <div class="col-6">
-                                <input type="text" id="enddate" class="form-control custom-input" @click="openDatePicker('end')"
-                                  :value="endDate" placeholder="結束日期" readonly style="padding: 5px 10px; cursor: pointer" />
+                                <!-- 結束日期選擇器 -->
+                                <v-menu
+                                  v-model="showEndDatePicker"
+                                  :close-on-content-click="false"
+                                  location="bottom"
+                                  transition="scale-transition"
+                                >
+                                  <template v-slot:activator="{ props }">
+                                    <input 
+                                      type="text" 
+                                      id="enddate" 
+                                      class="form-control custom-input" 
+                                      v-bind="props"
+                                      @click="openDatePicker('end')"
+                                      :value="endDate" 
+                                      placeholder="結束日期" 
+                                      readonly 
+                                      style="padding: 5px 10px; cursor: pointer" 
+                                    />
+                                  </template>
+                                  <v-card class="date-picker-card">
+                                    <v-date-picker 
+                                      v-model="selectedDate" 
+                                      :min="minDate"
+                                      @update:model-value="setDate" 
+                                      class="custom-date-picker"
+                                    ></v-date-picker>
+                                  </v-card>
+                                </v-menu>
                               </div>
-                              <v-menu v-model="showDatePicker" transition="scale-transition" offset-y class="date-picker-menu">
-                                <v-card class="date-picker-card">
-                                  <v-date-picker v-model="selectedDate" :min="minDate"
-                                    @update:model-value="setDate" class="custom-date-picker"></v-date-picker>
-                                </v-card>
-                              </v-menu>
                             </div>
                           </div>
                         </form>
@@ -143,6 +191,15 @@ import { useRouter } from "vue-router";
 import BillList from "./billList.vue";
 import CarouselsCycle from "@/components/CarouselsCycle.vue"; // 引入輪播組件
 
+// 控制 v-date-picker 顯示與隱藏
+const showDatePicker = ref(false);
+const showStartDatePicker = ref(false);
+const showEndDatePicker = ref(false);
+
+const itinerarytitle = ref("");
+
+
+
 // 添加页面挂载和卸载时的样式处理
 onMounted(() => {
   document.body.classList.add('itinerary-page');
@@ -202,12 +259,6 @@ const tab = ref(1);
 const show = ref('');
 //
 
-
-// 控制 v-date-picker 顯示與隱藏
-const showDatePicker = ref(false);
-
-
-const itinerarytitle = ref("");
 const itinerarylocation = ref("");
 const startDate = ref(""); // 顯示格式 YYYY-MM-DD
 const endDate = ref("");
