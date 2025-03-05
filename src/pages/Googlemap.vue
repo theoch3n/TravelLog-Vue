@@ -139,7 +139,7 @@ onMounted(() => {
 
   loadGoogleMapsAPI();
   // fetchPlaces();
-  fetchPlacesByDate();
+  // fetchPlacesByDate();
   fetchItineraryById();
 
   // initSortable()
@@ -168,6 +168,8 @@ watch(
         date_St.value.format("YYYY-MM-DD"),
         date_Ed.value.format("YYYY-MM-DD")
       );
+      selectedDate.value = date_St.value.format("YYYY-MM-DD");
+      fetchPlacesByDate();
     }
   },
   { deep: true, immediate: true }
@@ -192,7 +194,7 @@ const formatDisplayDate = (date) => {
 
 ////////////////////////得知當前所選的導覽業面////////////////////////////////
 // 當前選擇的日期
-const selectedDate = ref(dateList.value[0]); // 預設為第一天
+const selectedDate = ref('');
 // 處理點擊事件
 const handleDateClick = (date) => {
   selectedDate.value = date;
