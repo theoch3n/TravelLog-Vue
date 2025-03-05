@@ -131,7 +131,7 @@ window.$Confirm = function (title, text, confirmCallback, cancelCallback) {
 
 
 // 引入 Sweetalert2
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 window.Swal = Swal;
 
 const vuetify = createVuetify({

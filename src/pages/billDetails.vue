@@ -72,7 +72,7 @@
 
 <script setup>
 import axios from 'axios';
-import { computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, computed, onMounted, onBeforeUnmount } from 'vue';
 import CarouselsCycle from "@/components/CarouselsCycle.vue"; // 引入輪播組件
 
 // 添加頁面掛載和卸載時的樣式處理
