@@ -27,6 +27,7 @@
                                 <th>標題</th>
                                 <th>代墊人</th>
                                 <th>金額</th>
+                                <th>幣別</th>
                                 <th>創建日期</th>
                             </tr>
                         </thead>
@@ -34,17 +35,17 @@
                             <tr class="text-center pointer" :class="getBillStatusClass(bill)"
                                 v-for="(bill, index) in filteredBills" :key="bill.id" @click="openDetails(bill.id)">
                                 <td>{{ index + 1 }}</td>
-                                <td>{{ bill.title }}</td>
-                                <td>{{ bill.paidBy }}</td>
-                                <td>{{ bill.totalAmount }}</td>
-                                <td>{{ bill.createdAt }}</td>
+                                <td v-html="highlight(bill.title)"></td>
+                                <td v-html="highlight(bill.paidBy)"></td>
+                                <td v-html="highlight(bill.totalAmount)"></td>
+                                <td v-html="highlight(bill.currency)"></td>
+                                <td v-html="highlight(bill.createdAt)"></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" @click="createNewBill()">新增項目</button>
-                    <button type="button" class="btn btn-danger" @click="test()">測試按鈕</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         @click="resetForm()">關閉</button>
                 </div>
@@ -75,9 +76,7 @@ const details = ref([]);
 let itineraryInfo = ref();
 let itineraryId = ref();
 let itineraryTitle = ref();
-const test = () => {
-    console.log(searchBill.value)
-}
+
 watch(() => props.modelValue, (newValue) => {
     if (newValue) {
         itineraryInfo.value = {
@@ -88,6 +87,13 @@ watch(() => props.modelValue, (newValue) => {
         toggleModal('modalBillList', 'show');
     }
 });
+
+function highlight(text) {
+    const query = (searchQuery.value || "").toLowerCase();
+    if (!query || !text) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.toString().replace(regex, '<span style="color: skyblue; font-weight: bold;">$1</span>');
+}
 
 const resetForm = () => {
     selectedFilter.value = 'all';
@@ -102,6 +108,8 @@ const filteredBills = computed(() => {
         if (searchQuery.value && !(
             bill.title?.toLowerCase().includes(query) ||
             bill.totalAmount?.toString().includes(query) ||
+            bill.currency?.toLowerCase().includes(query) ||
+            bill.createdAt?.toString().includes(query) ||
             bill.paidBy?.toLowerCase().includes(query))) {
             isValid = false;
         }
@@ -145,18 +153,20 @@ const getBillsData = async () => {
                 billDetails: item.bill.billDetails || []  // 確保每個帳單都有 billDetails
             }));
         } else {
-            alert("發生錯誤");
+            $Error("發生錯誤");
         }
     } catch (error) {
         console.log("Error: ", error);
-        alert("提交失敗!");
+        $Error("提交失敗!");
     }
 };
+
+
 
 const openDetails = (BillId) => {
     const selectedBill = bills.value.find(item => item.id === BillId);
     if (!selectedBill) {
-        alert("找不到該帳單");
+        $Error("找不到該帳單");
         return;
     }
     selectedItem.value = selectedBill;
@@ -167,6 +177,7 @@ const openDetails = (BillId) => {
 const createNewBill = () => {
     toggleModal('modalBillList', 'hide');
     toggleModal('modalBill', 'show');
+    resetForm();
 }
 
 const toggleModal = (modalId, action) => {

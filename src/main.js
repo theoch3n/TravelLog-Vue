@@ -27,6 +27,108 @@ import * as bootstrap from "bootstrap";
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "bootstrap-icons/font/bootstrap-icons.css";
 window.bootstrap = bootstrap;
+//sweetalert2 組件內直接使用函式即可: $Success("這樣就可以用");
+import Swal from 'sweetalert2';
+window.$Info = function (text) {
+    Swal.fire({
+        title: '💡 提示',
+        text: text,
+        icon: 'info',
+        confirmButtonText: '好的',
+        customClass: {
+            popup: 'travel-swal-popup',
+            title: 'travel-swal-title',
+            content: 'travel-swal-content',
+            confirmButton: 'travel-swal-confirm-button travel-swal-info-button',
+            icon: 'travel-swal-icon'
+        },
+        buttonsStyling: false
+    });
+};
+
+window.$Success = function (text) {
+    Swal.fire({
+        title: '🎉 成功!',
+        text: text,
+        icon: 'success',
+        confirmButtonText: '太棒了!',
+        customClass: {
+            popup: 'travel-swal-popup',
+            title: 'travel-swal-title',
+            content: 'travel-swal-content',
+            confirmButton: 'travel-swal-confirm-button travel-swal-success-button',
+            icon: 'travel-swal-icon'
+        },
+        buttonsStyling: false
+    });
+};
+
+window.$Warning = function (text) {
+    Swal.fire({
+        title: '⚠️ 警告!',
+        text: text,
+        icon: 'warning',
+        confirmButtonText: '了解了',
+        customClass: {
+            popup: 'travel-swal-popup',
+            title: 'travel-swal-title',
+            content: 'travel-swal-content',
+            confirmButton: 'travel-swal-confirm-button travel-swal-warning-button',
+            icon: 'travel-swal-icon'
+        },
+        buttonsStyling: false
+    });
+};
+
+window.$Error = function (text) {
+    Swal.fire({
+        title: '😞 發生錯誤!',
+        text: text,
+        icon: 'error',
+        confirmButtonText: '再試一次',
+        customClass: {
+            popup: 'travel-swal-popup',
+            title: 'travel-swal-title',
+            content: 'travel-swal-content',
+            confirmButton: 'travel-swal-confirm-button travel-swal-error-button',
+            icon: 'travel-swal-icon'
+        },
+        buttonsStyling: false
+    });
+};
+
+window.$Confirm = function (title, text, confirmCallback, cancelCallback) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '✔ 確定',
+        cancelButtonText: '✖ 取消',
+        customClass: {
+            popup: 'travel-swal-popup',
+            title: 'travel-swal-title',
+            content: 'travel-swal-content',
+            confirmButton: 'travel-swal-confirm-button',
+            cancelButton: 'travel-swal-cancel-button',
+            actions: 'travel-swal-actions',
+            icon: 'travel-swal-icon'
+        },
+        buttonsStyling: false
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (typeof confirmCallback === 'function') confirmCallback();
+        } else {
+            if (typeof cancelCallback === 'function') cancelCallback();
+        }
+    });
+};
+
+
+
+
+
+
 
 // 引入 Sweetalert2
 import Swal from 'sweetalert2';

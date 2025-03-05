@@ -11,11 +11,11 @@ const getData = async (keyword = '') => {
     try {
         const request = { eventName: keyword, eventDescription: keyword };
         const response = await axios.post(`${baseAddress}/api/TourBundles/GetTourBundlesByKeyword`, request);
-        //alert(JSON.stringify(response.data));
+        //Success(JSON.stringify(response.data));
         categoryArray.value = response.data;
         getInfo();
     } catch (error) {
-        alert(error.message + "\n檢查你的api有沒有開");
+        $Error(error.message + "\n檢查你的api有沒有開");
     }
 };
 
