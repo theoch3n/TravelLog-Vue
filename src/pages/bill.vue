@@ -1,102 +1,111 @@
 <template>
-    <div class="modal fade" id="modalBill" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header text-center">
-                    <h5 class="modal-title w-100 ms-5" id="modalBillLabel"> {{ itinerary.itineraryTitle }} </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" @click="clearForm()"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-flex my-3">
-                        <div class="form-group w-100 me-3 text-center">
-                            <label class="form-label">品項</label>
-                            <input type="text" class="form-control w-100 text-center" v-model="Title">
+    <div class="bill-page-container">
+        <!-- 背景輪播 -->
+        <CarouselsCycle class="background-carousel" />
+        
+        <!-- 遮罩層 -->
+        <div class="overlay-mask"></div>
+        
+        <div class="modal fade" id="modalBill" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content custom-modal">
+                    <div class="modal-header text-center">
+                        <h5 class="modal-title w-100 ms-5" id="modalBillLabel"> {{ itinerary.itineraryTitle }} </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" @click="clearForm()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex my-3">
+                            <div class="form-group w-100 me-3 text-center">
+                                <label class="form-label">品項</label>
+                                <input type="text" class="form-control custom-input w-100 text-center" v-model="Title">
+                            </div>
+                            <div class="form-group w-100 text-center">
+                                <label class="form-label">價格</label>
+                                <input type="number" class="form-control custom-input w-100 text-center" v-model.number="totalPrice"
+                                    @click="selectAllText" @input="handleTotalPrice()"
+                                    @keydown="handleTotalPriceInput($event)">
+                            </div>
                         </div>
-                        <div class="form-group w-100 text-center">
-                            <label class="form-label">價格</label>
-                            <input type="number" class="form-control w-100 text-center" v-model.number="totalPrice"
-                                @click="selectAllText" @input="handleTotalPrice()"
-                                @keydown="handleTotalPriceInput($event)">
+
+                        <div class="container">
+                            <table class="table table-bordered table-hover custom-table">
+                                <thead class="table-header">
+                                    <tr class="text-center">
+                                        <th class="w-25">姓名</th>
+                                        <th class="w-25">比例(%)</th>
+                                        <th class="w-25">金額</th>
+                                        <th class="col-1">已付</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(p, index) in insideData" :key="p.id">
+                                        <td class="ps-4">
+                                            <select class="form-select custom-select text-center" disabled>
+                                                <option v-for="(option, optIndex) in members" :key="optIndex"
+                                                    :value="option" :selected="optIndex === index">
+                                                    {{ option }}
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input class="form-control custom-input text-center" type="number"
+                                                v-model.number="p.percentage" @input="updateValue(index, 'percentage')"
+                                                @keydown="handleKeydown(index, $event, 'percentage')"
+                                                @click="selectAllText($event)" :class="{ 'border-highlight': p.manual }">
+                                        </td>
+                                        <td>
+                                            <input class="form-control custom-input text-center" type="number" v-model.number="p.price"
+                                                @input="updateValue(index, 'price')"
+                                                @keydown="handleKeydown(index, $event, 'price')"
+                                                @click="selectAllText($event)" :class="{ 'border-highlight': p.manual }">
+                                        </td>
+                                        <th class="align-bottom">
+                                            <div class="form-check">
+                                                <input class="form-check-input custom-checkbox m-0 me-2" style="transform: scale(1.5)"
+                                                    type="checkbox" id="flexCheckDefault" v-model="p.paid"
+                                                    :disabled="members[index] === PaidBy || p.price == 0">
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                    <div class="modal-footer justify-content-between">
+                        <div class="form-group d-flex">
+                            <input type="text" class="form-control custom-input text-center w-25 me-1" v-model="keyword"
+                                placeholder="搜尋">
+                            <select class="form-select custom-select text-center w-50" v-model="selectedCurrency">
+                                <option value="" disabled>選擇幣別</option>
+                                <option v-for="(rate, currency) in filteredRates" :key="currency" :value="rate">
+                                    {{ currency }} -
+                                    {{ rate }}
+                                </option>
+                            </select>
+                        </div>
 
-                    <div class="container">
-                        <table class="table table-bordered  table-hover">
-                            <thead class="table-light">
-                                <tr class="text-center">
-                                    <th class="w-25">姓名</th>
-                                    <th class="w-25">比例(%)</th>
-                                    <th class="w-25">金額</th>
-                                    <th class="col-1">已付</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(p, index) in insideData" :key="p.id">
-                                    <td class="ps-4">
-                                        <select class="form-select text-center" disabled>
-                                            <option v-for="(option, optIndex) in members" :key="optIndex"
-                                                :value="option" :selected="optIndex === index">
-                                                {{ option }}
-                                            </option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input class="form-control text-center" type="number"
-                                            v-model.number="p.percentage" @input="updateValue(index, 'percentage')"
-                                            @keydown="handleKeydown(index, $event, 'percentage')"
-                                            @click="selectAllText($event)" :class="{ 'border-info': p.manual }">
-                                    </td>
-                                    <td>
-                                        <input class="form-control text-center" type="number" v-model.number="p.price"
-                                            @input="updateValue(index, 'price')"
-                                            @keydown="handleKeydown(index, $event, 'price')"
-                                            @click="selectAllText($event)" :class="{ 'border-info': p.manual }">
-                                    </td>
-                                    <th class="align-bottom">
-                                        <div class="form-check">
-                                            <input class="form-check-input m-0 me-2" style="transform: scale(1.5)"
-                                                type="checkbox" id="flexCheckDefault" v-model="p.paid"
-                                                :disabled="members[index] === PaidBy || p.price == 0">
-                                        </div>
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <div class="form-group d-flex">
-                        <input type="text" class="form-control text-center w-25 me-1" v-model="keyword"
-                            placeholder="搜尋">
-                        <select class="form-select text-center w-50" v-model="selectedCurrency">
-                            <option value="" disabled>選擇幣別</option>
-                            <option v-for="currency in filteredCurrencies" :key="currency" :value="currency">
-                                {{ currency }}
-                            </option>
-                        </select>
-                    </div>
+                        <div class="form-group">
+                            <select class="form-select custom-select text-center" v-model="PaidBy">
+                                <option value="" disabled>選擇付款人</option>
+                                <option v-for="(option, optIndex) in members" :key="optIndex" :value="option"
+                                    :disabled="totalPrice == 0">
+                                    {{ option }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="btn-group">
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="avg"
+                                autocomplete="off" v-model="selectedOption" @change="selectionChange()">
+                            <label class="btn custom-btn-outline" for="btnradio1">平分</label>
 
-                    <div class="form-group">
-                        <select class="form-select text-center" v-model="PaidBy">
-                            <option value="" disabled>選擇付款人</option>
-                            <option v-for="(option, optIndex) in members" :key="optIndex" :value="option"
-                                :disabled="totalPrice == 0">
-                                {{ option }}
-                            </option>
-                        </select>
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="custom"
+                                autocomplete="off" v-model="selectedOption" @change="selectionChange()">
+                            <label class="btn custom-btn-outline" for="btnradio3">自訂</label>
+                        </div>
                     </div>
-                    <div class="btn-group">
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" value="avg"
-                            autocomplete="off" v-model="selectedOption" @change="selectionChange()">
-                        <label class="btn btn-outline-primary" for="btnradio1">平分</label>
-
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" value="custom"
-                            autocomplete="off" v-model="selectedOption" @change="selectionChange()">
-                        <label class="btn btn-outline-primary" for="btnradio3">自訂</label>
-                    </div>
-                    <div>
-                        <button type="button" class="btn btn-primary text-light me-2" @click="saveData()">儲存</button>
-                        <button type="button" class="btn btn-secondary text-light" @click="backToList()">返回</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn custom-btn-secondary" data-bs-dismiss="modal" @click="clearForm()">取消</button>
+                        <button type="button" class="btn custom-btn" @click="saveData()">儲存</button>
                     </div>
                 </div>
             </div>
@@ -105,8 +114,41 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref, watch } from "vue";
+import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from "vue";
 import axios from 'axios';
+import CarouselsCycle from "@/components/CarouselsCycle.vue"; // 引入輪播組件
+
+// 添加頁面掛載和卸載時的樣式處理
+onMounted(() => {
+    document.body.classList.add('bill-page');
+    document.documentElement.style.overflow = 'auto';
+    document.body.style.overflow = 'auto';
+    
+    // 獲取header和footer元素
+    const header = document.querySelector('.desktop-header');
+    const footer = document.querySelector('footer.footer-container');
+    
+    // 添加透明背景
+    if (header) header.style.backgroundColor = 'transparent';
+    if (footer) footer.style.backgroundColor = 'transparent';
+
+    // 匯率api次數快用完了，省點
+    // getExchangeRates();
+});
+
+onBeforeUnmount(() => {
+    document.body.classList.remove('bill-page');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    
+    // 獲取header和footer元素
+    const header = document.querySelector('.desktop-header');
+    const footer = document.querySelector('footer.footer-container');
+    
+    // 恢復原來的背景
+    if (header) header.style.backgroundColor = '';
+    if (footer) footer.style.backgroundColor = '';
+});
 
 let isUpdating = false;
 let savePaidByData;
@@ -427,4 +469,198 @@ watch(
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.bill-page-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.background-carousel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.overlay-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.4));
+  z-index: 4;
+  pointer-events: none;
+}
+
+.custom-modal {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  border: none;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  color: white !important;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.modal-body {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+}
+
+.custom-input {
+  border-radius: 8px;
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  transition: all 0.3s ease;
+  padding: 10px 15px;
+}
+
+.custom-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.border-highlight {
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+
+.custom-select {
+  border-radius: 8px;
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  transition: all 0.3s ease;
+}
+
+.custom-select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.custom-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.table-header {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  color: white;
+}
+
+.custom-checkbox:checked {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.custom-btn {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  color: white !important;
+  border-radius: 30px !important;
+  padding: 8px 24px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4) !important;
+  border: none;
+}
+
+.custom-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.5) !important;
+}
+
+.custom-btn-secondary {
+  background: linear-gradient(135deg, #6366f1, #818cf8) !important;
+  color: white !important;
+  border-radius: 30px !important;
+  padding: 8px 24px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4) !important;
+  border: none;
+}
+
+.custom-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5) !important;
+}
+
+.custom-btn-outline {
+  color: #4f46e5 !important;
+  border: 1px solid #4f46e5 !important;
+  background-color: transparent !important;
+  transition: all 0.3s ease;
+}
+
+.custom-btn-outline:hover {
+  background-color: rgba(79, 70, 229, 0.1) !important;
+}
+
+.btn-check:checked + .custom-btn-outline {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  color: white !important;
+  border-color: transparent !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+
+<style>
+/* 全局樣式 */
+body.bill-page {
+  overflow-y: auto !important;
+  height: auto !important;
+  position: relative;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+body.bill-page .desktop-header {
+  background: transparent !important;
+  z-index: 10;
+}
+
+body.bill-page .header-container {
+  background: transparent !important;
+}
+
+body.bill-page footer.footer-container {
+  background: transparent !important;
+  z-index: 10;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  body.bill-page .desktop-header,
+  body.bill-page footer.footer-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+  }
+}
+</style>

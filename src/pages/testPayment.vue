@@ -4,6 +4,7 @@ import ECPayService from '../services/testECPayService';
 import { useProductPara } from '../stores/productPara';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../stores/userStore';
+import CarouselsCycle from "@/components/CarouselsCycle.vue";
 
 const router = useRouter();
 const isDialogVisible = ref(false);
@@ -13,16 +14,38 @@ const peopleCount = ref(1);
 const userStore = useUserStore();
 
 onMounted(() => {
+  document.body.classList.add('payment-page-body');
+  document.documentElement.style.overflow = 'auto';
   document.body.style.overflow = 'auto';
   document.body.style.position = 'static';
+
+  // 獲取header和footer元素
+  const header = document.querySelector('.desktop-header');
+  const footer = document.querySelector('footer.footer-container');
+
+  // 添加透明背景
+  if (header) header.style.backgroundColor = 'transparent';
+  if (footer) footer.style.backgroundColor = 'transparent';
+
   const backdrops = document.querySelectorAll('.modal-backdrop');
   backdrops.forEach(backdrop => backdrop.remove());
   console.log("接收的商品數據:", selectedItem.value);
 });
 
 onUnmounted(() => {
+  document.body.classList.remove('payment-page-body');
+  document.documentElement.style.overflow = '';
   document.body.style.overflow = 'auto';
   document.body.style.position = 'static';
+
+  // 獲取header和footer元素
+  const header = document.querySelector('.desktop-header');
+  const footer = document.querySelector('footer.footer-container');
+
+  // 恢復原來的背景
+  if (header) header.style.backgroundColor = '';
+  if (footer) footer.style.backgroundColor = '';
+
   isDialogVisible.value = false;
 });
 
@@ -53,161 +76,194 @@ async function initiatePayment() {
 </script>
 
 <template>
-  <div class="payment-page">
-    <div class="row">
-    <!-- 商品詳情卡片 -->
-    <div class="content-grid">
-      <div class="product-details-section">
-        <div class="product-card">
-          <div class="product-header">
-            <h1 class="product-title">{{ selectedItem.title }}</h1>
-            <div class="rating-container">
-              <v-rating
-                v-model="selectedItem.rating"
-                color="amber-darken-2"
-                background-color="grey-lighten-2"
-                half-increments
-                readonly
-                dense
-                size="18"
-              ></v-rating>
-            </div>
-          </div>
-          <p class="product-days">天數：{{ selectedItem.days }}</p>
-          <p class="product-description">{{ selectedItem.description }}</p>
+  <div class="payment-page-container">
+    <div class="overlay-mask"></div>
+    <CarouselsCycle class="background-carousel" />
 
-          <div class="info-grid">
-            <div class="info-item">
-              <v-icon color="primary" class="info-icon">mdi-map-marker</v-icon>
-              <div class="info-content">
-                <span class="info-label">目的地</span>
-                <span class="info-value">{{ selectedItem.location }}</span>
+    <div class="payment-content">
+      <div class="payment-grid">
+        <div class="product-banner-section">
+          <img v-if="selectedItem.img" :src="selectedItem.img" :alt="selectedItem.title" class="product-banner-image">
+        </div>
+        <!-- 商品詳情卡片 -->
+        <div class="product-details-section">
+          <div class="product-card">
+            <div class="product-header">
+              <h1 class="product-title">{{ selectedItem.title }}</h1>
+              <div class="rating-container">
+                <v-rating
+                  v-model="selectedItem.rating"
+                  color="amber-darken-2"
+                  background-color="grey-lighten-2"
+                  half-increments
+                  readonly
+                  dense
+                  size="18"
+                ></v-rating>
               </div>
             </div>
+            <p class="product-days">天數：{{ selectedItem.days }}</p>
+            <p class="product-description">{{ selectedItem.description }}</p>
 
-            <!-- <div class="info-item">
-              <v-icon color="primary" class="info-icon">mdi-airplane-takeoff</v-icon>
-              <div class="info-content">
-                <span class="info-label">出發地點</span>
-                <span class="info-value">{{ selectedItem.startingPoint }}</span>
+            <div class="info-grid">
+              <div class="info-item">
+                <v-icon color="primary" class="info-icon">mdi-map-marker</v-icon>
+                <div class="info-content">
+                  <span class="info-label">目的地</span>
+                  <span class="info-value">{{ selectedItem.location }}</span>
+                </div>
               </div>
-            </div> -->
 
-            <div class="info-item">
-              <v-icon color="primary" class="info-icon">mdi-calendar-start</v-icon>
-              <div class="info-content">
-                <span class="info-label">開始日期</span>
-                <span class="info-value">{{ selectedItem.starDate }}</span>
+              <div class="info-item">
+                <v-icon color="primary" class="info-icon">mdi-calendar-start</v-icon>
+                <div class="info-content">
+                  <span class="info-label">開始日期</span>
+                  <span class="info-value">{{ selectedItem.starDate }}</span>
+                </div>
               </div>
-            </div>
 
-            <div class="info-item">
-              <v-icon color="primary" class="info-icon">mdi-calendar-end</v-icon>
-              <div class="info-content">
-                <span class="info-label">結束日期</span>
-                <span class="info-value">{{ selectedItem.endDate }}</span>
+              <div class="info-item">
+                <v-icon color="primary" class="info-icon">mdi-calendar-end</v-icon>
+                <div class="info-content">
+                  <span class="info-label">結束日期</span>
+                  <span class="info-value">{{ selectedItem.endDate }}</span>
+                </div>
               </div>
-            </div>
 
-            <!-- <div class="info-item">
-              <v-icon color="primary" class="info-icon">mdi-phone</v-icon>
-              <div class="info-content">
-                <span class="info-label">聯絡電話</span>
-                <span class="info-value">{{ selectedItem.contactInfo }}</span>
-              </div>
-            </div> -->
-
-            <div class="info-item">
-              <v-icon color="primary" class="info-icon">mdi-cash</v-icon>
-              <div class="info-content">
-                <span class="info-label">價格</span>
-                <span class="info-value">NT$ {{ selectedItem.price?.toLocaleString() }}</span>
+              <div class="info-item">
+                <v-icon color="primary" class="info-icon">mdi-cash</v-icon>
+                <div class="info-content">
+                  <span class="info-label">價格</span>
+                  <span class="info-value">NT$ {{ selectedItem.price?.toLocaleString() }}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="row">
-      <!-- 訂單摘要卡片 -->
-      <div class="order-summary-section">
-        <div class="summary-card">
-          <h2 class="summary-title">訂單摘要</h2>
+        <!-- 訂單摘要卡片 -->
+        <div class="order-summary-section">
+          <div class="summary-card">
+            <h2 class="summary-title">訂單摘要</h2>
 
-          <div class="summary-content">
-            <div class="summary-item">
-              <span class="item-label">商品名稱</span>
-              <span class="item-value">{{ selectedItem.title }}</span>
+            <div class="summary-content">
+              <div class="summary-item">
+                <span class="item-label">商品名稱</span>
+                <span class="item-value">{{ selectedItem.title }}</span>
+              </div>
+
+              <div class="summary-item">
+                <span class="item-label">人數</span>
+                <span class="item-value">1 人</span>
+              </div>
+
+              <div class="total-section">
+                <span class="total-label">總金額</span>
+                <span class="total-value">NT$ {{ totalPrice.toLocaleString() }}</span>
+              </div>
             </div>
-
-            <div class="summary-item">
-              <span class="item-label">人數</span>
-              <span class="item-value">1 人</span>
+            <div class="button-container">
+              <v-btn
+                color="primary"
+                size="large"
+                class="payment-button"
+                elevation="2"
+                @click="initiatePayment"
+              >
+                <v-icon left>mdi-credit-card</v-icon>
+                確認付款
+              </v-btn>
             </div>
-
-            <div class="total-section">
-              <span class="total-label">總金額</span>
-              <span class="total-value">NT$ {{ totalPrice.toLocaleString() }}</span>
-            </div>
-          </div>
-          <div class="button-container">
-            <v-btn
-              color="primary"
-              size="large"
-              class="payment-button"
-              elevation="2"
-              @click="initiatePayment"
-            >
-              <v-icon left>mdi-credit-card</v-icon>
-              確認付款
-            </v-btn>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <style scoped>
-.payment-page {
+.payment-page-container {
+  position: relative;
+  width: 100%;
   min-height: 100vh;
-  width: 100%;
-  max-width: 100%;
-  padding: 0 1rem;
-  overflow-x: hidden;
-  box-sizing: border-box;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.row {
+.overlay-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  max-width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+  z-index: 4;
+  pointer-events: none;
 }
 
-.content-grid {
+.background-carousel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.payment-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  margin: 80px auto;
+}
+
+.payment-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
   align-items: start;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 /* 商品詳情卡片樣式 */
 .product-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
   box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-banner-section {
+  grid-column: 1 / -1;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1rem;
+}
+
+.product-banner-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.product-banner-image:hover {
+  transform: scale(1.05);
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .product-details-section {
@@ -226,6 +282,12 @@ async function initiatePayment() {
   font-weight: 700;
   color: #1a202c;
   margin: 0;
+}
+
+.product-days {
+  font-size: 14px;
+  color: #718096;
+  margin-bottom: 0.5rem;
 }
 
 .product-description {
@@ -269,14 +331,19 @@ async function initiatePayment() {
 
 /* 訂單摘要卡片樣式 */
 .summary-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
   border-radius: 16px;
-  padding: 1.5rem;
-  position: sticky;
-  top: calc(68px + 2rem);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 100%;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .order-summary-section {
@@ -284,7 +351,7 @@ async function initiatePayment() {
 }
 
 .summary-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #1a202c;
   margin-bottom: 1.5rem;
@@ -307,7 +374,7 @@ async function initiatePayment() {
   align-items: center;
   margin-top: 1.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
 }
 
 .total-label {
@@ -321,70 +388,105 @@ async function initiatePayment() {
   color: #3b82f6;
 }
 
-.payment-button {
-  margin-top: 1.5rem;
-}
-
-.product-days{
-    font-size: 14px;
-    color:lightslategrey
-}
-
 .button-container {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1.5rem;
-  width: 100%;
-  max-width: 100%;
+  margin-top: 2rem;
 }
 
 .payment-button {
-  width: auto;
-  min-width: 150px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  color: white !important;
+  border-radius: 30px !important;
+  padding: 0 2rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
 }
 
-/* 添加全局樣式覆蓋 */
-:deep(.modal-open) {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-  padding-right: 0 !important;
-  margin-right: 0 !important;
-}
-
-:deep(.page-container) {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-  padding-right: 0 !important;
-  margin-right: 0 !important;
-  box-sizing: border-box !important;
+.payment-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
 }
 
 /* 響應式設計 */
 @media (max-width: 1024px) {
-  .content-grid {
+  .payment-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 2rem;
   }
-
-  .summary-card {
-    position: static;
+  
+  .payment-content {
+    padding: 1.5rem;
+    margin: 70px auto;
   }
+}
 
-  .info-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
+@media (max-width: 768px) {
   .product-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-
+  
   .product-title {
     font-size: 1.5rem;
   }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .payment-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card, .summary-card {
+    padding: 1.5rem;
+  }
+  
+  .product-title {
+    font-size: 1.25rem;
+  }
+  
+  .summary-title {
+    font-size: 1.25rem;
+  }
+  
+  .total-value {
+    font-size: 1.25rem;
+  }
+}
+</style>
+
+<style>
+/* 全局樣式 */
+body.payment-page-body {
+  overflow-y: auto !important;
+  height: auto !important;
+  position: relative;
+}
+
+body.payment-page-body .desktop-header {
+  background: transparent !important;
+  z-index: 100;
+}
+
+body.payment-page-body .header-container {
+  background: transparent !important;
+}
+
+body.payment-page-body footer.footer-container {
+  background: transparent !important;
+  z-index: 100;
+  position: relative;
+}
+
+/* 確保頁面容器不受影響 */
+body.payment-page-body .page-container {
+  background: transparent !important;
 }
 </style>

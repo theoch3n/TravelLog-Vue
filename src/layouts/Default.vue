@@ -102,8 +102,8 @@ function logout() {
 .page-container {
   transition: transform 1000ms ease-out, background-color 1000ms ease-out;
   background-color: rgb(255, 255, 255);
+  width: 100%;
 }
-
 
 /* 以下為原有樣式，可依需求調整 */
 nav {
@@ -121,7 +121,7 @@ nav {
 }
 
 main {
-  margin-left: 20px;
+  margin-left: 0px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -132,7 +132,7 @@ main {
 }
 
 footer {
-  margin-left: 20px;
+  margin-left: 0px;
   flex: none;
   display: flex;
   flex-direction: column;

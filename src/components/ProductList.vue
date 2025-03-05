@@ -365,6 +365,7 @@ const selectItem = (item) => {
         price: infoData.value[item.itineraryId].price,
         description: infoData.value[item.itineraryId].description,
         rating: infoData.value[item.itineraryId].rating,
+        img: item.itineraryImage
     };
     // console.log(productPara.selectItem);
     productPara.selectToPay(para);
