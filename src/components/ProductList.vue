@@ -11,7 +11,7 @@
                         <p class="card-text text-center fs-3">
                             <rating v-if="infoData" :rating="infoData[index]?.rating" />
                         </p>
-                        <h5 v-if="infoData" class="text-center"> {{ "立即訂購價: " + infoData[index]?.price }}</h5>
+                        <h5 v-if="infoData" class="text-center"> {{ "立即訂購價: " + new Intl.NumberFormat().format(infoData[index]?.price)  }}</h5>
                     </div>
                 </div>
 
@@ -172,18 +172,18 @@ const displayContentByDate = (item) => {
 
 const profile = ref()
 let count = ref(0);
-const test = async (item) => {
-    if (count.value >= 5)
-        count.value = 0
-    count.value++;
-    if (count.value == 1)
-        $Info("123")
-    if (count.value == 2)
-        $Success("123")
-    if (count.value == 3)
-        $Error("123")
-    if (count.value == 4)
-        $Warning("123")
+// const test = async (item) => {
+//     if (count.value >= 5)
+//         count.value = 0
+//     count.value++;
+//     if (count.value == 1)
+//         $Info("123")
+//     if (count.value == 2)
+//         $Success("123")
+//     if (count.value == 3)
+//         $Error("123")
+//     if (count.value == 4)
+//         $Warning("123")
 
     // await getProfile();
     // await getPlace(item.itineraryId);
@@ -191,7 +191,7 @@ const test = async (item) => {
     // item.place = place.value;
     // $Success(JSON.stringify(item.place))
     // await addItinerary(item);
-};
+// };
 // const place = ref();
 // const getPlace = async (ItineraryId) => {
 //     const response = await axios.get(`${baseAddress}/api/Places/GetPlaceByScheduleId/${ItineraryId}`)

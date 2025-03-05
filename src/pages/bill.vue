@@ -273,9 +273,21 @@ const saveData = async () => {
             $Error("提交失敗!");
         }
     } else {
-        const errorMessage = Object.values(validation).filter(Boolean).join("\n");
-        $Error(`表單驗證失敗:\n\n${errorMessage}`);
-        console.log("Validation errors: ", validation);
+        const errorMessage = Object.values(validation).filter(Boolean).join("<br>");
+        Swal.fire({
+            title: "表單驗證失敗",
+            html: errorMessage,
+            icon: "error",
+            confirmButtonText: '再試一次',
+            customClass: {
+                popup: 'travel-swal-popup',
+                title: 'travel-swal-title',
+                content: 'travel-swal-content',
+                confirmButton: 'travel-swal-button travel-swal-confirm-button travel-swal-error-button',
+                icon: 'travel-swal-icon'
+            },
+            buttonsStyling: false
+        });
     }
 };
 

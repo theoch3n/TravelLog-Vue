@@ -59,10 +59,22 @@
                             </table>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button class="btn custom-btn" @click="backToList()">回到列表</button>
-                        <button type="button" class="btn custom-btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    <div class="modal-footer d-flex justify-content-between">
+                    <div class="form-group d-flex">
+                        <input type="text" class="form-control text-center w-25 me-1" v-model="keyword"
+                            placeholder="搜尋">
+                        <select class="form-select text-center w-50" v-model="selectedCurrency">
+                            <option value="" disabled>選擇幣別</option>
+                            <option v-for="(rate, currency) in filteredRates" :key="currency" :value="currency">
+                                {{ currency }} - {{ rate }}
+                            </option>
+                        </select>
                     </div>
+                    <div>
+                      <button class="btn custom-btn" @click="backToList()">回到列表</button>
+                      <button type="button" class="btn custom-btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    </div>
+                </div>
                 </div>
 
             </div>
@@ -192,7 +204,7 @@ let originalData = ref(null);
 
 watch(() => datas.value?.currency, async (newCurrency) => {
     if (newCurrency) {
-        // await getExchangeRates();
+        await getExchangeRates();
         originalData.value = JSON.parse(JSON.stringify(datas.value));
     }
 });

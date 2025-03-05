@@ -40,16 +40,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="text-center pointer" :class="getBillStatusClass(bill)"
-                                        v-for="(bill, index) in filteredBills" :key="bill.id" @click="openDetails(bill.id)">
-                                        <td>{{ index + 1 }}</td>
-                                        <td>{{ bill.title }}</td>
-                                        <td>{{ bill.paidBy }}</td>
-                                        <td>{{ bill.totalAmount }}</td>
-                                        <td>{{ bill.currency }}</td>
-                                        <td>{{ bill.createdAt }}</td>
-                                    </tr>
-                                </tbody>
+                            <tr class="text-center pointer" :class="getBillStatusClass(bill)"
+                                v-for="(bill, index) in filteredBills" :key="bill.id" @click="openDetails(bill.id)">
+                                <td>{{ index + 1 }}</td>
+                                <td v-html="highlight(bill.title)"></td>
+                                <td v-html="highlight(bill.paidBy)"></td>
+                                <td v-html="highlight(bill.totalAmount)"></td>
+                                <td v-html="highlight(bill.currency)"></td>
+                                <td v-html="highlight(bill.createdAt)"></td>
+                            </tr>
+                        </tbody>
                             </table>
                         </div>
                     </div>
