@@ -184,8 +184,8 @@ const snackbarTitle = ref("")
 
 // 登入資料與驗證邏輯
 const login = ref({
-    email: "Test@gmail.com",
-    password: "T123456",
+    email: "",
+    password: "",
     showPassword: false,
     rememberMe: false,
     errors: {}
