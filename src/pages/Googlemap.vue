@@ -46,7 +46,7 @@
                   >
                     <button
                       class="date-tab-btn"
-                      :class="{ active: selectedDate === date }"
+                      :class="{ active: selectedDate.value === date }"
                       @click="handleDateClick(date)"
                     >
                       {{ formatDisplayDate(date) }}
