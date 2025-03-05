@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, onMounted } from "vue";
 import "./style.css"; // 全局樣式
 import App from "./App.vue";
 import router from "./router/router";
@@ -126,7 +126,8 @@ window.$Confirm = function (title, text, confirmCallback, cancelCallback) {
 
 
 
-
+// 設置網頁標題
+document.title = "TravelLog - 探索旅遊行程";
 
 
 

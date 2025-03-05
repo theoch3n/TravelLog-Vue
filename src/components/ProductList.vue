@@ -120,7 +120,7 @@
                             </div>
                             <div class="modal-footer d-flex justify-content-end">
                                 <div>
-                                    <button class="btn btn-danger me-3" @click="test(item)">測試按鈕</button>
+                                    <!-- <button class="btn btn-danger me-3" @click="test(item)">測試按鈕</button> -->
                                     <!-- <button class="btn btn-primary" @click="show(item)">加到購物車</button> -->
                                     <v-btn class="btn btn-primary" @click="selectItem(item)"
                                         :to="payUrl.to">立即結帳</v-btn>
@@ -362,7 +362,7 @@ const selectItem = (item) => {
         starDate: item.itineraryStartDate,
         endDate: item.itineraryEndDate,
         days: days.value,
-        price: infoData.value[item.itineraryId].price,
+        price: travelInfo.value.price,
         description: infoData.value[item.itineraryId].description,
         rating: infoData.value[item.itineraryId].rating,
         img: item.itineraryImage

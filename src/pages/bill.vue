@@ -77,7 +77,7 @@
                                 placeholder="搜尋">
                             <select class="form-select custom-select text-center w-50" v-model="selectedCurrency">
                                 <option value="" disabled>選擇幣別</option>
-                                <option v-for="(rate, currency) in filteredRates" :key="currency" :value="rate">
+                                <option v-for="(rate, currency) in filteredCurrencies" :key="currency" :value="rate">
                                     {{ currency }} -
                                     {{ rate }}
                                 </option>
