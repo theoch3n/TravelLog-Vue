@@ -205,41 +205,7 @@ const handleDateClick = (date) => {
 
 //假的vard資料
 
-const places = ref([
-  {
-    title: "一蘭拉麵 心齋橋店",
-    rating: "3.6",
-    img: "/湯婆婆.jpg",
-    time: "19:00",
-  },
-  {
-    title: "大阪城",
-    rating: "2",
-    img: "/湯婆婆.jpg",
-    time: "10:00",
-  },
-  {
-    title: "TST麵包坊",
-    rating: "4.5",
-    img: "/777.jpeg",
-    time: "10:00",
-  },
-]);
-
-const places2 = ref([
-  {
-    title: "TST麵包坊",
-    rating: "4.5",
-    img: "/777.jpeg",
-    time: "10:00",
-  },
-  {
-    title: "光之穹頂",
-    rating: "4",
-    img: "/666.jpeg",
-    time: "10:00",
-  },
-]);
+const places = ref([]);
 
 // Load Google Maps API
 const loadGoogleMapsAPI = () => {
