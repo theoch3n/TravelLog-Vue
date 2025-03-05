@@ -172,18 +172,18 @@ const displayContentByDate = (item) => {
 
 const profile = ref()
 let count = ref(0);
-const test = async (item) => {
-    if (count.value >= 5)
-        count.value = 0
-    count.value++;
-    if (count.value == 1)
-        $Info("123")
-    if (count.value == 2)
-        $Success("123")
-    if (count.value == 3)
-        $Error("123")
-    if (count.value == 4)
-        $Warning("123")
+// const test = async (item) => {
+//     if (count.value >= 5)
+//         count.value = 0
+//     count.value++;
+//     if (count.value == 1)
+//         $Info("123")
+//     if (count.value == 2)
+//         $Success("123")
+//     if (count.value == 3)
+//         $Error("123")
+//     if (count.value == 4)
+//         $Warning("123")
 
     // await getProfile();
     // await getPlace(item.itineraryId);
@@ -191,7 +191,7 @@ const test = async (item) => {
     // item.place = place.value;
     // $Success(JSON.stringify(item.place))
     // await addItinerary(item);
-};
+// };
 // const place = ref();
 // const getPlace = async (ItineraryId) => {
 //     const response = await axios.get(`${baseAddress}/api/Places/GetPlaceByScheduleId/${ItineraryId}`)
