@@ -5,43 +5,43 @@ import CarouselsCycle from "@/components/CarouselsCycle.vue";
 // 團隊成員資料
 const teamMembers = ref([
   {
-    name: '陳小明',
-    position: '創辦人 & CEO',
-    description: '擁有10年旅遊產業經驗，致力於打造最佳旅遊規劃體驗',
+    name: '陳泰智',
+    position: '組長',
+    description: '專案負責項目：綠界金流串接、訂單管理、可視化數據分析、前台 UI 設計、資料表設計、版本控制',
     avatar: '/images/team/member1.jpg'
   },
   {
-    name: '林美玲',
-    position: '產品總監',
-    description: '前Google地圖產品經理，熱愛探索世界各地的美食與文化',
+    name: '黃弘儒',
+    position: '組員',
+    description: '專案負責項目：群組拆帳功能、串接匯率api、包套行程展示、資料表設計、版本控制',
     avatar: '/images/team/member2.jpg'
   },
   {
-    name: '王大偉',
-    position: '技術總監',
-    description: '資深全端工程師，專注於地理資訊系統與旅遊科技整合',
+    name: '蕭文哲',
+    position: '組員',
+    description: '專案負責項目：行程規劃功能、搜尋景點、加入行程、Google map API串接、資料表設計',
     avatar: '/images/team/member3.jpg'
   },
   {
-    name: '張雅婷',
-    position: '市場行銷總監',
-    description: '擁有豐富的品牌行銷經驗，專注於數位行銷與社群經營',
+    name: '李宥澤',
+    position: '組員',
+    description: '專案負責項目：登入系統前端及後端、登入系統相關API及資庫、會員系統、資料表設計、前端首頁設計',
     avatar: '/images/team/member4.jpg'
   },
   {
-    name: '李志豪',
-    position: '資深UI/UX 設計師',
-    description: '致力於打造直覺且易用的旅遊規劃介面，讓使用者享受最佳體驗',
+    name: '陳濟恩',
+    position: '組員',
+    description: '專案負責項目：行程規劃功能、資料表設計、版本控制',
     avatar: '/images/team/member5.jpg'
   }
 ]);
 
-// 公司里程碑
+// 里程碑
 const milestones = ref([
-  { year: '2020', event: '公司成立，推出第一版旅遊規劃平台' },
-  { year: '2021', event: '用戶數突破10萬，獲得天使輪投資' },
-  { year: '2022', event: '推出AI智能行程推薦功能，合作夥伴超過500家' },
-  { year: '2023', event: '擴展至亞洲主要旅遊市場，月活躍用戶突破50萬' }
+  { year: '2024/12', event: '題目發想，決定開發旅遊規劃平台' },
+  { year: '2025/01', event: '開發後台管理系統' },
+  { year: '2025/02', event: '開發前台行程規劃平台、更換組長' },
+  { year: '2025/03', event: '專案正式發表' }
 ]);
 
 // 在組件掛載時添加特殊類，卸載時移除
@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
               <div class="section-content story-content">
                 <p>TravelLog 誕生於2020年，源於一群熱愛旅行的科技愛好者的共同願景 - 讓旅行規劃變得簡單而有趣。</p>
                 <p>我們深知旅行規劃的複雜性和挑戰，因此致力於打造一個直觀、智能且全面的旅遊規劃平台，幫助旅行者輕鬆創建完美的行程。</p>
-                <p>從最初的小型創業團隊，到如今服務全球數十萬用戶的旅遊科技公司，我們始終堅持以用戶體驗為核心，不斷創新和完善我們的服務。</p>
+                <p>我們始終堅持以用戶體驗為核心，不斷創新和完善我們的服務。</p>
               </div>
             </div>
             
@@ -192,33 +192,6 @@ onBeforeUnmount(() => {
                 </div>
               </div>
             </div>
-            
-            <!-- <div class="about-card">
-              <h2 class="section-title">聯絡我們</h2>
-              <div class="section-content contact-content">
-                <div class="contact-item">
-                  <i class="mdi mdi-email-outline"></i>
-                  <p>contact@travellog.com</p>
-                </div>
-                
-                <div class="contact-item">
-                  <i class="mdi mdi-phone"></i>
-                  <p>+886 2 1234 5678</p>
-                </div>
-                
-                <div class="contact-item">
-                  <i class="mdi mdi-map-marker"></i>
-                  <p>台北市信義區信義路五段7號</p>
-                </div>
-                
-                <div class="social-media">
-                  <a href="#" class="social-icon"><i class="mdi mdi-facebook"></i></a>
-                  <a href="#" class="social-icon"><i class="mdi mdi-instagram"></i></a>
-                  <a href="#" class="social-icon"><i class="mdi mdi-twitter"></i></a>
-                  <a href="#" class="social-icon"><i class="mdi mdi-youtube"></i></a>
-                </div>
-              </div>
-            </div> -->
           </div>
         </div>
       </div>

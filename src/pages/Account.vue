@@ -1,9 +1,7 @@
 <template>
-    <!-- 將 h-100 移除，改用 min-height -->
     <div class="authincation" style="min-height: 100vh;">
         <div class="container-fluid">
             <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-                <!-- 調整欄位寬度，例如 col-md-8 -->
                 <div class="col-md-6 col-lg-4">
                     <div class="authincation-content">
                         <div class="row no-gutters">
@@ -58,11 +56,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div> <!-- authincation-content -->
-                </div> <!-- col -->
-            </div> <!-- row -->
-        </div> <!-- container-fluid -->
-    </div> <!-- authincation -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -116,7 +114,6 @@ export default {
 <!-- Required vendors -->
 
 <style scoped>
-/* 原有樣式可以保留 */
 /* 讓畫面置中，並增加上方的空白 */
 .authincation {
     display: flex;
