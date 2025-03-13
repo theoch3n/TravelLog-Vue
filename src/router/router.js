@@ -9,7 +9,7 @@ import TravelPackage from "../pages/TravelPackage.vue";
 import DefaultLayout from "../layouts/Default.vue";
 import PaymentLayout from "../layouts/PaymentLayout.vue";
 import AccountLayout from "../layouts/AccountLayout.vue";
-import testPayment from "../pages/testPayment.vue";
+import Payment from "../pages/Payment.vue";
 import Googlemap from "../pages/Googlemap.vue";
 import Account from "../pages/Account.vue";
 import Register from "../pages/Register.vue";
@@ -75,7 +75,7 @@ const routes = [
             {
                 path: "/payment",
                 name: "payment",
-                component: testPayment,
+                component: Payment,
             },
             {
                 path: "/paymentResult/:merchantTradeNo",
@@ -134,24 +134,8 @@ const routes = [
                 component: VerifyEmail,
                 props: route => ({ token: route.query.token })
               }
-              
         ],
     },
-    // {
-    //     path: "/payment", // 路由路徑 (根目錄)
-    //     name: "PaymentPage", // 路由名稱 (用於程式內部識別)
-    //     component: PaymentLayout, // 使用 PaymentLayout 作為根組件
-    //     meta: {
-    //         layout: "PaymentLayout",
-    //     },
-    //     children: [
-    //         {
-    //             path: "",
-    //             name: "Payment",
-    //             component: testPayment,
-    //         },
-    //     ],
-    // },
     {
         path: "/account",
         component: AccountLayout,
